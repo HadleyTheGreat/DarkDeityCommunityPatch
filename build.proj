@@ -1,0 +1,110 @@
+<Project DefaultTargets="BuildAll" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <DistFolder>$(MSBuildProjectDirectory)\dist</DistFolder>
+    <ArtifactsFolder>$(MSBuildProjectDirectory)\artifacts</ArtifactsFolder>
+    <ZipOutputFile>$(ArtifactsFolder)\DarkDeityPatch01.zip</ZipOutputFile>
+    <UtmtUrl>https://github.com/UnderminersTeam/UndertaleModTool/releases/download/0.9.0.0/UTMT_CLI_v0.9.0.0-Windows.zip</UtmtUrl>
+    <ThirdPartyDir>$(MSBuildProjectDirectory)\imports\</ThirdPartyDir>
+    <ZipFile>$(ThirdPartyDir)\utmt_cli.zip</ZipFile>
+    <ExtractDir>$(MSBuildProjectDirectory)\dist\utmt_cli</ExtractDir>
+  </PropertyGroup>
+
+  <Target Name="DownloadImports" Condition="!Exists('$(ZipFile)')">
+    <MakeDir Directories="$(ThirdPartyDir)" />
+
+    <!-- Download ZIP -->
+    <Exec
+      Command='curl.exe -L "$(UtmtUrl)" -o "$(ZipFile)"'
+      ConsoleToMSBuild="true" />
+  </Target>	   
+
+  <Target Name="ExtractImports">
+    <!-- Extract ZIP -->
+<Exec
+    Command='powershell -NoProfile -ExecutionPolicy Bypass -Command "Expand-Archive -Path &quot;$(ZipFile)&quot; -DestinationPath &quot;$(ExtractDir)&quot; -Force"' />
+  </Target>
+
+  <Target Name="DownloadAndExtractUtmt" Condition="!Exists('$(ExtractDir)')">
+    <!-- Create destination folders -->
+    <MakeDir Directories="$(ExtractDir)" />
+
+    <!-- Download ZIP -->
+    <Exec
+      Command='curl.exe -L "$(UtmtUrl)" -o "$(ZipFile)"'
+      ConsoleToMSBuild="true" />
+  </Target>
+
+  <Target Name="PrepExternals" Condition="!Exists('$(ExtractDir)')"
+    	DependsOnTargets="DownloadImports;ExtractImports"/>
+
+  <Target Name="BuildAll"
+          DependsOnTargets="Get-SteamAppPath;CopyReadme;PrepExternals" />
+
+  <Target Name="Get-SteamAppPath">
+    <Message Text="Starting the master build sequence..." Importance="high" />
+
+    <MSBuild Projects="src\cpp\Get-SteamAppPath\Get-SteamAppPath\Get-SteamAppPath.vcxproj"
+             Targets="Build"
+             Properties="Configuration=Release;Platform=x64" />
+
+    <!-- Ensure destination exists -->
+    <MakeDir Directories="dist\tools" />
+
+    <!-- Copy the built executable -->
+    <Copy SourceFiles="src\cpp\Get-SteamAppPath\x64\Release\Get-SteamAppPath.exe"
+          DestinationFolder="dist\tools"
+          SkipUnchangedFiles="true" />
+
+    <Message Text="Copied Get-SteamAppPath.exe to dist\tools"
+             Importance="high" />
+
+    <Message Text="Master build sequence complete!" Importance="high" />
+  </Target>
+
+  <Target Name="CopyReadme">
+    <MakeDir Directories="dist" />
+
+    <Copy SourceFiles="readme.txt"
+          DestinationFolder="dist"
+          SkipUnchangedFiles="true" />
+
+    <Message Text="Copied readme.txt to dist"
+             Importance="high" />
+  </Target>
+
+  <Target Name="DistClean">
+
+    <!-- 1. Delete dist\utmt_cli directory -->
+    <RemoveDir Directories="dist\utmt_cli"
+               Condition="Exists('dist\utmt_cli')" />
+
+    <!-- 2. Delete dist\tools\Get-SteamAppPath.exe -->
+    <Delete Files="dist\tools\Get-SteamAppPath.exe"
+            Condition="Exists('dist\tools\Get-SteamAppPath.exe')" />
+
+    <!-- 3. Run MSBuild Clean in src\cpp\Get-SteamAppPath -->
+    <MSBuild Projects="src\cpp\Get-SteamAppPath\Get-SteamAppPath.sln"
+             Targets="Clean"
+             Properties="Configuration=Release;Platform=x64" />
+
+    <!-- 4. Delete dist\readme.txt -->
+    <Delete Files="dist\readme.txt"
+            Condition="Exists('dist\readme.txt')" />
+
+  </Target>
+
+<Target Name="ZipDistFolder" AfterTargets="Build">
+    
+    <MakeDir Directories="$(ArtifactsFolder)" Condition="!Exists('$(ArtifactsFolder)')" />
+
+    <Delete Files="$(ZipOutputFile)" Condition="Exists('$(ZipOutputFile)')" />
+
+    <ZipDirectory
+        SourceDirectory="$(DistFolder)"
+        DestinationFile="$(ZipOutputFile)"
+        Overwrite="true" />
+
+    <Message Importance="high" Text="Successfully created patch archive at: $(ZipOutputFile)" />
+  </Target>
+
+</Project>
