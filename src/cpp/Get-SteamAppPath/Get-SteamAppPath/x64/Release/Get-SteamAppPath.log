@@ -1,0 +1,6 @@
+﻿  Get-SteamAppPath.cpp
+  Generating code
+  Previous IPDB not found, fall back to full compilation.
+  All 1482 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  Finished generating code
+  Get-SteamAppPath.vcxproj -> U:\repos\GitHub\DarkDeityPatch01\src\cpp\Get-SteamAppPath\x64\Release\Get-SteamAppPath.exe
