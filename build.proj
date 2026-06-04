@@ -93,7 +93,7 @@
 
   </Target>
 
-<Target Name="ZipDistFolder" AfterTargets="Build">
+<Target Name="Artifacts" AfterTargets="Build">
     
     <MakeDir Directories="$(ArtifactsFolder)" Condition="!Exists('$(ArtifactsFolder)')" />
 
