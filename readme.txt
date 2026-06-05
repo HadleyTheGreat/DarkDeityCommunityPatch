@@ -1,9 +1,13 @@
-----------------------------
-Dark Deity community patch 1
-----------------------------
+--------------------------------------------
+Dark Deity community patch 1 - version 1.0.1
+--------------------------------------------
 This package contains community developed bugfix patches for Dark Deity written by JohnHadley of Steam.  It was designed to work with the most current Steam Windows PC version of the game as of 6/2/2026.  It is not intended for, has not been tested with, and is not likely to work with any other versions of the game.  JohnHadley is not affiliated with the developers of Dark Deity and this is not an official bug patch.
 
 In particular this patch is designed to fix a few crash bugs that exist in chapter 22.
+
+CHANGELOG
+1.0.0 - Initial release
+1.0.1 - Found more places that invalid types were getting into the sniper attack range function.  I think this should fix the remaining crashes in chapter 22.
 
 --------------
 HOW TO INSTALL
