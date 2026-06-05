@@ -9,7 +9,7 @@ function scr_set_attackdisplay_range3(arg0)
         {
             var node = ds_list_find_value(arg0.viewneighborsmelee, index);
             
-            if (typeof(node) != "undefined" && instance_exists(node))
+            if (typeof(node) != "undefined" && instance_exists(node) && scr_debug_assert_instance_type(node, 170, "set_attackdisplay_range1:node"))
             {
                 if (ds_exists(node.viewneighborsranged, ds_type_list))
                 {
@@ -17,7 +17,7 @@ function scr_set_attackdisplay_range3(arg0)
                     {
                         var innernode = ds_list_find_value(node.viewneighborsranged, innerindex);
                         
-                        if (typeof(innernode) != "undefined" && instance_exists(innernode))
+                        if (typeof(innernode) != "undefined" && instance_exists(innernode) && scr_debug_assert_instance_type(innernode, 170, "set_attackdisplay_range1:innernode"))
                             innernode.attackdisplay = true;
                     }
                 }
