@@ -6,4 +6,5 @@ IF "%*"=="" (
 )
 SET DATAWIN=%DDPATH%\data.win
 utmt_cli\undertalemodcli load "%DATAWIN%" -s tools\scriptupdater.csx -o "%DATAWIN%"
-
+echo --- Press enter to continue ---
+pause
