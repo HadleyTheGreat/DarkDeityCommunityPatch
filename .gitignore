@@ -1,2 +1,5 @@
-/artifacts
-/imports
+artifacts/
+imports/
+dist/
+images/
+
