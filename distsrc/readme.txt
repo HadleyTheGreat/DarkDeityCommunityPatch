@@ -1,18 +1,22 @@
---------------------------------------------
-Dark Deity community patch 1 - version 1.0.1
---------------------------------------------
-This package contains community developed bugfix patches for Dark Deity written by JohnHadley of Steam.  It was designed to work with the most current Steam Windows PC version of the game as of 6/2/2026.  It is not intended for, has not been tested with, and is not likely to work with any other versions of the game.  JohnHadley is not affiliated with the developers of Dark Deity and this is not an official bug patch.
+------------------------------------------
+Dark Deity Community Patch - version 2.0.0
+------------------------------------------
+This package contains community developed bugfix patches for Dark Deity written by JohnHadley of Steam.  It was designed to work with the most current Steam Windows PC version of the game as of 6/10/2026.  It is not intended for, has not been tested with, and is not likely to work with any other versions of the game.  JohnHadley is not affiliated with the developers of Dark Deity and this is not an official bug patch.
 
-In particular this patch is designed to fix a few crash bugs that exist in chapter 22.
-
-CHANGELOG
-1.0.0 - Initial release
-1.0.1 - Found more places that invalid types were getting into the sniper attack range function.  I think this should fix the remaining crashes in chapter 22.
+Bugs/glitches fixed
+-------------------
+Game crash bug: Variable <unknown_object>.passable(100144, -2147483648) not set before reading it. (chapter 22)
+Game crash bug: Data structure with index does not exist. (chapter 22)
+Movement bug: Enemy unit cannot move anymore after being chained
+Movement bug: Friendly or enemy units glitch onto the wrong square
+Movement bug: Attempting to push a unit causes it to visibly glitch out with a blurry image
+Movement bug: Unit's sprite being shown on a different tile than the one you can select the unit to interact with it with the cursor. 
+Spawning bug: Units spawning on top of other units in chapter 22.
 
 --------------
 HOW TO INSTALL
 --------------
-1) Download DarkDeityPatch01.zip from the releases section of the GitHub site at https://github.com/HadleyTheGreat/DarkDeityPatch01
+1) Download the latest version of DarkDeityCommunityPatch.zip from the releases section of the GitHub site at https://github.com/HadleyTheGreat/DarkDeityCommunityPatch
 2) Use the Windows file explorer to extract the contents into a place that the user has write access such as a folder on your desktop, or a sub-folder in your Documents or Downloads folder by right-clicking it and selecting Extract All.
 3) After extracting, run APPLYPATCH.BAT by double-clicking it in the file explorer or right-clicking it and selecting Open.  If you have default security settings Windows will warn you that you are about to run a batch file and ask you for permission.  You must allow it to run the batch file to do the install.
 
@@ -21,6 +25,10 @@ Once the install is complete, you don't need the folder you extracted and instal
 ----------------
 HOW TO UNINSTALL
 ----------------
+Method 1:
+1) Follow the same steps used to install the patch and the APPLYPATCH.BAT script will detect that it is already installed and prompt you to ask if you want to uninstall it.
+
+Method 2:
 1) In Steam, click Library and locate Dark Deity within it
 2) Right-click on Dark Deity then select Properties->Installed Files->Verify ntegrity of game files
 
@@ -31,7 +39,7 @@ NOTES
 -----
 This patch rewrites the DATA.WIN file of the game to modify the game scripts in it.  If you attempt to manually verify the Steam installation of the game then Steam will recognize that the DATA.WIN file has changed and re-download it.  You would then need to re-apply the patch if you still want to use it.  If a new official update is released for the game it may also re-download DATA.WIN and require re-application of the patch.
 
-This patch calculates SHA256 hashes for the scripts that it is changing in DATA.WIN before changing them to make sure that they are the expected versions.  If the changes already exist because you have already applied the patch then it will tell you that the hashes don't match the expected values and not change DATA.WIN.  If a new official or unofficial patch has changed one or more of the scripts that this patch is attempting to change then the patch will not be able to be applied.  This is intentional to prevent applying the patch in situations where may no longer be compatible.  One would hope that if there is a new official patch then this patch will no longer be needed because the developers will have some officially implemented bugfixes for these bugs.
+The patch calculates the SHA256 hash for the DATA.WIN file before applying changes to make sure you only apply them to the exact version of the game it was written for.  This is intentional to prevent applying the patch in situations where may no longer be compatible.  If you *REALLY* want to install the patches to another version, then you can delete scripts\hashes.csv file before running APPLYPATCH.BAT to suppress the validation.  I would hope that if there is a new official game update at some point then this patch will no longer be needed because the developers will have some officially implemented bugfixes for these bugs, so you won't need to apply it anymore to any newer version of the game.
 
 -------------------------
 LICENSES AND ATTRIBUTIONS
