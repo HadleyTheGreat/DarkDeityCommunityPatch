@@ -9,8 +9,13 @@ if (instance_exists(obj_game))
     speed = 0;
     hspeed = 0;
     vspeed = 0;
-    if (GridX != floor(GridX)) GridX = floor(GridX);
-    if (GridY != Floor(GridY)) GridY = floor(GridY);
+    
+    if (GridX != floor(GridX))
+        GridX = floor(GridX);
+    
+    if (GridY != floor(GridY))
+        GridY = floor(GridY);
+    
     x = GridX * 32;
     y = GridY * 32;
     
