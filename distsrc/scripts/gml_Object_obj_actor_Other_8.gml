@@ -6,16 +6,15 @@ if (instance_exists(obj_game))
             scr_enemy_range();
     }
     
+    if (GridX != floor(GridX))
+        GridX = floor(GridX + 0.5);
+    
+    if (GridY != floor(GridY))
+        GridY = floor(GridY + 0.5);
+    
     speed = 0;
     hspeed = 0;
     vspeed = 0;
-    
-    if (GridX != floor(GridX))
-        GridX = floor(GridX);
-    
-    if (GridY != floor(GridY))
-        GridY = floor(GridY);
-    
     x = GridX * 32;
     y = GridY * 32;
     
