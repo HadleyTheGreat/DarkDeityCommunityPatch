@@ -3,14 +3,16 @@ Dark Deity Community Patch - version 2.0.0
 ------------------------------------------
 This package contains community developed bugfix patches for Dark Deity written by JohnHadley of Steam.  It was designed to work with the most current Steam Windows PC version of the game as of 6/10/2026.  It is not intended for, has not been tested with, and is not likely to work with any other versions of the game.  JohnHadley is not affiliated with the developers of Dark Deity and this is not an official bug patch.
 
-Bugs/glitches fixed
--------------------
-Game crash bug: Variable <unknown_object>.passable(100144, -2147483648) not set before reading it. (chapter 22)
-Game crash bug: Data structure with index does not exist. (chapter 22)
-Movement bug: Enemy unit cannot move anymore after being chained
-Movement bug: Friendly or enemy units glitch onto the wrong square
-Movement bug: Attempting to push a unit causes it to visibly glitch out with a blurry image
-Movement bug: Unit's sprite being shown on a different tile than the one you can select the unit to interact with it with the cursor. 
+All bugs fixed by this patch
+----------------------------
+Memory corruption: Destroying an actor object (usually because the player killed the enemy) results in corruption of other game data.
+Game crash bug: Variable <unknown_object>.passable(100144, -2147483648) not set before reading it. (chapter 22 especially)
+Game crash bug: Data structure with index does not exist. (chapter 22 especially)
+Movement bug: Unit continues to slowly drift after completing a movement path.
+Movement bug: More than one unit ends up on the same tile as a result of movement drift.
+Movement bug: Enemy unit cannot move anymore after being chained, even after the chain expires.
+Movement bug: Attempting to push a unit causes it to visibly glitch out with a blurry image.
+Movement bug: Unit's sprite being shown on a different tile than the one you can select the unit to interact with it with the cursor.
 Spawning bug: Units spawning on top of other units in chapter 22.
 
 --------------
