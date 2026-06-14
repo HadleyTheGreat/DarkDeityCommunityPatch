@@ -40,7 +40,7 @@ function scr_load_game_8()
         ds_grid_read(obj_game_data.characters, ini_read_string("Game Data", 3, "Null"));
         ds_grid_set(obj_game_data.characters, ds_grid_value_x(obj_game_data.characters, 0, 0, 29, 5, "Irving"), 3, 1119);
         
-        if (ini_read_real("Game Data", "1", 0) > 81)
+        if (ini_read_real("Game Data", "1", 0) > 82)
             ds_grid_set(obj_game_data.characters, ds_grid_value_x(obj_game_data.characters, 0, 0, 29, 5, "Irving"), 3, 1122);
         
         ds_grid_set(obj_game_data.characters, ds_grid_value_x(obj_game_data.characters, 0, 0, 29, 5, "Irving"), 0, 38);
