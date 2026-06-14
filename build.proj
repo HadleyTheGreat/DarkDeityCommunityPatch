@@ -7,7 +7,7 @@
 		<ArtifactsDir>$(MSBuildProjectDirectory)\artifacts</ArtifactsDir>
 		<UtmtCliDir>$(MSBuildProjectDirectory)\dist\utmt_cli</UtmtCliDir>
 		<ImportsDir>$(MSBuildProjectDirectory)\imports</ImportsDir>
-		<DistVersion>2.0.0</DistVersion>
+		<DistVersion>2.1.0</DistVersion>
 		<ReleaseZipFile>$(ArtifactsDir)\DarkDeityCommunityPatch-$(DistVersion).zip</ReleaseZipFile>
 		<UtmtCliUrl>https://github.com/UnderminersTeam/UndertaleModTool/releases/download/0.9.0.0/UTMT_CLI_v0.9.0.0-Windows.zip</UtmtCliUrl>
 		<UtmtCliZipFile>$(ImportsDir)\utmt_cli.zip</UtmtCliZipFile>
