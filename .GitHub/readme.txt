@@ -1,5 +1,5 @@
 ------------------------------------------
-Dark Deity Community Patch - version 2.0.0
+Dark Deity Community Patch - version 2.1.0
 ------------------------------------------
 This package contains community developed bugfix patches for Dark Deity written by JohnHadley of Steam.  It was designed to work with the most current Steam Windows PC version of the game as of 6/10/2026.  It is not intended for, has not been tested with, and is not likely to work with any other versions of the game.  JohnHadley is not affiliated with the developers of Dark Deity and this is not an official bug patch.
 
@@ -14,7 +14,11 @@ Movement bug: Enemy unit cannot move anymore after being chained, even after the
 Movement bug: Attempting to push a unit causes it to visibly glitch out with a blurry image.
 Movement bug: Unit's sprite being shown on a different tile than the one you can select the unit to interact with it with the cursor.
 Spawning bug: Units spawning on top of other units in chapter 22.
+Sprite mismatch: Irving's hair reverts back to red if you load any save file from chapter 12-16
+Unending mission: A user reported to me that chapter 10 never ended for him, I made the game check on every turn after 8 instead of just on exactly turn 9 to try to end the map as a workaround.
+Stat recording bug; Helena's historical statistics were not being tracked properly
 
+Version 2.1.0 fixes the movement bugs for enemy units now as well as player units.  In version 2.0.0, I didn't realize that there were separate path completion events for player and enemy units, so the fixes only resolved the player movement drift.  Now similar changes have been made to prevent enemy movement drift as well.
 --------------
 HOW TO INSTALL
 --------------
@@ -41,13 +45,13 @@ NOTES
 -----
 This patch rewrites the DATA.WIN file of the game to modify the game scripts in it.  If you attempt to manually verify the Steam installation of the game then Steam will recognize that the DATA.WIN file has changed and re-download it.  You would then need to re-apply the patch if you still want to use it.  If a new official update is released for the game it may also re-download DATA.WIN and require re-application of the patch.
 
-The patch calculates the SHA256 hash for the DATA.WIN file before applying changes to make sure you only apply them to the exact version of the game it was written for.  This is intentional to prevent applying the patch in situations where may no longer be compatible.  If you *REALLY* want to install the patches to another version, then you can delete the scripts\hashes.csv file before running APPLYPATCH.BAT to suppress the validation.  I would hope that if there is a new official game update at some point then this patch will no longer be needed because the developers will have some officially implemented bugfixes for these bugs, so you won't need to apply it anymore to any newer version of the game.
+The patch calculates the SHA256 hash for the DATA.WIN file before applying changes to make sure you only apply them to the exact version of the game it was written for.  This is intentional to prevent applying the patch in situations where may no longer be compatible.  If you *REALLY* want to install the patches to another version, then you can delete scripts\hashes.csv file before running APPLYPATCH.BAT to suppress the validation.  I would hope that if there is a new official game update at some point then this patch will no longer be needed because the developers will have some officially implemented bugfixes for these bugs, so you won't need to apply it anymore to any newer version of the game.
 
 -------------------------
 LICENSES AND ATTRIBUTIONS
 -------------------------
 This patch package incorporates pre-compiled binaries and other files from the official UndertaleModCLI release version 0.9.0.0 in its entirety and with no modifications in the UTMT_CLI folder.  JohnHadley does not lay claim to and is not affiliated with UndertaleModTool or UndertaleModCLI.
 
-UndertaleModTool and its command-line tool UndertaleModCLI are third-party, open source tools for modifying GameMaker data files redistributed under the GNU General Public License version 3.0, see UTMT_CLI\LICENSE.TXT for full details.  The source code and binaries for UndertaleModTool and UndertaleModCLI are freely available on GitHub at https://github.com/UnderminersTeam/UndertaleModTool.
+UndertaleModTool and its command-line tool UndertaleModCLI are third-party, open source tools for modifying GameMaker data files redistributed under the GNU General Public License version 3.0, see UTMT_CLI\LICENSE.TXT for full details.  The source code and binaries for UndertaleModTool and UndertaleModCLI are freely available on GitHub at https://github.com/UnderminersTeam/UndertaleModToolUndertaleModTool.
 
 The game scripts in the scripts folder are modified versions of copyrighted material owned by the developers and creators of Dark Deity.  To the extent that any of these third-party modifications made to the original scripts and included in this package would be copyrightable, JohnHadley and any other contributors to this package release those modifications to the public domain without copyright or claim to be freely used by anyone for any purpose.
