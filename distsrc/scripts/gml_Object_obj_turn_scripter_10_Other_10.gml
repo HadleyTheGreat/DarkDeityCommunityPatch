@@ -90,7 +90,7 @@ else if (turn == 8)
 else if (turn == 9)
     alpha = 0.1;
 
-if (turn == 9 && !instance_exists(obj_stat_view))
+if (turn >= 9 && !instance_exists(obj_stat_view))
 {
     obj_game.state = "idle";
     obj_cursor.cursor_active = false;
