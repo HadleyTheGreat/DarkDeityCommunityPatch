@@ -84,10 +84,39 @@ if ([System.IO.File]::Exists($csvPath)) {
 # Fetch the pre-patch expected hash and post-patch expected hash from the hash table
 $preHash = $hashTable["prePatch"]
 $postHash = $hashTable["postPatch"]
+$backupHash = ""
+
+if ([System.IO.File]::Exists($backupPath)) {
+    Write-Host "Found a version of the patch already installed." -ForegroundColor Yellow
+
+    $title = ""
+    $message = "Do you want to uninstall the patch?"
+
+    # Define the choices. The ampersand (&) marks the shortcut key.
+    $choices = @(
+        [System.Management.Automation.Host.ChoiceDescription]::new("&Yes", "Uninstall the patch")
+        [System.Management.Automation.Host.ChoiceDescription]::new("&No", "Cancel the operation.")
+    )
+    # default choice: 0 = yes, 1 = no
+    $default = 1
+
+    $choice = $Host.UI.PromptForChoice($title, $message, $choices, $default)
+
+    if ($choice -eq 0) {
+        Write-Host "Restoring the original DATA.WIN from the backup file"
+        Copy-Item -Path $backupPath -Destination $DataWinPath -Force
+        Write-Host "Deleting the backup file"
+        Remove-Item $backupPath
+        Write-Host "The patch has been removed successfully." -ForegroundColor Green         
+    } else {
+        Write-Host "You chose No. No changes have been made to your patch install." -ForegroundColor Yellow
+    }
+    return
+}
 
 if ([System.IO.File]::Exists($DataWinPath)) {
     # Calculate the file's SHA256 hash and extract just the Hash value
-    Write-Host "Calculating the pre-patch SHA256 hash"
+    Write-Host "Calculating the DATA.WIN pre-patch SHA256 hash"
     $CurrentHash = (Get-FileHash -Path $DataWinPath -Algorithm SHA256).Hash
     
     if ($buildingHashes -eq $true) {
@@ -140,90 +169,44 @@ if ([System.IO.File]::Exists($DataWinPath)) {
             Write-Host "Unexpected error while processing the DATA.WIN file" -ForegroundColor Red
             Write-Host "Restoring the original DATA.WIN from the backup file"
             Copy-Item -Path $backupPath -Destination $DataWinPath -Force
+            Write-Host "Deleting the backup file"
+            Remove-Item $backupPath            
             Write-Host "The patch was not applied successfully." -ForegroundColor Red
         }
     } elseif ($CurrentHash -eq $postHash) {
-        Write-Host "The DATA.WIN file was already patched with this patch." -ForegroundColor Yellow
-        if ([System.IO.File]::Exists($backupPath)) {
-            Write-Host "There exists a backup file in DATA.WIN.OLD"
-            $title = ""
-            $message = "Do you want to restore to the pre-patch state from the backup?"
-
-            # Define the choices. The ampersand (&) marks the shortcut key.
-            $choices = @(
-                [System.Management.Automation.Host.ChoiceDescription]::new("&Yes", "Continue with the operation.")
-                [System.Management.Automation.Host.ChoiceDescription]::new("&No", "Cancel the operation.")
-            )
-            # default choice: 0 = yes, 1 = no
-            $default = 1
-
-            $choice = $Host.UI.PromptForChoice($title, $message, $choices, $default)
-
-            if ($choice -eq 0) {
-                Write-Host "Restoring the original DATA.WIN from the backup file"
-                Copy-Item -Path $backupPath -Destination $DataWinPath -Force
-                Write-Host "Deleting the backup file"
-                Remove-Item $backupPath
-                Write-Host "The patch has been removed successfully." -ForegroundColor Green         
-            } else {
-                Write-Host "You chose No. No changes have been made to DATA.WIN" -ForegroundColor Yellow
-            }
-        } else {
-            Write-Host "No backup file exists in WIN.DATA.OLD" -ForegroundColor Yellow
-
-            $title   = ""
-            $message = "Do you want to launch Steam's file integrity check URL for the game to restore it to its original version?"
-
-            # Define the choices. The ampersand (&) marks the shortcut key.
-            $choices = @(
-                [System.Management.Automation.Host.ChoiceDescription]::new("&Yes", "Continue with the operation.")
-                [System.Management.Automation.Host.ChoiceDescription]::new("&No", "Cancel the operation.")
-            )
-            # default choice: 0 = yes, 1 = no
-            $default = 1
-
-            $choice = $Host.UI.PromptForChoice($title, $message, $choices, $default)
-
-            if ($choice -eq 0) {
-                Start "steam://validate/1374840"
-
-                $timeoutSeconds = 60  # Stop waiting after 1 minute
-                $checkInterval = 1    # Check every 1 second
-                $secondsElapsed = 0
-
-                Write-Host "Waiting for '$DataWinPath' to be removed by Steam"
-                while ((Test-Path -Path $DataWinPath) -and ($secondsElapsed -lt $timeoutSeconds)) {
-                    Start-Sleep -Seconds $checkInterval
-                    $secondsElapsed += $checkInterval
-                    if ($secondsElapsed % 5 -eq 0) {
-                        Write-Host "Still waiting... ($secondsElapsed seconds elapsed)"
-                    }
-                }
-
-                $secondsElapsed = 0
-
-                Write-Host "Waiting for '$DataWinPath' to be replaced by Steam"
-                while (-not (Test-Path -Path $DataWinPath) -and ($secondsElapsed -lt $timeoutSeconds)) {
-                    Start-Sleep -Seconds $checkInterval
-                    $secondsElapsed += $checkInterval
-                    if ($secondsElapsed % 5 -eq 0) {
-                        Write-Host "Still waiting... ($secondsElapsed seconds elapsed)"
-                    }
-                }
-
-                Write-Host "The patch has been removed successfully." -ForegroundColor Green
-            } else {
-                Write-Host "You chose No. No changes have been made to DATA.WIN" -ForegroundColor Yellow
-            }
-        }
+        Write-Host "You're ready to play!"
+        Write-Host "The DATA.WIN file was already patched with this patch." -ForegroundColor Green
     } else {
-        Write-Warning "Error: Hash mismatch!"
-        Write-Host "Expected: $preHash" -ForegroundColor Cyan
-        Write-Host "Calculated: $CurrentHash" -ForegroundColor Red
-        Write-Host ""
-        Write-Host "This patch is not meant to operate on this version of DATA.WIN" -ForegroundColor Red
-        Write-Host "DATA.WIN does not match either the expected pre-patch or post-patch file hash" -ForegroundColor Red
-    } 
+        Write-Host "No previous patch backup file exists, but DATA.WIN doesn't match the expected version" -ForegroundColor Yellow
+
+        $title   = ""
+        $message = "Do you want to launch Steam's file integrity check for the game to restore it to its original version?"
+
+        # Define the choices. The ampersand (&) marks the shortcut key.
+        $choices = @(
+            [System.Management.Automation.Host.ChoiceDescription]::new("&Yes", "Continue with the operation.")
+            [System.Management.Automation.Host.ChoiceDescription]::new("&No", "Cancel the operation.")
+        )
+        # default choice: 0 = yes, 1 = no
+        $default = 1
+
+        $choice = $Host.UI.PromptForChoice($title, $message, $choices, $default)
+
+        if ($choice -eq 0) {
+            # Fallback to protect path layout if running selections (F8) inside an editor where $PSScriptRoot resolves as null
+            $BaseDir = if ($PSScriptRoot) { $PSScriptRoot } else { Get-Location }
+            & $BaseDir\Validate-SteamApp 1374840 data.win
+            Write-Host "The patch has been removed successfully." -ForegroundColor Green
+        } else {
+            Write-Host "You chose No. No changes have been made to DATA.WIN" -ForegroundColor Yellow
+            Write-Warning "Error: Hash mismatch!"
+            Write-Host "Expected: $preHash" -ForegroundColor Cyan
+            Write-Host "Calculated: $CurrentHash" -ForegroundColor Red
+            Write-Host ""
+            Write-Host "This patch is not meant to operate on this version of DATA.WIN" -ForegroundColor Red
+            Write-Host "DATA.WIN does not match either the expected pre-patch or post-patch file hash" -ForegroundColor Red
+        }
+    }
 } else {
     Write-Warning "Error: DATA.WIN not found at $DataWinPath"
 }
