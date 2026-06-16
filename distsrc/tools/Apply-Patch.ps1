@@ -75,7 +75,8 @@ if ([System.IO.File]::Exists($csvPath)) {
         $hashtable[$_.id] = $_.sha256hash
     }
     $buildingHashes = $false
-} else {
+}
+else {
     $hashTable["prePatch"] = ""
     $hashTable["postPatch"] = ""
     $buildingHashes = $true
@@ -108,105 +109,129 @@ if ([System.IO.File]::Exists($backupPath)) {
         Write-Host "Deleting the backup file"
         Remove-Item $backupPath
         Write-Host "The patch has been removed successfully." -ForegroundColor Green         
-    } else {
+    }
+    else {
         Write-Host "You chose No. No changes have been made to your patch install." -ForegroundColor Yellow
     }
     return
 }
 
+
 if ([System.IO.File]::Exists($DataWinPath)) {
-    # Calculate the file's SHA256 hash and extract just the Hash value
-    Write-Host "Calculating the DATA.WIN pre-patch SHA256 hash"
-    $CurrentHash = (Get-FileHash -Path $DataWinPath -Algorithm SHA256).Hash
+
+        # Calculate the file's SHA256 hash and extract just the Hash value
+        Write-Host "Calculating the DATA.WIN pre-patch SHA256 hash"
+        $CurrentHash = (Get-FileHash -Path $DataWinPath -Algorithm SHA256).Hash
     
-    if ($buildingHashes -eq $true) {
-        $hashTable["prePatch"] = $CurrentHash
-        $preHash = $CurrentHash
-    }
-    
-    # Compare the hashes (PowerShell's -eq is case-insensitive by default)
-    if ($CurrentHash -eq $preHash) {
         if ($buildingHashes -eq $true) {
-            Write-Host "There is no hash file, so a new one will be created." -ForegroundColor Yellow
-            Write-Host "No version validation will be performed." -ForegroundColor Yellow
-        } else {
-            Write-Host "DATA.WIN matches the expected version."
-        }   
+            $hashTable["prePatch"] = $CurrentHash
+            $preHash = $CurrentHash
+        }
         
-        Write-Host "Saving a backup to $backupPath"
-        Copy-Item -Path $DataWinPath -Destination $backupPath -Force
-        
-        utmt_cli\undertalemodcli load "$DataWinPath" -s tools\scriptupdater.csx -o "$DataWinPath"
-        
-        if ($LASTEXITCODE -eq 0) {
+    
+        # Compare the hashes (PowerShell's -eq is case-insensitive by default)
+        if ($CurrentHash -eq $preHash) {
             if ($buildingHashes -eq $true) {
-                Write-Host "Calculating the post-patch SHA256 hash"
+                Write-Host "There is no hash file, so a new one will be created." -ForegroundColor Yellow
+                Write-Host "No version validation will be performed." -ForegroundColor Yellow
+            }
+            else {
+                Write-Host "DATA.WIN matches the expected version."
+            }   
+        
+            Write-Host "Saving a backup to $backupPath"
+            Copy-Item -Path $DataWinPath -Destination $backupPath -Force
+        
+            utmt_cli\undertalemodcli load "$DataWinPath" -s tools\scriptupdater.csx -o "$DataWinPath"
+        
+            if ($LASTEXITCODE -eq 0) {
+                if ($buildingHashes -eq $true) {
+                    Write-Host "Calculating the post-patch SHA256 hash"
 
-                $CurrentHash = (Get-FileHash -Path $DataWinPath -Algorithm SHA256).Hash
-                $hashTable["postPatch"] = $CurrentHash
+                    $CurrentHash = (Get-FileHash -Path $DataWinPath -Algorithm SHA256).Hash
+                    $hashTable["postPatch"] = $CurrentHash
 
-                # Write the hashTable back to the csv file at $csvPath
-                $hashTable.GetEnumerator() |
-                    Sort-Object Key |
-                    Select-Object `
-                        @{Name='id'; Expression={$_.Key}},
-                        @{Name='sha256hash'; Expression={$_.Value}} |
-                    Export-Csv -Path $csvPath -NoTypeInformation
+                    # Write the hashTable back to the csv file at $csvPath
+                    $hashTable.GetEnumerator() |
+                        Sort-Object Key |
+                        Select-Object `
+                        @{Name = 'id'; Expression = { $_.Key } },
+                        @{Name = 'sha256hash'; Expression = { $_.Value } } |
+                        Export-Csv -Path $csvPath -NoTypeInformation
 
-                Write-Host "New hash file created at $csvPath"
-                Write-Host "Patch applied successfully" -ForegroundColor Green
-            } else {
-                Write-Host "Calculating the post-patch SHA256 hash"
-                $CurrentHash = (Get-FileHash -Path $DataWinPath -Algorithm SHA256).Hash
-                if ($CurrentHash -eq $postHash) {
-                    Write-Host "Validation hash matches expected value" 
+                    Write-Host "New hash file created at $csvPath"
                     Write-Host "Patch applied successfully" -ForegroundColor Green
-                } else {
-                    Write-Host "VALIDATION MISMATCH! The patch was applied but DATA.WIN may be corrupt." -ForegroundColor Red   
                 }
-            } 
-        } else {
-            Write-Host "Unexpected error while processing the DATA.WIN file" -ForegroundColor Red
-            Write-Host "Restoring the original DATA.WIN from the backup file"
-            Copy-Item -Path $backupPath -Destination $DataWinPath -Force
-            Write-Host "Deleting the backup file"
-            Remove-Item $backupPath            
-            Write-Host "The patch was not applied successfully." -ForegroundColor Red
+                else {
+                    Write-Host "Calculating the post-patch SHA256 hash"
+                    $CurrentHash = (Get-FileHash -Path $DataWinPath -Algorithm SHA256).Hash
+                    if ($CurrentHash -eq $postHash) {
+                        Write-Host "Validation hash matches expected value" 
+                        Write-Host "Patch applied successfully" -ForegroundColor Green
+                    }
+                    else {
+                        Write-Host "VALIDATION MISMATCH! The patch was applied but DATA.WIN may be corrupt." -ForegroundColor Red   
+                    }
+                } 
+            }
+            else {
+                Write-Host "Unexpected error while processing the DATA.WIN file" -ForegroundColor Red
+                Write-Host "Restoring the original DATA.WIN from the backup file"
+                Copy-Item -Path $backupPath -Destination $DataWinPath -Force
+                Write-Host "Deleting the backup file"
+                Remove-Item $backupPath            
+                Write-Host "The patch was not applied successfully." -ForegroundColor Red
+            }
         }
-    } elseif ($CurrentHash -eq $postHash) {
-        Write-Host "You're ready to play!"
-        Write-Host "The DATA.WIN file was already patched with this patch." -ForegroundColor Green
-    } else {
-        Write-Host "No previous patch backup file exists, but DATA.WIN doesn't match the expected version" -ForegroundColor Yellow
-
-        $title   = ""
-        $message = "Do you want to launch Steam's file integrity check for the game to restore it to its original version?"
-
-        # Define the choices. The ampersand (&) marks the shortcut key.
-        $choices = @(
-            [System.Management.Automation.Host.ChoiceDescription]::new("&Yes", "Continue with the operation.")
-            [System.Management.Automation.Host.ChoiceDescription]::new("&No", "Cancel the operation.")
-        )
-        # default choice: 0 = yes, 1 = no
-        $default = 1
-
-        $choice = $Host.UI.PromptForChoice($title, $message, $choices, $default)
-
-        if ($choice -eq 0) {
-            # Fallback to protect path layout if running selections (F8) inside an editor where $PSScriptRoot resolves as null
-            $BaseDir = if ($PSScriptRoot) { $PSScriptRoot } else { Get-Location }
-            & $BaseDir\Validate-SteamApp 1374840 data.win
-            Write-Host "The patch has been removed successfully." -ForegroundColor Green
-        } else {
-            Write-Host "You chose No. No changes have been made to DATA.WIN" -ForegroundColor Yellow
-            Write-Warning "Error: Hash mismatch!"
-            Write-Host "Expected: $preHash" -ForegroundColor Cyan
-            Write-Host "Calculated: $CurrentHash" -ForegroundColor Red
-            Write-Host ""
-            Write-Host "This patch is not meant to operate on this version of DATA.WIN" -ForegroundColor Red
-            Write-Host "DATA.WIN does not match either the expected pre-patch or post-patch file hash" -ForegroundColor Red
+        elseif ($CurrentHash -eq $postHash) {
+            Write-Host "You're ready to play!"
+            Write-Host "The DATA.WIN file was already patched with this patch." -ForegroundColor Green
         }
-    }
-} else {
+        else {
+            Write-Host "No previous patch backup file exists, but DATA.WIN doesn't match the expected version" -ForegroundColor Yellow
+
+            $title = ""
+            $message = "Do you want to launch Steam's file integrity check to restore Dark Deity to the current Steam version?"
+
+            # Define the choices. The ampersand (&) marks the shortcut key.
+            $choices = @(
+                [System.Management.Automation.Host.ChoiceDescription]::new("&Yes", "Continue with the operation.")
+                [System.Management.Automation.Host.ChoiceDescription]::new("&No", "Cancel the operation.")
+            )
+            # default choice: 0 = yes, 1 = no
+            $default = 1
+
+            $choice = $Host.UI.PromptForChoice($title, $message, $choices, $default)
+
+            if ($choice -eq 0) {
+                # Fallback to protect path layout if running selections (F8) inside an editor where $PSScriptRoot resolves as null
+                $BaseDir = if ($PSScriptRoot) { $PSScriptRoot } else { Get-Location }
+                & $BaseDir\Validate-SteamApp 1374840 data.win
+
+                Write-Host "Dark Deity has been restored to the current release version."  -ForegroundColor Green
+                Write-Host "Calculating the DATA.WIN SHA256 hash"
+                $NewHash = (Get-FileHash -Path $DataWinPath -Algorithm SHA256).Hash
+
+                if ($CurrentHash -eq $NewHash) {
+                    Write-Host "The restored DATA.WIN file is same version as you already had installed."
+                    Write-Host "The patch is not intended for this version!" -ForegroundColor Red
+                }
+                elseif ($NewHash -eq $preHash) {
+                    Write-Host "This is the version of DATA.WIN this patch was intended to apply to." -ForegroundColor Green
+                    Write-Host "Please run APPLYPATCH.BAT again if you want to re-install the patch"
+                }
+                else {
+                    Write-Host "The restored DATA.WIN file is a different version than you had installed." -ForegroundColor Yellow
+                    Write-Host "The patch is not intended for this version!" -ForegroundColor Red
+                }
+            }
+            else {
+                Write-Host "You chose No. No changes have been made to DATA.WIN" -ForegroundColor Yellow
+            }
+        }
+    
+}
+else {
     Write-Warning "Error: DATA.WIN not found at $DataWinPath"
 }
+
