@@ -1,4 +1,4 @@
-<Project DefaultTargets="Dist" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Release" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 	<PropertyGroup>
 		<ImagesDir>$(MSBuildProjectDirectory)\images</ImagesDir>
 		<DistDir>$(MSBuildProjectDirectory)\dist</DistDir>
