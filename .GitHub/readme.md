@@ -21,7 +21,7 @@ Version 2.1.1 applies exactly the same bug fixes as 2.1.0, but it has improved i
 
 ### HOW TO INSTALL
 
-1\) Download the zip file of the Dark Deity Community Patch from the bottom of the page https://github.com/HadleyTheGreat/DarkDeityCommunityPatch/releases/latest
+1\) Download the zip file of the Dark Deity Community Patch from the bottom of the latest release page at https://github.com/HadleyTheGreat/DarkDeityCommunityPatch/releases/latest
 
 2\) Use the Windows file explorer to extract the contents of the zip file into a place that the user has write access such as a folder on your desktop, or a sub-folder in your Documents or Downloads folder by right-clicking it and selecting Extract All.
 
