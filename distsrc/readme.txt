@@ -1,5 +1,5 @@
 ------------------------------------------
-Dark Deity Community Patch - version 2.1.0
+Dark Deity Community Patch - version 2.1.1
 ------------------------------------------
 This package contains community developed bugfix patches for Dark Deity written by JohnHadley of Steam.  It was designed to work with the most current Steam Windows PC version of the game as of 6/10/2026.  It is not intended for, has not been tested with, and is not likely to work with any other versions of the game.  JohnHadley is not affiliated with the developers of Dark Deity and this is not an official bug patch.
 
@@ -16,9 +16,9 @@ Movement bug: Unit's sprite being shown on a different tile than the one you can
 Spawning bug: Units spawning on top of other units in chapter 22.
 Sprite mismatch: Irving's hair reverts back to red if you load any save file from chapter 12-16
 Unending mission: A user reported to me that chapter 10 never ended for him, I made the game check on every turn after 8 instead of just on exactly turn 9 to try to end the map as a workaround.
-Stat recording bug; Helena's historical statistics were not being tracked properly
+Stat recording bug; Helena's historical statistics were not being tracked properly.
 
-Version 2.1.0 fixes the movement bugs for enemy units now as well as player units.  In version 2.0.0, I didn't realize that there were separate path completion events for player and enemy units, so the fixes only resolved the player movement drift.  Now similar changes have been made to prevent enemy movement drift as well.
+Version 2.1.1 applies exactly the same bug fixes as 2.1.0, but it has improved install scripts to make installation and uninstallation on systems that already have previous versions of the patch installed work better.  Version 2.1.0 fixed the movement bugs for enemy units as well as the player units, since I didn't realize that there were separate path completion events for player and enemy units when I made version 2.0.0.
 --------------
 HOW TO INSTALL
 --------------
