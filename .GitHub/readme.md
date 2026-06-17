@@ -1,4 +1,4 @@
-# Dark Deity Community Patch - version 2.1.1
+## Dark Deity Community Patch - version 2.1.1
 
 This package contains community developed bugfix patches for Dark Deity written by JohnHadley of Steam.  It was designed to work with the most current Steam Windows PC version of the game as of 6/10/2026.  It is not intended for, has not been tested with, and is not likely to work with any other versions of the game.  JohnHadley is not affiliated with the developers of Dark Deity and this is not an official bug patch.
 
