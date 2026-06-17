@@ -27,7 +27,7 @@ Version 2.1.1 applies exactly the same bug fixes as 2.1.0, but it has improved i
 
 3\) After extracting, run APPLYPATCH.BAT by double-clicking it in the file explorer or right-clicking it and selecting Open.  If you have default security settings Windows will warn you that you are about to run a batch file and ask you for permission.  You must allow it to run the batch file to do the install.
 
-Once the install is complete, you don't need the folder you extracted and installed from anymore and you can safely delete it.
+Once the install is complete, you don't need the zip file or the folder you extracted and installed from anymore and you can safely delete them.
 
 ### HOW TO UNINSTALL
 
