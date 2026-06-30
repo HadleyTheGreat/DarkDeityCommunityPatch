@@ -37,8 +37,9 @@ The tool will try to locate the Dark Deity install directory automatically.
 If that fails for any reason, you can provide the path manually.
 
 Examples:
-${SCRIPT_NAME} -i /usr/games/
-
+${SCRIPT_NAME} -i "$HOME/.steam/steam/steamapps/common/Dark Deity"
+${SCRIPT_NAME} -u ~/.steam/steam/steamapps/common/"Dark Deity"
+${SCRIPT_NAME} -i "/usr/games/Dark Deity"
 EOF
 }
 
@@ -152,7 +153,7 @@ EOF
     				#cp "$GAME_DIR/data.win" "data.win"
     				echo "--- Building patched.win ---"
     				rm -f "${GAME_DIR}/patched.win"
-    				utmt_cli_linux/UndertaleModCli load "${GAME_DIR}/data.win" -s "tools/scriptupdater.csx" -o "${GAME_DIR}/patched.win"
+    				utmt_cli/UndertaleModCli load "${GAME_DIR}/data.win" -s "tools/scriptupdater.csx" -o "${GAME_DIR}/patched.win"
     				echo "--- Renaming data.win to data.win.old to save as a backup ---"
     				rm -f "${GAME_DIR}/data.win.old"
     				mv "$GAME_DIR/data.win" "$GAME_DIR/data.win.old"
@@ -204,6 +205,29 @@ EOF
 	    		echo -e "\033[32mPatch was uninstalled successfully.\033[0m"
 	    		exit 0				
                 ;;
+            -c|--hash)
+             	if [[ $# -eq 2 ]]; then
+            		GAME_DIR=$2
+            	else
+					if ! GAME_DIR=$(find_game_dir "$APPID"); then
+	 					cat << EOF
+Could not automatically locate the Dark Deity install directory.
+If you can locate the directory, you can specify it manually.
+Example:
+    ${SCRIPT_NAME} -h "$HOME/.steam/steam/steamapps/common/Dark Deity"
+EOF
+	    				exit 1
+					fi
+            	fi
+            	
+            	if [ -f "${GAME_DIR}/data.win" ]; then
+            		sha256sum "$GAME_DIR/data.win" | cut -d ' ' -f 1
+	            	exit 0
+	            fi
+	            
+				echo "Could not find the file 'data.win' in the Dark Deity directory"
+				exit 1
+				;;
             -v|--version)
                 version
                 exit 0

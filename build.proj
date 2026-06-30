@@ -1,0 +1,25 @@
+<Project DefaultTargets="Release">
+  
+  <!-- Define the list of projects you want to build -->
+  <ItemGroup>
+    <ProjectsToBuild Include="windows.proj" />
+    <ProjectsToBuild Include="linux.proj" />
+  </ItemGroup>
+
+  <Target Name="Release">
+    <MSBuild Projects="@(ProjectsToBuild)" Targets="Release" />
+  </Target>
+  
+  <Target Name="Dist">
+    <MSBuild Projects="@(ProjectsToBuild)" Targets="Dist" />
+  </Target>
+
+  <Target Name="ReleaseClean">
+    <MSBuild Projects="@(ProjectsToBuild)" Targets="ReleaseClean" />
+  </Target>
+
+  <Target Name="DistClean">
+    <MSBuild Projects="@(ProjectsToBuild)" Targets="DistClean" />
+  </Target>
+
+</Project>

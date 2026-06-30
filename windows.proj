@@ -1,26 +1,31 @@
 <Project DefaultTargets="Release" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-	<PropertyGroup>
-		<Curl Condition="$([MSBuild]::IsOSPlatform('Windows'))">curl.exe</Curl>
-		<Curl Condition="$([MSBuild]::IsOSPlatform('Linux'))">curl</Curl>		
-		<ImagesDir>$(MSBuildProjectDirectory)\images</ImagesDir>
-		<DistDir>$(MSBuildProjectDirectory)\dist</DistDir>
-		<ToolsDir>$(DistDir)\tools</ToolsDir>
-		<DistSrcDir>$(MSBuildProjectDirectory)\distsrc</DistSrcDir>
-		<ArtifactsDir>$(MSBuildProjectDirectory)\artifacts</ArtifactsDir>
-		<UtmtCliDir>$(MSBuildProjectDirectory)\dist\utmt_cli</UtmtCliDir>
-		<UtmtCliDirLinux>$(MSBuildProjectDirectory)\dist\utmt_cli_linux</UtmtCliDirLinux>
-		<ImportsDir>$(MSBuildProjectDirectory)\imports</ImportsDir>
-		<DistVersion>2.1.1</DistVersion>
-		<ReleaseZipFile>$(ArtifactsDir)\DarkDeityCommunityPatch-$(DistVersion).zip</ReleaseZipFile>
-		<ReleaseZipFileLinux>$(ArtifactsDir)\DarkDeityCommunityPatch-Linux-$(DistVersion).zip</ReleaseZipFileLinux>
-		<UtmtCliUrl>https://github.com/UnderminersTeam/UndertaleModTool/releases/download/0.9.0.0/UTMT_CLI_v0.9.0.0-Windows.zip</UtmtCliUrl>
-		<UtmtCliUrlLinux>https://github.com/UnderminersTeam/UndertaleModTool/releases/download/0.9.0.0/UTMT_CLI_v0.9.0.0-Ubuntu.zip</UtmtCliUrlLinux>		
-		<UtmtCliZipFile>$(ImportsDir)\utmt_cli.zip</UtmtCliZipFile>
-		<UtmtCliZipFileLinux>$(ImportsDir)\utmt_cli_linux.zip</UtmtCliZipFileLinux>
+    <PropertyGroup>
+        <TargetFramework>netstandard2.0</TargetFramework>
+	<!-- This tells dotnet not to look for C# files or compile a DLL -->
+	<EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+	<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+	<IncludeBuildOutput>false</IncludeBuildOutput>
+    </PropertyGroup>
+	
+    <PropertyGroup>
+        <Curl Condition="$([MSBuild]::IsOSPlatform('Windows'))">curl.exe</Curl>
+	<Curl Condition="$([MSBuild]::IsOSPlatform('Linux'))">curl</Curl>	
+	<ImagesDir>$(MSBuildProjectDirectory)\images</ImagesDir>
+	<DistRoot>$(MSBuildProjectDirectory)\dist</DistRoot>
+	<DistDir>$(DistRoot)\windows</DistDir>
+	<ToolsDir>$(DistDir)\tools</ToolsDir>
+	<DistSrcDir>$(MSBuildProjectDirectory)\distsrc</DistSrcDir>
+	<ArtifactsDir>$(MSBuildProjectDirectory)\artifacts</ArtifactsDir>
+	<UtmtCliDir>$(DistDir)\utmt_cli</UtmtCliDir>
+	<ImportsDir>$(MSBuildProjectDirectory)\imports</ImportsDir>
+	<DistVersion>3.0.0</DistVersion>
+	<ReleaseZipFile>$(ArtifactsDir)\DarkDeityCommunityPatch-$(DistVersion).zip</ReleaseZipFile>
+	<UtmtCliUrl>https://github.com/UnderminersTeam/UndertaleModTool/releases/download/0.9.0.0/UTMT_CLI_v0.9.0.0-Windows.zip</UtmtCliUrl>
+	<UtmtCliZipFile>$(ImportsDir)\utmt_cli.zip</UtmtCliZipFile>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<DistSources Include="$(DistSrcDir)\**\*.*" Exclude="$(DistSrcDir)\**\.gitignore" />
+		<DistSources Include="$(DistSrcDir)\**\*.*" Exclude="$(DistSrcDir)\**\.gitignore;$(DistSrc)\patchtool" />
 	</ItemGroup>
 
 	<Target Name="DistDownloadImports" Condition="!Exists('$(UtmtCliZipFile)')">
@@ -28,31 +33,20 @@
 		<Exec Command='$(Curl) -L "$(UtmtCliUrl)" -o "$(UtmtCliZipFile)"' ConsoleToMSBuild="true" />
 	</Target>
 
-	<Target Name="DistExtractImports" Condition="!Exists('$(UtmtCliDir)\UndertaleModCli.exe')"
-			DependsOnTargets="DistDownloadImports">
-		<Exec Condition="$([MSBuild]::IsOSPlatform('Linux'))" Command='unzip -o "$(UtmtCliZipFile)" -d "$(UtmtCliDir)"' />
-		<Exec Condition="$([MSBuild]::IsOSPlatform('Windows'))" Command='powershell -NoProfile -ExecutionPolicy Bypass -Command "Expand-Archive -Path &quot;$(UtmtCliZipFile)&quot; -DestinationPath &quot;$(UtmtCliDir)&quot; -Force"' />
+	<Target Name="DistExtractImports" DependsOnTargets="DistDownloadImports" Condition="!Exists('$(UtmtCliDir)\UndertaleModCli.exe')">
+		<Exec Condition="$([MSBuild]::IsOSPlatform('Linux'))"
+		      Command='unzip -o "$(UtmtCliZipFile)" -d "$(UtmtCliDir)"' />
+		<Exec Condition="$([MSBuild]::IsOSPlatform('Windows'))"
+		      Command='powershell -NoProfile -ExecutionPolicy Bypass -Command "Expand-Archive -Path &quot;$(UtmtCliZipFile)&quot; -DestinationPath &quot;$(UtmtCliDir)&quot; -Force"' />
 	</Target>
 	
-	<Target Name="DistDownloadImportsLinux" Condition="!Exists('$(UtmtCliZipFileLinux)')">
-		<MakeDir Directories="$(ImportsDir)" />
-		<Exec Command='$(Curl) -L "$(UtmtCliUrlLinux)" -o "$(UtmtCliZipFileLinux)"' ConsoleToMSBuild="true" />
-	</Target>
-
-	<Target Name="DistExtractImportsLinux" Condition="!Exists('$(UtmtCliDirLinux)\UndertaleModCli')"
-			DependsOnTargets="DistDownloadImportsLinux">
-		<Exec Command='unzip -o "$(UtmtCliZipFileLinux)" -d "$(UtmtCliDirLinux)"' />
-	</Target>
-
 	<Target Name="DistCreateFolders">
 		<MakeDir Directories="$(DistDir)" />
 		<MakeDir Directories="$(DistDir)\scripts" />
 		<MakeDir Directories="$(DistDir)\tools" />
 	</Target>
-
+	
 	<Target Name="Dist" DependsOnTargets="DistCreateFolders;DistCopySources;DistExtractImports;FetchPreImage;GeneratePostImage;GenerateHashFile"/>
-	<Target Name="DistLinux" DependsOnTargets="DistCreateFolders;DistCopySources;DistExtractImportsLinux"/>	
-
 
 	<Target Name="DistClean">
 		<RemoveDir Directories="$(DistDir)"/>
@@ -63,7 +57,7 @@
 		<Delete Files="$(ReleaseZipFile)" Condition="Exists('$(ReleaseZipFile)')" />
 
 		<RemoveDir Directories="$(DistDir)\originals"/>
-		<Delete Files="$(DistDir)\tools\Get-BaseImage.ps1;$(DistDir)\tools\Generate-HashFile.ps1;$(DistDir)\applypatch-linux.sh"/>
+		<Delete Files="$(DistDir)\tools\Get-BaseImage.ps1;$(DistDir)\tools\Generate-HashFile.ps1;$(DistDir)\patchtool"/>
 		
 		<ZipDirectory
 			SourceDirectory="$(DistDir)"
@@ -73,30 +67,19 @@
 		<Message Importance="high" Text="Successfully created patch archive at: $(ReleaseZipFile)" />
 	</Target>
 
-	<Target Name="ReleaseLinux" DependsOnTargets="DistLinux">
-		<MakeDir Directories="$(ArtifactsDir)" Condition="!Exists('$(ArtifactsDir)')" />
-		<Delete Files="$(ReleaseZipFileLinux)" Condition="Exists('$(ReleaseZipFileLinux)')" />
-
-		<RemoveDir Directories="$(DistDir)\originals"/>
-		<Delete Files="$(DistDir)\tools\Get-BaseImage.ps1;$(DistDir)\tools\Generate-HashFile.ps1;$(DistDir)\applypatch.bat"/>
-		
-		<ZipDirectory
-			SourceDirectory="$(DistDir)"
-			DestinationFile="$(ReleaseZipFileLinux)"
-			Overwrite="true" />
-
-		<Message Importance="high" Text="Successfully created patch archive at: $(ReleaseZipFile)" />
-	</Target>
-
 	<Target Name="ImportsClean">
-		<RemoveDir Directories="$(ImportsDir)"/>
+		<Delete Files="$(UtmtCliZipFile)"/>
 	</Target>
 
 	<Target Name="ImagesClean">
-		<RemoveDir Directories="$(ImagesDir)"/>
+		<Delete Files="$(ImagesDir)\PREPATCH.WIN;$(ImagesDir)\POSTPATCH.WIN"/>
 	</Target>
 	
 	<Target Name="ReleaseClean" DependsOnTargets="ImportsClean;DistClean;ImagesClean"/>
+	
+	<Target Name="Spotless">
+		<RemoveDir Directories="$(DistRoot);$(ImagesDir);$(ImportsDir)"/>
+	</Target>
 	
 	<Target Name="FetchPreImage" Inputs="$(DistDir)\tools\Get-BaseImage.ps1" Outputs="$(ImagesDir)\PREPATCH.WIN" Condition="!Exists('$(ImagesDir)\PREPATCH.WIN') And $([MSBuild]::IsOSPlatform('Windows'))">
 		<MakeDir Directories="$(ImagesDir)"/>
@@ -113,7 +96,7 @@
 		    Inputs="$(DistDir)\utmt_cli\undertalemodcli.exe;$(ImagesDir)\PREPATCH.WIN"
 			Outputs="$(ImagesDir)\POSTPATCH.WIN">
 		<MakeDir Directories="$(ImagesDir)"/>
-		<Exec WorkingDirectory="dist" Command='utmt_cli\undertalemodcli load "..\images\PREPATCH.WIN" -s "tools\scriptupdater.csx" -o "..\images\POSTPATCH.WIN"'/>
+		<Exec WorkingDirectory="dist" Command='utmt_cli\UndertaleModCli load "..\images\PREPATCH.WIN" -s "tools\scriptupdater.csx" -o "..\images\POSTPATCH.WIN"'/>
 		<RemoveDir Directories="$(DistDir)\originals"/>
 	</Target>
 			
