@@ -1,3 +1,8 @@
+param(
+    [Parameter(Mandatory = $true)]
+    [string]$GameId
+)
+
 function Get-SteamGamePath {
     [CmdletBinding()]
     param(
@@ -53,7 +58,9 @@ function Get-SteamGamePath {
 # Abort the script on any errors
 $ErrorActionPreference = "Stop"
 
-$GameDir = Get-SteamGamePath -AppID $1
+$GameDir = Get-SteamGamePath -AppID $GameId 
 if ($GameDir -eq $null) {
 	exit 1
 }
+echo "$GameDir"
+

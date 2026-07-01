@@ -1,145 +1,240 @@
 <Project DefaultTargets="Release" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 	<PropertyGroup>
 		<GameDir></GameDir>
-		<Curl Condition="$([MSBuild]::IsOSPlatform('Windows'))">curl.exe</Curl>
-		<Curl Condition="$([MSBuild]::IsOSPlatform('Linux'))">curl</Curl>		
-		<ImagesDir>$(MSBuildProjectDirectory)\images</ImagesDir>
 		<DistRoot>$(MSBuildProjectDirectory)\dist</DistRoot>
 		<DistDir>$(DistRoot)\linux</DistDir>
 		<ToolsDir>$(DistDir)\tools</ToolsDir>
 		<DistSrcDir>$(MSBuildProjectDirectory)\distsrc</DistSrcDir>
-		<ArtifactsDir>$(MSBuildProjectDirectory)\artifacts</ArtifactsDir>
+		<ArtifactsDir>$(MSBuildProjectDirectory)\artifacts</ArtifactsDir>		
 		<UtmtCliDir>$(DistDir)\utmt_cli</UtmtCliDir>
 		<ImportsDir>$(MSBuildProjectDirectory)\imports</ImportsDir>
 		<DistVersion>3.0.0</DistVersion>
 		<ReleaseZipFile>$(ArtifactsDir)\DarkDeityCommunityPatch-Linux-$(DistVersion).zip</ReleaseZipFile>
-		<UtmtCliUrl>https://github.com/UnderminersTeam/UndertaleModTool/releases/download/0.9.0.0/UTMT_CLI_v0.9.0.0-Ubuntu.zip</UtmtCliUrl>		
-		<UtmtCliZipFile>$(ImportsDir)\utmt_cli_linux.zip</UtmtCliZipFile>
+		<UtmtCliUrlWindows>https://github.com/UnderminersTeam/UndertaleModTool/releases/download/0.9.0.0/UTMT_CLI_v0.9.0.0-Windows.zip</UtmtCliUrlWindows>
+		<UtmtCliUrlLinux>https://github.com/UnderminersTeam/UndertaleModTool/releases/download/0.9.0.0/UTMT_CLI_v0.9.0.0-Ubuntu.zip</UtmtCliUrlLinux>
+		<UtmtCliZipFileWindows>$(ImportsDir)\utmt_cli.zip</UtmtCliZipFileWindows>
+		<UtmtCliZipFileLinux>$(ImportsDir)\utmt_cli_linux.zip</UtmtCliZipFileLinux>
 	</PropertyGroup>
 
+	<PropertyGroup 
+		Condition="$([MSBuild]::IsOSPlatform('Windows'))">
+
+		<Curl>curl.exe</Curl>
+		<LocalUtmtDir>$(ImportsDir)\utmt_cli</LocalUtmtDir>
+		<Utmt>$(LocalUtmtDir)\UndertaleModCli.exe</Utmt>
+	</PropertyGroup>
+
+	<PropertyGroup 
+		Condition="$([MSBuild]::IsOSPlatform('Linux'))">
+
+		<Curl>curl</Curl>
+		<LocalUtmtDir>$(ImportsDir)\utmt_cli_linux</LocalUtmtDir>
+		<Utmt>$(LocalUtmtDir)\UndertaleModCli</Utmt>
+	</PropertyGroup>
+	
 	<ItemGroup>
-		<DistSources Include="$(DistSrcDir)\**\*.*" Exclude="$(DistSrcDir)\**\.gitignore;$(DistSrcDir)\applypatch.bat" />
+		<DistSources 
+			Include="$(DistSrcDir)\**\*.*" 
+			Exclude="$(DistSrcDir)\**\.gitignore;$(DistSrcDir)\applypatch.bat" />
 	</ItemGroup>
 
-	<Target Name="DistDownloadImports" Condition="!Exists('$(UtmtCliZipFile)')">
+	<Target 
+		Name="DistDownloadImportsWindows"
+		Condition="!Exists('$(UtmtCliZipFileWindows)')"
+		BeforeTargets="ExtractBuildTools"> 
+		
 		<MakeDir Directories="$(ImportsDir)" />
-		<Exec Command='$(Curl) -L "$(UtmtCliUrl)" -o "$(UtmtCliZipFile)"' ConsoleToMSBuild="true" />
+		<Exec 
+			Command='$(Curl) -L "$(UtmtCliUrlWindows)" -o "$(UtmtCliZipFileWindows)"'
+			ConsoleToMSBuild="true" />
 	</Target>
 
-	<Target Name="DistExtractImports" DependsOnTargets="DistDownloadImports" Condition="!Exists('$(UtmtCliDir)\UndertaleModCli')">
-		<Exec Condition="$([MSBuild]::IsOSPlatform('Linux'))"
-		      Command='unzip -o "$(UtmtCliZipFile)" -d "$(UtmtCliDir)"' />
-		<Exec Condition="$([MSBuild]::IsOSPlatform('Windows'))"
-		      Command='powershell -NoProfile -ExecutionPolicy Bypass -Command "Expand-Archive -Path &quot;$(UtmtCliZipFile)&quot; -DestinationPath &quot;$(UtmtCliDir)&quot; -Force"' />
+	<Target
+		Name="DistDownloadImportsLinux"
+		BeforeTargets="ExtractBuildTools;DistExtractImports"
+		Condition="!Exists('$(UtmtCliZipFileLinux)')">
+		
+		<MakeDir Directories="$(ImportsDir)" />
+		<Exec 
+			Command='$(Curl) -L "$(UtmtCliUrlLinux)" -o "$(UtmtCliZipFileLinux)"'
+			ConsoleToMSBuild="true" />
 	</Target>
 
-	<Target Name="DistCreateFolders">
+	<Target 
+		Name="ExtractBuildTools"
+		BeforeTargets="GeneratePostImageWindows;GeneratePostImageLinux"
+		Condition="!Exists('$(Utmt)')">
+		
+		<MakeDir Directories="$(LocalUtmtDir)"/>
+		<Exec 
+			Condition="$([MSBuild]::IsOSPlatform('Linux'))"
+		    Command='unzip -o "$(UtmtCliZipFileLinux)" -d "$(LocalUtmtDir)"' />
+		<Exec 
+			Condition="$([MSBuild]::IsOSPlatform('Windows'))"
+			Command='tar -xf "$(UtmtCliZipFileWindows)" -C "$(LocalUtmtDir)"' />
+	</Target>
+
+	<Target
+		Name="DistExtractImports"
+		Condition="!Exists('$(UtmtCliDir)\UndertaleModCli')">
+
+		<MakeDir Directories="$(UtmtCliDir)" />
+
+		<Exec 
+			Condition="$([MSBuild]::IsOSPlatform('Linux'))"
+		    Command='unzip -o "$(UtmtCliZipFileLinux)" -d "$(UtmtCliDir)"' />
+		<Exec 
+			Condition="$([MSBuild]::IsOSPlatform('Windows'))"
+			Command='tar -xf "$(UtmtCliZipFileLinux)" -C "$(UtmtCliDir)"' />
+	</Target>
+	
+	<Target 
+		Name="DistCreateFolders">
+		
 		<MakeDir Directories="$(DistDir)" />
 		<MakeDir Directories="$(DistDir)\scripts" />
 		<MakeDir Directories="$(DistDir)\tools" />
 	</Target>
 
-	<Target Name="Dist" DependsOnTargets="DistCreateFolders;DistCopySources;DistExtractImports;GeneratePostImage;GenerateHashFile"/>
+	<Target
+		Name="Dist"
+		DependsOnTargets="DistCreateFolders;DistCopySources;DistExtractImports;GeneratePostImage;GenerateHashFile">
+	</Target>
 
 	<Target Name="DistClean">
 		<RemoveDir Directories="$(DistDir)"/>
 	</Target>
 
-	<Target Name="Release" DependsOnTargets="Dist">
-		<MakeDir Directories="$(ArtifactsDir)" Condition="!Exists('$(ArtifactsDir)')" />
-		<Delete Files="$(ReleaseZipFile)" Condition="Exists('$(ReleaseZipFile)')" />
-
-		<RemoveDir Directories="$(DistDir)\originals"/>
-		<Delete Files="$(DistDir)\tools\Get-BaseImage.ps1;$(DistDir)\tools\Generate-HashFile.ps1;$(DistDir)\applypatch.bat"/>
+	<Target 
+		Name="Release" DependsOnTargets="Dist;LocateGameFolder">
+		<Delete Files="$(ReleaseZipFile)" />
+		<Delete Files="$(GameDir)\patched.win" />
 		
+		<RemoveDir Directories="$(DistDir)\originals"/>
+		<!-- Delete files only used for the build -->
+		<Delete Files="$(DistDir)\tools\Get-BaseImage.ps1;$(DistDir)\tools\Generate-HashFile.ps1"/>
+		<!-- Delete files that are only part of the Windows distribution -->
+		<Delete Files="$(DistDir)\applypatch.bat"/>
+
+		<MakeDir Directories="$(ArtifactsDir)" />
 		<ZipDirectory
 			SourceDirectory="$(DistDir)"
 			DestinationFile="$(ReleaseZipFile)"
 			Overwrite="true" />
 			
-		<Message Importance="high" Text="Successfully created patch archive at: $(ReleaseZipFile)" />
+		<Message 
+			Importance="high" 
+			Text="Successfully created patch archive at: $(ReleaseZipFile)" />
 	</Target>
 
-	<Target Name="ImportsClean">
-		<Delete Files="$(UtmtCliZipFile)"/>
+	<Target 
+		Name="ImportsClean">
+		
+		<Delete Files="$(UtmtCliZipFileWindows)"/>
+		<Delete Files="$(UtmtCliZipFileLinux)"/>
 	</Target>
 
-	<Target Name="ImagesClean">
-		<Delete Files="$(ImagesDir)\PREPATCH.WIN;$(ImagesDir)\POSTPATCH.WIN"/>
+	<Target
+		Name="ReleaseClean"
+		DependsOnTargets="ImportsClean;DistClean">
 	</Target>
 	
-	<Target Name="ReleaseClean" DependsOnTargets="ImportsClean;DistClean;ImagesClean"/>
-	
-	<Target Name="Spotless">
-		<RemoveDir Directories="$(DistRoot);$(ImagesDir);$(ImportsDir)"/>
+	<Target 
+		Name="Spotless">
+		
+		<RemoveDir Directories="$(DistRoot);$(ImportsDir)"/>
 	</Target>
 	
-	<Target Name="LocateGameFolder" BeforeTargets="GeneratePostImageLinux;GeneratePostImageWindows;GenerateHashFileLinux;GenerateHashFileWindows" Condition="'$(GameDir)' == ''">
-    	<Exec
-    	    Command='bash $(DistDir)/tools/steamappfinder 1374840' 
-          	ConsoleToMSBuild="true" 
-          	StandardOutputImportance="Low"
-          	Condition="$([MSBuild]::IsOSPlatform('Linux'))">
-      	    
-      	    <Output TaskParameter="ConsoleOutput" PropertyName="GameDir"/>
-    	</Exec>
-    	<Exec
-  			Command='powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$(DistDir)\tools\Get-SteamGamePath.ps1" 1374840'  	
-          	ConsoleToMSBuild="true" 
-          	StandardOutputImportance="Low"
-          	Condition="$([MSBuild]::IsOSPlatform('Windows'))">
-      	    
-      	    <Output TaskParameter="ConsoleOutput" PropertyName="GameDir"/>
-    	</Exec>
-    	
-    	
-		<Message Importance="high" Text="Successfully found game folder at: $(GameDir)" />    			
-  		<Error Text="Couldn't locate the Dark Deity install folder" 
-         		Condition="'$(GameDir)' == '' Or !Exists('$(GameDir)')" />
+	<Target 
+		Name="LocateGameFolder"
+		BeforeTargets="GeneratePostImageLinux;GeneratePostImageWindows;GenerateHashFileLinux;GenerateHashFileWindows" 
+		Condition="'$(GameDir)' == ''">
+
+		<Exec
+    	    Command='bash $(DistDir)/tools/steamappfinder 1374840'
+			Condition="$([MSBuild]::IsOSPlatform('Linux'))"
+          	ConsoleToMSBuild="true"
+          	StandardOutputImportance="Low">
+
+			<Output TaskParameter="ConsoleOutput" PropertyName="GameDir"/>
+		</Exec>
+		<Exec
+  			Command='powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$(DistDir)\tools\Get-SteamAppPath.ps1" 1374840'
+          	Condition="$([MSBuild]::IsOSPlatform('Windows'))"
+          	ConsoleToMSBuild="true"
+          	StandardOutputImportance="Low">
+
+			<Output TaskParameter="ConsoleOutput" PropertyName="GameDir"/>
+		</Exec>
+    	    	
+		<Message 
+			Importance="high" 
+			Text="Successfully found game folder at: $(GameDir)" />    			
+  		<Error 
+			Text="Couldn't locate the Dark Deity install folder" 
+         	Condition="'$(GameDir)' == '' Or !Exists('$(GameDir)')" />
 	</Target>
-	
-	<Target Name="GeneratePostImage" DependsOnTargets="GeneratePostImageWindows;GeneratePostImageLinux"/>
-	
-	<Target Name="GeneratePostImageWindows" Condition="$([MSBuild]::IsOSPlatform('Windows'))"
-		    Inputs="$(DistDir)\utmt_cli\UndertaleModCli.exe;$(GameDir)\data.win"
-			Outputs="$(ImagesDir)\patched.win">
-		<MakeDir Directories="$(ImagesDir)"/>
+
+	<Target
+		Name="GeneratePostImage"
+		DependsOnTargets="GeneratePostImageWindows;GeneratePostImageLinux">
+	</Target>
+
+	<Target
+		Name="GeneratePostImageWindows"
+		Condition="$([MSBuild]::IsOSPlatform('Windows'))"
+		Inputs="$(Utmt);$(GameDir)\data.win"
+		Outputs="$(GameDir)\patched.win">
+
 		<Exec
 			WorkingDirectory="$(DistDir)"
-			Command='utmt_cli\UndertaleModCli.exe load "$(GameDir)\data.win" -s "tools\scriptupdater.csx" -o "$(GameDir)\patched.win"'/>
+			Command='"$(Utmt)" load "$(GameDir)\data.win" -s "$(ToolsDir)\scriptupdater.csx" -o "$(GameDir)\patched.win"'/>
 	</Target>
 
-	<Target Name="GeneratePostImageLinux" Condition="$([MSBuild]::IsOSPlatform('Linux'))"
-		    Inputs="$(DistDir)\utmt_cli\UndertaleModCli;$(GameDir)\data.win"
-			Outputs="$(ImagesDir)\patched.win">
-		<MakeDir Directories="$(ImagesDir)"/>
+	<Target
+		Name="GeneratePostImageLinux"
+		Condition="$([MSBuild]::IsOSPlatform('Linux'))"
+		Inputs="$(Utmt);$(GameDir)\data.win"
+		Outputs="$(GameDir)\patched.win">
+
 		<Exec
 			WorkingDirectory="$(DistDir)"
-			Command='utmt_cli/UndertaleModCli load "$(GameDir)/data.win" -s "tools/scriptupdater.csx" -o "$(GameDir)/patched.win"'/>
-	</Target>
-			
-	<Target Name="GenerateHashFile" DependsOnTargets="GenerateHashFileLinux;GenerateHashFileWindows"/>
-	
-	<Target Name="GenerateHashFileLinux" Condition="$([MSBuild]::IsOSPlatform('Linux'))"
-			Inputs="$(GameDir)\data.win;$(GameDir)\patched.win;$(DistDir)\tools\Generate-HashFile.sh"
-			Outputs="$(DistDir)\scripts\hashes.csv">
-		<Exec
-			Command='bash "$(DistDir)/tools/Generate-HashFile.sh"' />		
+			Command='"$(Utmt)" load "$(GameDir)/data.win" -s "$(ToolsDir)/scriptupdater.csx" -o "$(GameDir)/patched.win"'/>
 	</Target>
 
-	<Target Name="GenerateHashFileWindows" Condition="$([MSBuild]::IsOSPlatform('Windows'))"
-			Inputs="$(GameDir)\data.win;$(GameDir)\patched.win;$(DistDir)\tools\Generate-HashFile.ps1"
-			Outputs="$(DistDir)\scripts\hashes.csv">
+	<Target
+		Name="GenerateHashFile"
+		DependsOnTargets="GenerateHashFileLinux;GenerateHashFileWindows">
+	</Target>
+
+	<Target
+		Name="GenerateHashFileWindows"
+		Condition="$([MSBuild]::IsOSPlatform('Windows'))"
+		Inputs="$(GameDir)\data.win;$(GameDir)\patched.win;$(DistDir)\tools\Generate-HashFile.ps1"
+		Outputs="$(DistDir)\scripts\hashes.csv">
+		
 		<Exec
 			Command='powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$(DistDir)\tools\Generate-HashFile.ps1"' />
+	</Target>	
+	
+	<Target 
+		Name="GenerateHashFileLinux" 
+		Condition="$([MSBuild]::IsOSPlatform('Linux'))"
+		Inputs="$(GameDir)\data.win;$(GameDir)\patched.win;$(DistDir)\tools\Generate-HashFile.sh"
+		Outputs="$(DistDir)\scripts\hashes.csv">
+		<Exec
+			Command='bash "$(DistDir)/tools/Generate-HashFile.sh"' />		
 	</Target>
 
 	<Target Name="DistCopySources"
 		Inputs="@(DistSources)"
 		Outputs="@(DistSources-> '$(DistDir)\%(RecursiveDir)%(Filename)%(Extension)')">
-		<Message Text="Copying docs" Importance="high" />
-		<Copy SourceFiles="@(DistSources)"
-			  DestinationFiles="@(DistSources-> '$(DistDir)\%(RecursiveDir)%(Filename)%(Extension)')"
-			  SkipUnchangedFiles="true" />
+		<Message 
+			Text="Copying docs"
+			Importance="high" />
+		<Copy 
+			SourceFiles="@(DistSources)"
+			DestinationFiles="@(DistSources-> '$(DistDir)\%(RecursiveDir)%(Filename)%(Extension)')"
+			SkipUnchangedFiles="true" />
 	</Target>
 </Project>
