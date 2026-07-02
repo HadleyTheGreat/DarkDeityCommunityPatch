@@ -4,7 +4,8 @@
 		<DistRoot>$(MSBuildProjectDirectory)\dist</DistRoot>
 		<DistDir>$(DistRoot)\linux</DistDir>
 		<ToolsDir>$(DistDir)\tools</ToolsDir>
-		<DistSrcDir>$(MSBuildProjectDirectory)\distsrc</DistSrcDir>
+		<DistSrcDir>$(MSBuildProjectDirectory)\distsrc\linux</DistSrcDir>
+		<BuildToolsDir>$(DistSrcDir)\buildtools</BuildToolsDir>
 		<ArtifactsDir>$(MSBuildProjectDirectory)\artifacts</ArtifactsDir>		
 		<UtmtCliDir>$(DistDir)\utmt_cli</UtmtCliDir>
 		<ImportsDir>$(MSBuildProjectDirectory)\imports</ImportsDir>
@@ -33,9 +34,15 @@
 	</PropertyGroup>
 	
 	<ItemGroup>
-		<DistSources 
-			Include="$(DistSrcDir)\**\*.*" 
-			Exclude="$(DistSrcDir)\**\.gitignore;$(DistSrcDir)\applypatch.bat" />
+		<DistCommonSources
+			Include="$(MSBuildProjectDirectory)\distsrc\**\*"
+			Exclude="$(MSBuildProjectDirectory)\distsrc\windows\**\*;$(MSBuildProjectDirectory)\distsrc\linux\**\*" />
+
+		<DistLinuxSources 
+			Include="$(MSBuildProjectDirectory)\distsrc\linux\**\*" 
+			Exclude="$(MSBuildProjectDirectory)\distsrc\linux\**\.gitignore;$(MSBuildProjectDirectory)\distsrc\linux\buildtools\**\*" />
+
+		<DistSources Include="@(DistCommonSources);@(DistLinuxSources)" />
 	</ItemGroup>
 
 	<Target 
@@ -111,10 +118,6 @@
 		<Delete Files="$(GameDir)\patched.win" />
 		
 		<RemoveDir Directories="$(DistDir)\originals"/>
-		<!-- Delete files only used for the build -->
-		<Delete Files="$(DistDir)\tools\Get-BaseImage.ps1;$(DistDir)\tools\Generate-HashFile.ps1"/>
-		<!-- Delete files that are only part of the Windows distribution -->
-		<Delete Files="$(DistDir)\applypatch.bat"/>
 
 		<MakeDir Directories="$(ArtifactsDir)" />
 		<ZipDirectory
@@ -151,7 +154,7 @@
 		Condition="'$(GameDir)' == ''">
 
 		<Exec
-    	    Command='bash $(DistDir)/tools/steamappfinder 1374840'
+    	    Command='bash "$(BuildToolsDir)/Get-SteamAppPath.sh" 1374840'
 			Condition="$([MSBuild]::IsOSPlatform('Linux'))"
           	ConsoleToMSBuild="true"
           	StandardOutputImportance="Low">
@@ -159,7 +162,7 @@
 			<Output TaskParameter="ConsoleOutput" PropertyName="GameDir"/>
 		</Exec>
 		<Exec
-  			Command='powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$(DistDir)\tools\Get-SteamAppPath.ps1" 1374840'
+  			Command='powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$(BuildToolsDir)\Get-SteamAppPath.ps1" 1374840'
           	Condition="$([MSBuild]::IsOSPlatform('Windows'))"
           	ConsoleToMSBuild="true"
           	StandardOutputImportance="Low">
@@ -210,20 +213,20 @@
 	<Target
 		Name="GenerateHashFileWindows"
 		Condition="$([MSBuild]::IsOSPlatform('Windows'))"
-		Inputs="$(GameDir)\data.win;$(GameDir)\patched.win;$(DistDir)\tools\Generate-HashFile.ps1"
+		Inputs="$(GameDir)\data.win;$(GameDir)\patched.win;$(BuildToolsDir)\Generate-HashFile.ps1"
 		Outputs="$(DistDir)\scripts\hashes.csv">
 		
 		<Exec
-			Command='powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$(DistDir)\tools\Generate-HashFile.ps1"' />
+			Command='powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$(BuildToolsDir)\Generate-HashFile.ps1"' />
 	</Target>	
 	
 	<Target 
 		Name="GenerateHashFileLinux" 
 		Condition="$([MSBuild]::IsOSPlatform('Linux'))"
-		Inputs="$(GameDir)\data.win;$(GameDir)\patched.win;$(DistDir)\tools\Generate-HashFile.sh"
+		Inputs="$(GameDir)\data.win;$(GameDir)\patched.win;$(BuildToolsDir)\Generate-HashFile.sh"
 		Outputs="$(DistDir)\scripts\hashes.csv">
 		<Exec
-			Command='bash "$(DistDir)/tools/Generate-HashFile.sh"' />		
+			Command='bash "$(BuildToolsDir)/Generate-HashFile.sh" "$(DistDir)/scripts"' />		
 	</Target>
 
 	<Target Name="DistCopySources"
