@@ -5,7 +5,7 @@
 		<DistDir>$(DistRoot)\windows</DistDir>
 		<ToolsDir>$(DistDir)\tools</ToolsDir>
 		<DistSrcDir>$(MSBuildProjectDirectory)\distsrc\windows</DistSrcDir>
-		<BuildToolsDir>$(DistSrcDir)\buildtools</BuildToolsDir>		
+		<BuildToolsDir>$(DistDir)\buildtools</BuildToolsDir>		
 		<ArtifactsDir>$(MSBuildProjectDirectory)\artifacts</ArtifactsDir>
 		<UtmtCliDir>$(DistDir)\utmt_cli</UtmtCliDir>
 		<ImportsDir>$(MSBuildProjectDirectory)\imports</ImportsDir>
@@ -200,7 +200,7 @@
 
 		<Exec
 			WorkingDirectory="$(DistDir)"
-			Command='"$(Utmt)" load "$(GameDir)\data.win" -s "$(ToolsDir)\scriptupdater.csx" -o "$(GameDir)\patched.win"'/>
+			Command='"$(Utmt)" load "$(GameDir)\data.win" -s "$(DistDir)\scripts\nongmlmods.csx" -s "$(ToolsDir)\scriptupdater.csx" -o "$(GameDir)\patched.win"'/>
 	</Target>
 
 	<Target
@@ -211,7 +211,7 @@
 
 		<Exec
 			WorkingDirectory="$(DistDir)"
-			Command='"$(Utmt)" load "$(GameDir)/data.win" -s "$(ToolsDir)/scriptupdater.csx" -o "$(GameDir)/patched.win"'/>
+			Command='"$(Utmt)" load "$(GameDir)/data.win" -s "$(DistDir)/scripts/nongmlmods.csx" -s "$(ToolsDir)/scriptupdater.csx" -o "$(GameDir)/patched.win"'/>
 	</Target>
 
 	<Target
