@@ -142,7 +142,7 @@ if ([System.IO.File]::Exists($DataWinPath)) {
             Write-Host "Saving a backup to $backupPath"
             Copy-Item -Path $DataWinPath -Destination $backupPath -Force
         
-            utmt_cli\undertalemodcli load "$DataWinPath" -s tools\scriptupdater.csx -o "$DataWinPath"
+            utmt_cli\undertalemodcli load "$DataWinPath" -s scripts\nongmlmods.csx -s tools\scriptupdater.csx -o "$DataWinPath"
         
             if ($LASTEXITCODE -eq 0) {
                 if ($buildingHashes -eq $true) {
