@@ -5,7 +5,7 @@
 		<DistDir>$(DistRoot)\linux</DistDir>
 		<ToolsDir>$(DistDir)\tools</ToolsDir>
 		<DistSrcDir>$(MSBuildProjectDirectory)\distsrc\linux</DistSrcDir>
-		<BuildToolsDir>$(DistSrcDir)\buildtools</BuildToolsDir>
+
 		<ArtifactsDir>$(MSBuildProjectDirectory)\artifacts</ArtifactsDir>		
 		<UtmtCliDir>$(DistDir)\utmt_cli</UtmtCliDir>
 		<ImportsDir>$(MSBuildProjectDirectory)\imports</ImportsDir>
@@ -23,6 +23,7 @@
 		<Curl>curl.exe</Curl>
 		<LocalUtmtDir>$(ImportsDir)\utmt_cli</LocalUtmtDir>
 		<Utmt>$(LocalUtmtDir)\UndertaleModCli.exe</Utmt>
+		<BuildToolsDir>$(DistRoot)\windows\buildtools</BuildToolsDir>		
 	</PropertyGroup>
 
 	<PropertyGroup 
@@ -31,6 +32,7 @@
 		<Curl>curl</Curl>
 		<LocalUtmtDir>$(ImportsDir)\utmt_cli_linux</LocalUtmtDir>
 		<Utmt>$(LocalUtmtDir)\UndertaleModCli</Utmt>
+		<BuildToolsDir>$(DistDir)\linux\buildtools</BuildToolsDir>		
 	</PropertyGroup>
 	
 	<ItemGroup>
