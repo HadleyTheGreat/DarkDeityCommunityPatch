@@ -44,28 +44,27 @@ STEAM_ROOTS=(
 usage() {
     cat << EOF
 Dark Deity Community Patch installation and removal tool for Linux
-Version ${VERSION}
 
-This patch should support SteamOS, Ubuntu, and most other x86-based Linux distributions.
-It is intended to patch Dark Deity version 1.5.8.
+This patch should support SteamOS, Ubuntu, and most other x86-based 
+Linux distributions.  The patch is for Dark Deity version 1.5.8.
 
 Usage: 
-    ./${SCRIPT_NAME} -i [path]   Install the Dark Deity community patch.
-    ./${SCRIPT_NAME} -u [path]   Uninstall the Dark Deity community patch.
-    ./${SCRIPT_NAME} --version    Display the version of the community patch and exit.
-    ./${SCRIPT_NAME} -h          Display this help message and exit.
-
-[path] is optional.
-
-The tool will try to locate the Dark Deity install directory in Steam automatically.
-If you are installing a non-Steam version of the game, or that fails for any reason
-you can specify the path manually.
+    ./${SCRIPT_NAME} COMMAND [FLAGS] [directory]
+COMMAND can be one of
+    -h, -?, --help    Show this help	
+    -i, --install     Install the patch
+    -u, --uninstall   Uninstall the patch
+    -c, --hash        Calculate the hash of data.win and data.win.old if it exists
+FLAGS can be one or more of
+	-o, --override    Ignore pre-patch validation failures and patch anyway
+	
+[directory] optionally specifies the directory of the Dark Deity executable 
 
 Examples:
 ./${SCRIPT_NAME} -i
 ./${SCRIPT_NAME} -i "$HOME/.steam/steam/steamapps/common/Dark Deity"
 ./${SCRIPT_NAME} -u ~/.steam/steam/steamapps/common/"Dark Deity"
-./${SCRIPT_NAME} -i "/usr/games/Dark Deity"
+./${SCRIPT_NAME} --hash "/usr/games/Dark Deity"
 EOF
 }
 
@@ -121,7 +120,22 @@ do_uninstall() {
         echo "--- Uninstalling existing patch ---"
         rm -f "${GAME_DIR}/data.win"
         mv "${GAME_DIR}/data.win.old" "${GAME_DIR}/data.win"
-    fi
+     	if [[ -f "$GAME_DIR/removepatch.sh" ]]; then
+    		rm "$GAME_DIR/removepatch.sh"
+    	fi
+   	fi
+}
+
+do_install() {
+    echo "--- Building patched.win ---"
+    rm -f "$GAME_DIR/patched.win"
+    utmt_cli/UndertaleModCli load "$GAME_DIR/data.win" -s "scripts/nongmlmods.csx" -s "tools/scriptupdater.csx" -o "${GAME_DIR}/patched.win"
+    echo "--- Renaming data.win to data.win.old to save as a backup ---"
+    rm -f "$GAME_DIR/data.win.old"
+    mv "$GAME_DIR/data.win" "$GAME_DIR/data.win.old"
+    echo "--- Renaming patched.win to data.win ---"
+    mv "$GAME_DIR/patched.win" "$GAME_DIR/data.win"	
+    cp "tools/removepatch.sh" "$GAME_DIR/removepatch.sh"              
 }
 
 do_version() {
@@ -129,8 +143,17 @@ do_version() {
 }
 
 do_hash() {
-    echo "Error: hash checking is not yet implemented." >&2
-    return 1
+	if [[ ! -f "$GAME_DIR/data.win" ]]; then
+		echo "Error: Couldn't find file \"$GAME_DIR/data.win\""
+		return 1
+	fi
+    local currentHash=$(get_sha256_hash "$GAME_DIR/data.win")
+    echo "data.win: $currentHash"
+    
+	if [[ -f "$GAME_DIR/data.win.old" ]]; then		
+    	local backupHash=$(get_sha256_hash "$GAME_DIR/data.win.old")
+    	echo "data.win.old: $backupHash"
+    fi
 }
 
 validate_gamedir() {
@@ -258,6 +281,7 @@ EOF
             usage
             ;;
         "hash")
+        	validate_gamedir
             do_hash
             ;;
         "version")
@@ -270,19 +294,6 @@ EOF
     esac
 }
 
-do_install() {
-    echo "--- Building patched.win ---"
-    rm -f "$GAME_DIR/patched.win"
-    utmt_cli/UndertaleModCli load "$GAME_DIR/data.win" -s "scripts/nongmlmods.csx" -s "tools/scriptupdater.csx" -o "${GAME_DIR}/patched.win"
-    echo "--- Renaming data.win to data.win.old to save as a backup ---"
-    rm -f "$GAME_DIR/data.win.old"
-    mv "$GAME_DIR/data.win" "$GAME_DIR/data.win.old"
-    echo "--- Renaming patched.win to data.win ---"
-    mv "$GAME_DIR/patched.win" "$GAME_DIR/data.win"	
-    cp "tools/removepatch.sh" "$GAME_DIR/removepatch.sh"
-    local currentHash=
-    echo -e "\033[32mPatch was installed successfully.\033[0m"                
-}
 
 # Parse command-line arguments safely
 parse_params() {
