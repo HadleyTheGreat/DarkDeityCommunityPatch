@@ -8,9 +8,9 @@ set -euo pipefail
 SCRIPT_NAME=$(basename "$0")
 VERSION="3.0.0"
 VERBOSE=false
-FILE_PATH=""
 APPID="1374840"
 GAME_DIR=""
+ACTION=""
 
 # Default install locations for Steam
 STEAM_ROOTS=(
@@ -27,9 +27,9 @@ Version ${VERSION}
 This patch should support SteamOS, Ubuntu, and most other x86-based Linux distributions
 
 Usage: 
-    ${SCRIPT_NAME} -i [path]   Install the Dark Diety community patch.
+    ${SCRIPT_NAME} -i [path]   Install the Dark Deity community patch.
     ${SCRIPT_NAME} -u [path]   Uninstall the Dark Deity community patch.
-    ${SCRIPT_NAME} -v          Display the version of the community patch and exit.
+    ${SCRIPT_NAME} --version    Display the version of the community patch and exit.
     ${SCRIPT_NAME} -h          Display this help message and exit.
 
 [path] is optional.
@@ -41,11 +41,6 @@ ${SCRIPT_NAME} -i "$HOME/.steam/steam/steamapps/common/Dark Deity"
 ${SCRIPT_NAME} -u ~/.steam/steam/steamapps/common/"Dark Deity"
 ${SCRIPT_NAME} -i "/usr/games/Dark Deity"
 EOF
-}
-
-# Print version information
-version() {
-    echo "${SCRIPT_NAME} version ${VERSION}"
 }
 
 find_libraryfolders_vdf() {
@@ -79,6 +74,7 @@ find_game_dir() {
     while IFS= read -r library; do
         local steamapps="$library/steamapps"
         local manifest="$steamapps/appmanifest_${appid}.acf"
+        local installdir
 
         if [[ -f "$manifest" ]]; then
             installdir=$(grep '"installdir"' "$manifest" |
@@ -95,167 +91,162 @@ find_game_dir() {
 }
 
 do_uninstall() {
-	if [ -f "${GAME_DIR}/data.win.old" ]; then
+	if [[ -f "${GAME_DIR}/data.win.old" ]]; then
 		echo "--- Uninstalling existing patch ---"
 		rm -f "${GAME_DIR}/data.win"
 		mv "${GAME_DIR}/data.win.old" "${GAME_DIR}/data.win"
 	fi
 }
 
-# Main application logic
-main() {
-    if [ "${VERBOSE}" = true ]; then
-        echo "[INFO] Running script in verbose mode..."
-    fi
-
-    if [ -n "${FILE_PATH}" ]; then
-        echo "[SUCCESS] Processing file: ${FILE_PATH}"
-    else
-        usage >&2
-        exit 1
-    fi
-
-    # Your core application logic goes here
+do_version() {
+	echo "$VERSION"
 }
 
+do_hash() {
+	echo "Error: hash checking is not yet implemented." >&2
+	return 1
+}
+
+validate_gamedir() {
+	if [[ -z "$GAME_DIR" ]]; then
+		if ! GAME_DIR=$(find_game_dir "$APPID"); then
+	 		cat << EOF >&2
+Error: Failed to automatically locate the Dark Deity install folder.
+If you can locate the directory, you can specify it manually.
+Examples:
+    ${SCRIPT_NAME} -i "$HOME/.steam/steam/steamapps/common/Dark Deity"
+    ${SCRIPT_NAME} -u "/usr/games/steam/steamapps/common/Dark Deity"
+EOF
+			return 1
+		fi	
+	fi
+	
+	if [[ ! -f "$GAME_DIR/data.win" ]]; then
+		echo "Error: file not found \"$GAME_DIR/data.win\""
+		return 1
+	fi
+	
+	echo "GAME_DIR = $GAME_DIR"
+}
+
+set_action() {
+    if [[ -n "$ACTION" ]]; then 
+        echo "Error: More than one command specified in arguments." >&2
+        return 1
+    fi
+    ACTION="$1"
+}
+   	
+# Main application logic
+main() {
+	case "$ACTION" in
+		"install")
+			validate_gamedir
+			do_install
+			;;
+		"uninstall")
+			validate_gamedir
+			if [[ ! -f "$GAME_DIR/data.win.old" ]]; then
+				cat << EOF 
+There is no backup file "$GAME_DIR/data.win.old".
+Either:
+   1) The patch was never installed.
+   2) The patch was installed but it has already been uninstalled.
+   3) The patch is still installed but you deleted the backup file.
+If your problem is #3 then to uninstall you should:
+   - Go to your Library in Steam
+   - Right-click Dark Deity and select Properties->Installed Files
+   - Click on Verify integrity of game files
+   This will cause Steam to check the game files and re-download data.win if necesary.
+EOF
+			fi
+			;;
+		"help")
+			usage
+			;;
+		"hash")
+			do_hash
+			;;
+		"version")
+			do_version
+			;;
+		*)
+			echo "Internal error: No handler for command \"$ACTION\"" >&2
+			return 1
+			;;
+	esac
+}
+
+do_install() {
+    echo "--- Building patched.win ---"
+    rm -f "${GAME_DIR}/patched.win"
+    utmt_cli/UndertaleModCli load "${GAME_DIR}/data.win" -s "scripts/nongmlmods.csx" -s "tools/scriptupdater.csx" -o "${GAME_DIR}/patched.win"
+    echo "--- Renaming data.win to data.win.old to save as a backup ---"
+    rm -f "${GAME_DIR}/data.win.old"
+    mv "$GAME_DIR/data.win" "$GAME_DIR/data.win.old"
+    echo "--- Renaming patched.win to data.win ---"
+    mv "$GAME_DIR/patched.win" "$GAME_DIR/data.win"
+    echo -e "\033[32mPatch was installed successfully.\033[0m"				
+}
 
 
 # Parse command-line arguments safely
 parse_params() {
     while [[ $# -gt 0 ]]; do
         case "$1" in
-            -h|--help)
-                usage
-                exit 0
-                ;;
+        	#  --- COMMANDS ---
+            -h|-\?|--help)
+            	shift 
+            	set_action "help"
+            	;; 
             -i|--install)
-            	if [[ $# -eq 2 ]]; then
-            		GAME_DIR=$2
-            	else
-					if ! GAME_DIR=$(find_game_dir "$APPID"); then
-	 					cat << EOF
-Could not automatically locate the Dark Deity install directory.
-If you can locate the directory, you can specify it manually.
-Examples:
-    ${SCRIPT_NAME} -i "$HOME/.steam/steam/steamapps/common/Dark Deity"
-    ${SCRIPT_NAME} -u "/usr/games/steam/steamapps/common/Dark Deity"
-EOF
-	    				echo -e "\033[31mPatch was not installed successfully.\033[0m"
-	    				exit 1
-					fi
-            	fi
-            	
-            	do_uninstall
-            	
-				if [ -f "${GAME_DIR}/data.win" ]; then
-    				echo "Found data.win at: $GAME_DIR/data.win"
-    				#echo "--- Copying $GAME_DIR/data.win to data.win ---"
-    				#cp "$GAME_DIR/data.win" "data.win"
-    				echo "--- Building patched.win ---"
-    				rm -f "${GAME_DIR}/patched.win"
-    				utmt_cli/UndertaleModCli load "${GAME_DIR}/data.win" -s "tools/scriptupdater.csx" -o "${GAME_DIR}/patched.win"
-    				echo "--- Renaming data.win to data.win.old to save as a backup ---"
-    				rm -f "${GAME_DIR}/data.win.old"
-    				mv "$GAME_DIR/data.win" "$GAME_DIR/data.win.old"
-    				echo "--- Renaming patched.win to data.win ---"
-    				mv "$GAME_DIR/patched.win" "$GAME_DIR/data.win"
-            		echo -e "\033[32mPatch was installed successfully.\033[0m"				
-            		exit 0
-				else
-					cat << EOF
-Could not find Dark Deity's data.win file
-If you can locate the directory, you can specify it manually.
-Example:
-    ${SCRIPT_NAME} -i "$HOME/.steam/steam/steamapps/common/Dark Deity"
-EOF
-    				echo -e "\033[31mPatch was not installed successfully.\033[0m"
-    				exit 1
-				fi
-           		;;
+            	shift
+            	set_action "install";
+            	;;
             -u|--uninstall)
-            	if [[ $# -eq 2 ]]; then
-            		GAME_DIR=$2
-            	else
-					if ! GAME_DIR=$(find_game_dir "$APPID"); then
-	 					cat << EOF
-Could not automatically locate the Dark Deity install directory.
-If you can locate the directory, you can specify it manually.
-Examples:
-    ${SCRIPT_NAME} -i "$HOME/.steam/steam/steamapps/common/Dark Deity"
-    ${SCRIPT_NAME} -u "/usr/games/steam/steamapps/common/Dark Deity"
-EOF
-	    				echo -e "\033[31mPatch was not uninstalled successfully.\033[0m"
-	    				exit 1
-	    			fi
-            	fi
+            	shift
+            	set_action "uninstall";
+            	;;
+            -c|--hash)
+            	shift
+            	set_action "hash";
+            	;;
+            --version)
+            	shift
+            	set_action "version";
+            	;;
             	
-            	echo "Found Dark Deity folder at: ${GAME_DIR}"
-            	echo "${GAME_DIR}/data.win.old"        
- 				if [ ! -f "${GAME_DIR}/data.win.old" ]; then
-					echo -e "\033[31mCould not find data.win.old in the Dark Deity folder.\033[0m"
-					echo "Either the patch was never installed, it was already uninstalled, or you deleted data.win.old"
-					echo "If you deleted data.win.old, follow these steps to uninstall the patch:"
-					echo "1) In Steam, select Library in Steam desktop mode"
-					echo "2) Right-click Dark Deity and select Properties>Installed Files->Verify integrity of game files"
-					echo "3) Steam will validate the files then redownload any files changed from the original version."
-					exit 1
+            # --- OPTIONS ---
+            # verbose is not currently used but it is implemented here for possible future use
+            -v|--verbose)
+                shift
+                VERBOSE=true
+                ;;
+
+			-*)
+				echo "Error: Unrecognized argument \"$1\"." >&2
+				return 1
+				;;
+			*)	
+				if [[ -z "$ACTION" ]]; then
+					echo "Error: Command switch missing." >&2
+					return 1
 				fi
 				
-				do_uninstall
-	    		echo -e "\033[32mPatch was uninstalled successfully.\033[0m"
-	    		exit 0				
-                ;;
-            -c|--hash)
-             	if [[ $# -eq 2 ]]; then
-            		GAME_DIR=$2
-            	else
-					if ! GAME_DIR=$(find_game_dir "$APPID"); then
-	 					cat << EOF
-Could not automatically locate the Dark Deity install directory.
-If you can locate the directory, you can specify it manually.
-Example:
-    ${SCRIPT_NAME} -h "$HOME/.steam/steam/steamapps/common/Dark Deity"
-EOF
-	    				exit 1
+				if [[ "$ACTION" = "install" || "$ACTION" = "uninstall" || "$ACTION" = "hash" ]]; then		
+					if [[ $# -gt 1 ]]; then
+						echo "Error: Optional path argument must be the last argument." >&2
+						echo "If you want use a path with a space in it, be sure to enclose it in quotation marks." >&2
+						return 1
 					fi
-            	fi
-            	
-            	if [ -f "${GAME_DIR}/data.win" ]; then
-            		sha256sum "$GAME_DIR/data.win" | cut -d ' ' -f 1
-	            	exit 0
-	            fi
-	            
-				echo "Could not find the file 'data.win' in the Dark Deity directory"
-				exit 1
+
+					GAME_DIR="$1"
+				else
+					echo "Error: Unexpected argument \"$1\"." >&2
+					return 1
+				fi
+				shift
 				;;
-            -v|--version)
-                version
-                exit 0
-                ;;
-            -f|--file)
-                if [[ -z "${2:-}" || "$2" =~ ^- ]]; then
-                    echo -e "\033[31mError: Option '$1' requires a non-empty argument.\033[0m" >&2
-                    usage >&2
-                    exit 1
-                fi
-                FILE_PATH="$2"
-                shift 2
-                ;;
-            --verbose)
-                VERBOSE=true
-                shift
-                ;;
-            -*)
-                echo "Error: Unknown option '$1'" >&2
-                usage >&2
-                exit 1
-                ;;
-            *)
-                # Handle positional arguments if needed
-                echo "Error: Unexpected argument '$1'" >&2
-                usage >&2
-                exit 1
-                ;;
         esac
     done
 }
