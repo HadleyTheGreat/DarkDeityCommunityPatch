@@ -13,8 +13,14 @@ var changesMade = false;
 
 EnsureDataLoaded();
 
-string patchDir = Path.Combine(Environment.CurrentDirectory, @"scripts");
-string origDir  = Path.Combine(Environment.CurrentDirectory, @"originals");
+// This script should be running from a subfolder of the installation root directory
+string rootDir = Path.Combine(Path.GetDirectoryName(__FILE__),"..");
+
+// The GML files should be located in the scripts subfolder of the installation
+string scriptsDir = Path.Combine(rootDir, "scripts");
+
+// Original copies of scripts that are replaced will be placed in the originals subfolder
+string origDir  = Path.Combine(rootDir, "originals");
 
 Directory.CreateDirectory(origDir);
 
@@ -29,7 +35,7 @@ GlobalDecompileContext globalDecompileContext = new(Data);
 var decompilerSettings = Data.ToolInfo.DecompilerSettings;
 
 // Collect patch files
-string[] dirFiles = Directory.GetFiles(patchDir, "*.gml");
+string[] dirFiles = Directory.GetFiles(scriptsDir, "*.gml");
 if (dirFiles.Length == 0)
 {
     ScriptError("No .gml files found in scripts folder.");
