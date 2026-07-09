@@ -11,6 +11,28 @@ VERBOSE=false
 APPID="1374840"
 GAME_DIR=""
 ACTION=""
+SCRIPTS_DIR="scripts"
+OVERRIDE=false
+
+if [ ! -d "$SCRIPTS_DIR" ]; then
+    echo "Error: \"$SCRIPTS_DIR\" directory not found."
+    exit 1
+fi
+
+HASH_FILE="$SCRIPTS_DIR/hashes.csv"
+if [[ ! -f "$HASH_FILE" ]]; then
+    echo "Error: \"$HASH_FILE\" not found." >&2
+    exit 1
+fi
+
+# Read hashes from CSV
+prePatchHash=$(awk -F'"' '$2=="prePatch" {print $4}' "$HASH_FILE")
+postPatchHash=$(awk -F'"' '$2=="postPatch" {print $4}' "$HASH_FILE")
+
+if [[ -z "$prePatchHash" || -z "$postPatchHash" ]]; then
+    echo "Error: Failed to read hashes from $HASH_FILE."
+    exit 1
+fi
 
 # Default install locations for Steam
 STEAM_ROOTS=(
@@ -21,25 +43,29 @@ STEAM_ROOTS=(
 # Display usage instructions
 usage() {
     cat << EOF
-Dark Deity Community Patch installation and removal tool for Steam on Linux
+Dark Deity Community Patch installation and removal tool for Linux
 Version ${VERSION}
 
-This patch should support SteamOS, Ubuntu, and most other x86-based Linux distributions
+This patch should support SteamOS, Ubuntu, and most other x86-based Linux distributions.
+It is intended to patch Dark Deity version 1.5.8.
 
 Usage: 
-    ${SCRIPT_NAME} -i [path]   Install the Dark Deity community patch.
-    ${SCRIPT_NAME} -u [path]   Uninstall the Dark Deity community patch.
-    ${SCRIPT_NAME} --version    Display the version of the community patch and exit.
-    ${SCRIPT_NAME} -h          Display this help message and exit.
+    ./${SCRIPT_NAME} -i [path]   Install the Dark Deity community patch.
+    ./${SCRIPT_NAME} -u [path]   Uninstall the Dark Deity community patch.
+    ./${SCRIPT_NAME} --version    Display the version of the community patch and exit.
+    ./${SCRIPT_NAME} -h          Display this help message and exit.
 
 [path] is optional.
-The tool will try to locate the Dark Deity install directory automatically.
-If that fails for any reason, you can provide the path manually.
+
+The tool will try to locate the Dark Deity install directory in Steam automatically.
+If you are installing a non-Steam version of the game, or that fails for any reason
+you can specify the path manually.
 
 Examples:
-${SCRIPT_NAME} -i "$HOME/.steam/steam/steamapps/common/Dark Deity"
-${SCRIPT_NAME} -u ~/.steam/steam/steamapps/common/"Dark Deity"
-${SCRIPT_NAME} -i "/usr/games/Dark Deity"
+./${SCRIPT_NAME} -i
+./${SCRIPT_NAME} -i "$HOME/.steam/steam/steamapps/common/Dark Deity"
+./${SCRIPT_NAME} -u ~/.steam/steam/steamapps/common/"Dark Deity"
+./${SCRIPT_NAME} -i "/usr/games/Dark Deity"
 EOF
 }
 
@@ -91,42 +117,106 @@ find_game_dir() {
 }
 
 do_uninstall() {
-	if [[ -f "${GAME_DIR}/data.win.old" ]]; then
-		echo "--- Uninstalling existing patch ---"
-		rm -f "${GAME_DIR}/data.win"
-		mv "${GAME_DIR}/data.win.old" "${GAME_DIR}/data.win"
-	fi
+    if [[ -f "${GAME_DIR}/data.win.old" ]]; then
+        echo "--- Uninstalling existing patch ---"
+        rm -f "${GAME_DIR}/data.win"
+        mv "${GAME_DIR}/data.win.old" "${GAME_DIR}/data.win"
+    fi
 }
 
 do_version() {
-	echo "$VERSION"
+    echo "$VERSION"
 }
 
 do_hash() {
-	echo "Error: hash checking is not yet implemented." >&2
-	return 1
+    echo "Error: hash checking is not yet implemented." >&2
+    return 1
 }
 
 validate_gamedir() {
-	if [[ -z "$GAME_DIR" ]]; then
-		if ! GAME_DIR=$(find_game_dir "$APPID"); then
-	 		cat << EOF >&2
+    if [[ -z "$GAME_DIR" ]]; then
+        if ! GAME_DIR=$(find_game_dir "$APPID"); then
+             cat << EOF >&2
 Error: Failed to automatically locate the Dark Deity install folder.
 If you can locate the directory, you can specify it manually.
 Examples:
     ${SCRIPT_NAME} -i "$HOME/.steam/steam/steamapps/common/Dark Deity"
     ${SCRIPT_NAME} -u "/usr/games/steam/steamapps/common/Dark Deity"
 EOF
-			return 1
-		fi	
-	fi
+            return 1
+        fi    
+    fi
+    
+    if [[ ! -f "$GAME_DIR/data.win" ]]; then
+        echo "Error: file not found \"$GAME_DIR/data.win\""
+        return 1
+    fi
+    
+    echo "GAME_DIR = $GAME_DIR"
+}
+
+validate_prehash() {
+    local currentHash=$(get_sha256_hash "$GAME_DIR/data.win")
+    if [[ "$currentHash" = "$postPatchHash" ]]; then
+        echo "Patch was already installed.  Nothing to do."
+        exit 0
+    fi
 	
-	if [[ ! -f "$GAME_DIR/data.win" ]]; then
-		echo "Error: file not found \"$GAME_DIR/data.win\""
-		return 1
+    if [[ "$currentHash" = "$prePatchHash" ]]; then
+        return 0
+    fi
+    
+    # If the data.win file didn't have the right starting hash, check data.old.win
+    local backupHash=""
+    if [[ -f "$GAME_DIR/data.win.old" ]]; then
+        backupHash=$(get_sha256_hash "$GAME_DIR/data.win.old")
+    fi
+
+    if [[ "$backupHash" = "$prePatchHash" ]]; then
+        # if data.old.win is the right pre-version, then run do_uninstall to delete and replace it
+        # with data.old.win before starting the patch process
+        do_uninstall
+        return 0
+    fi
+
+	# Normally validation should fail here, but if the user wants to override validation then just allow patching data.win anyway, even though its not the version the patch was designed for.
+    if [[ $OVERRIDE = true ]]; then
+    	return 0
+   	fi
+        	
+    # Neither data.win nor data.win.old is the right version and the user didn't want to override, so the patch can't be applied
+    echo "Expected pre-patch hash:  $prePatchHash"
+    echo "Expected post-patch hash: $postPatchHash"
+    echo "data.win hash:            $currentHash"
+    if [[ -n "$backupHash" ]]; then
+        echo "data.win.old hash:    $backupHash"
+    fi
+    echo "Error: Dark Deity version mismatch."
+    echo "You can use the --override switch to force it to be applied."
+    return 1
+}
+
+validate_posthash() {
+	if [[ $OVERRIDE = true ]]; then
+		echo -e "\033[32mThe patch installation was successful.\033[0m"
+		exit 0
+	fi	
+		
+	local currentHash=$(get_sha256_hash "$GAME_DIR/data.win")
+	if [[ "$currentHash" = "$postPatchHash" ]]; then
+		echo "Post-patch hash validation passed."
+		echo -e "\033[32mThe patch installation was successful.\033[0m"
+		exit 0
+	else	
+		echo "Experted hash: $postPatchHash"
+		echo "Actual hash: $currentHash"
+		echo -e "\033[31mPost-patch hash validation failed.\033[0m"
+		exit 1
 	fi
-	
-	echo "GAME_DIR = $GAME_DIR"
+}
+
+get_sha256_hash() {
+    sha256sum "$1" | awk '{print $1}'
 }
 
 set_action() {
@@ -136,18 +226,20 @@ set_action() {
     fi
     ACTION="$1"
 }
-   	
+       
 # Main application logic
 main() {
-	case "$ACTION" in
-		"install")
-			validate_gamedir
-			do_install
-			;;
-		"uninstall")
-			validate_gamedir
-			if [[ ! -f "$GAME_DIR/data.win.old" ]]; then
-				cat << EOF 
+    case "$ACTION" in
+        "install")
+            validate_gamedir
+            validate_prehash
+            do_install
+            validate_posthash
+            ;;
+        "uninstall")
+            validate_gamedir
+            if [[ ! -f "$GAME_DIR/data.win.old" ]]; then
+                cat << EOF 
 There is no backup file "$GAME_DIR/data.win.old".
 Either:
    1) The patch was never installed.
@@ -159,98 +251,107 @@ If your problem is #3 then to uninstall you should:
    - Click on Verify integrity of game files
    This will cause Steam to check the game files and re-download data.win if necesary.
 EOF
-			fi
-			;;
-		"help")
-			usage
-			;;
-		"hash")
-			do_hash
-			;;
-		"version")
-			do_version
-			;;
-		*)
-			echo "Internal error: No handler for command \"$ACTION\"" >&2
-			return 1
-			;;
-	esac
+            fi
+            do_uninstall
+            ;;
+        "help")
+            usage
+            ;;
+        "hash")
+            do_hash
+            ;;
+        "version")
+            do_version
+            ;;
+        *)
+            echo "Internal error: No handler for command \"$ACTION\"" >&2
+            return 1
+            ;;
+    esac
 }
 
 do_install() {
     echo "--- Building patched.win ---"
-    rm -f "${GAME_DIR}/patched.win"
-    utmt_cli/UndertaleModCli load "${GAME_DIR}/data.win" -s "scripts/nongmlmods.csx" -s "tools/scriptupdater.csx" -o "${GAME_DIR}/patched.win"
+    rm -f "$GAME_DIR/patched.win"
+    utmt_cli/UndertaleModCli load "$GAME_DIR/data.win" -s "scripts/nongmlmods.csx" -s "tools/scriptupdater.csx" -o "${GAME_DIR}/patched.win"
     echo "--- Renaming data.win to data.win.old to save as a backup ---"
-    rm -f "${GAME_DIR}/data.win.old"
+    rm -f "$GAME_DIR/data.win.old"
     mv "$GAME_DIR/data.win" "$GAME_DIR/data.win.old"
     echo "--- Renaming patched.win to data.win ---"
-    mv "$GAME_DIR/patched.win" "$GAME_DIR/data.win"
-    echo -e "\033[32mPatch was installed successfully.\033[0m"				
+    mv "$GAME_DIR/patched.win" "$GAME_DIR/data.win"	
+    cp "tools/removepatch.sh" "$GAME_DIR/removepatch.sh"
+    local currentHash=
+    echo -e "\033[32mPatch was installed successfully.\033[0m"                
 }
-
 
 # Parse command-line arguments safely
 parse_params() {
     while [[ $# -gt 0 ]]; do
         case "$1" in
-        	#  --- COMMANDS ---
+            #  --- COMMANDS ---
             -h|-\?|--help)
-            	shift 
-            	set_action "help"
-            	;; 
+                shift 
+                set_action "help"
+                ;; 
             -i|--install)
-            	shift
-            	set_action "install";
-            	;;
+                shift
+                set_action "install";
+                ;;
             -u|--uninstall)
-            	shift
-            	set_action "uninstall";
-            	;;
+                shift
+                set_action "uninstall";
+                ;;
             -c|--hash)
-            	shift
-            	set_action "hash";
-            	;;
+                shift
+                set_action "hash";
+                ;;
             --version)
-            	shift
-            	set_action "version";
-            	;;
-            	
+                shift
+                set_action "version";
+                ;;
+                
             # --- OPTIONS ---
             # verbose is not currently used but it is implemented here for possible future use
             -v|--verbose)
                 shift
                 VERBOSE=true
                 ;;
+            -o|--override)
+            	shift
+            	OVERRIDE=true
+            	;;
+            -*)
+                echo "Error: Unrecognized argument \"$1\"." >&2
+                return 1
+                ;;
+            *)    
+                if [[ -z "$ACTION" ]]; then
+                    echo "Error: Command switch missing." >&2
+                    return 1
+                fi
+                
+                if [[ "$ACTION" = "install" || "$ACTION" = "uninstall" || "$ACTION" = "hash" ]]; then        
+                    if [[ $# -gt 1 ]]; then
+                        echo "Error: Optional path argument must be the last argument." >&2
+                        echo "If you want use a path with a space in it, be sure to enclose it in quotation marks." >&2
+                        return 1
+                    fi
 
-			-*)
-				echo "Error: Unrecognized argument \"$1\"." >&2
-				return 1
-				;;
-			*)	
-				if [[ -z "$ACTION" ]]; then
-					echo "Error: Command switch missing." >&2
-					return 1
-				fi
-				
-				if [[ "$ACTION" = "install" || "$ACTION" = "uninstall" || "$ACTION" = "hash" ]]; then		
-					if [[ $# -gt 1 ]]; then
-						echo "Error: Optional path argument must be the last argument." >&2
-						echo "If you want use a path with a space in it, be sure to enclose it in quotation marks." >&2
-						return 1
-					fi
-
-					GAME_DIR="$1"
-				else
-					echo "Error: Unexpected argument \"$1\"." >&2
-					return 1
-				fi
-				shift
-				;;
+                    GAME_DIR="$1"
+                else
+                    echo "Error: Unexpected argument \"$1\"." >&2
+                    return 1
+                fi
+                shift
+                ;;
         esac
     done
 }
 
 # Script entry point
 parse_params "$@"
+if [[ -z "$ACTION" ]]; then
+    usage
+    exit 0
+fi
 main "$@"

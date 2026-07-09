@@ -4,8 +4,7 @@
 		<DistRoot>$(MSBuildProjectDirectory)\dist</DistRoot>
 		<DistDir>$(DistRoot)\windows</DistDir>
 		<ToolsDir>$(DistDir)\tools</ToolsDir>
-		<DistSrcDir>$(MSBuildProjectDirectory)\distsrc\windows</DistSrcDir>
-		<BuildToolsDir>$(DistDir)\buildtools</BuildToolsDir>		
+		<DistSrcDir>$(MSBuildProjectDirectory)\distsrc</DistSrcDir>
 		<ArtifactsDir>$(MSBuildProjectDirectory)\artifacts</ArtifactsDir>
 		<UtmtCliDir>$(DistDir)\utmt_cli</UtmtCliDir>
 		<ImportsDir>$(MSBuildProjectDirectory)\imports</ImportsDir>
@@ -23,6 +22,7 @@
 		<Curl>curl.exe</Curl>
 		<LocalUtmtDir>$(ImportsDir)\utmt_cli</LocalUtmtDir>
 		<Utmt>$(LocalUtmtDir)\UndertaleModCli.exe</Utmt>
+		<BuildToolsDir>$(DistSrcDir)\windows\buildtools</BuildToolsDir>		
 	</PropertyGroup>
 
 	<PropertyGroup
@@ -31,6 +31,7 @@
 		<Curl>curl</Curl>
 		<LocalUtmtDir>$(ImportsDir)\utmt_cli_linux</LocalUtmtDir>
 		<Utmt>$(LocalUtmtDir)\UndertaleModCli</Utmt>
+		<BuildToolsDir>$(DistSrcDir)\linux\buildtools</BuildToolsDir>	
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -40,7 +41,7 @@
 
 		<DistWindowsSources 
 			Include="$(MSBuildProjectDirectory)\distsrc\windows\**\*" 
-			Exclude="$(MSBuildProjectDirectory)\distsrc\windows\**\.gitignore;$(MSBuildProjectDirectory)\distsrc\linux\buildtools\**\*" />
+			Exclude="$(MSBuildProjectDirectory)\distsrc\windows\**\.gitignore;$(MSBuildProjectDirectory)\distsrc\windows\buildtools\**\*" />
 
 		<DistSources Include="@(DistCommonSources);@(DistWindowsSources)" />
 	</ItemGroup>
@@ -188,6 +189,18 @@
 	</Target>
 
 	<Target
+		Name="RemoveOldPatch"
+		BeforeTargets="GeneratePostImageWindows;GeneratePostImageLinux"
+		Condition="Exists('$(GameDir)\data.win.old')"
+		>
+		
+    	<Move 
+    		SourceFiles="$(GameDir)\data.win.old" 
+         	DestinationFiles="$(GameDir)\data.win" 
+          	OverwriteReadOnlyFiles="true" />
+    </Target>
+
+	<Target
 		Name="GeneratePostImage"
 		DependsOnTargets="GeneratePostImageWindows;GeneratePostImageLinux">
 	</Target>
@@ -226,7 +239,7 @@
 		Outputs="$(DistDir)\scripts\hashes.csv">
 
 		<Exec
-			Command='powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$(BuildToolsDir)\Generate-HashFile.ps1"' />
+			Command='powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$(BuildToolsDir)\Generate-HashFile.ps1" "$(DistDir)/scripts"' />
 	</Target>
 
 	<Target
@@ -235,7 +248,7 @@
 		Inputs="$(GameDir)\data.win;$(GameDir)\patched.win;$(BuildToolsDir)\Generate-HashFile.sh"
 		Outputs="$(DistDir)\scripts\hashes.csv">
 		<Exec
-			Command='bash "$(BuildToolsDir)/Generate-HashFile.sh"' />
+			Command='bash "$(BuildToolsDir)/Generate-HashFile.sh" "$(DistDir)/scripts"' />
 	</Target>
 
 	<Target Name="DistCopySources"
