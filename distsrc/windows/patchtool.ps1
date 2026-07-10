@@ -12,8 +12,8 @@ $SCRIPT_NAME = $MyInvocation.MyCommand.Name
 $VERSION = "3.0.0"
 $VERBOSE_OUTPUT = $false
 $APPID = "1374840"
-$global:GAME_DIR = ""
-$global:ACTION = ""
+$GAME_DIR = ""
+$ACTION = ""
 $OVERRIDE = $false
 
 # Get the directory where the script is located
@@ -41,14 +41,14 @@ function Load-Hashes {
     
     $hash_file = Join-Path $SCRIPTS_DIR "hashes.csv"
     if (-not (Test-Path -Path $hash_file -PathType Leaf)) {
-        $global:prePatchHash = ""
-        $global:postPatchHash = ""
+        $script:prePatchHash = ""
+        $script:postPatchHash = ""
         Write-Warning "Hash file not present. Version validation will be skipped."
     } else {
         # Emulate the awk logic using regex pattern matching
         Get-Content $hash_file | ForEach-Object {
-            if ($_ -match '"prePatch"[^"]*"([^"]+)"') { $global:prePatchHash = $Matches[1] }
-            if ($_ -match '"postPatch"[^"]*"([^"]+)"') { $global:postPatchHash = $Matches[1] }
+            if ($_ -match '"prePatch"[^"]*"([^"]+)"') { $script:prePatchHash = $Matches[1] }
+            if ($_ -match '"postPatch"[^"]*"([^"]+)"') { $script:postPatchHash = $Matches[1] }
         }
     }
 }
@@ -125,9 +125,9 @@ function Find-GameDir {
 }
 
 function Do-Uninstall {
-    $oldFile = Join-Path $global:GAME_DIR "data.win.old"
-    $currentFile = Join-Path $global:GAME_DIR "data.win"
-    $removeScript = Join-Path $global:GAME_DIR "removepatch.ps1" # Changed extension for Windows
+    $oldFile = Join-Path $GAME_DIR "data.win.old"
+    $currentFile = Join-Path $GAME_DIR "data.win"
+    $removeScript = Join-Path $GAME_DIR "removepatch.ps1" # Changed extension for Windows
 
     if (Test-Path -Path $oldFile -PathType Leaf) {
         Write-Output "--- Uninstalling existing patch ---"
@@ -138,9 +138,9 @@ function Do-Uninstall {
 }
 
 function Do-Install {
-    $currentFile = Join-Path $global:GAME_DIR "data.win"
-    $patchedFile = Join-Path $global:GAME_DIR "patched.win"
-    $oldFile = Join-Path $global:GAME_DIR "data.win.old"
+    $currentFile = Join-Path $GAME_DIR "data.win"
+    $patchedFile = Join-Path $GAME_DIR "patched.win"
+    $oldFile = Join-Path $GAME_DIR "data.win.old"
     
     Write-Output "--- Building patched.win ---"
     if (Test-Path -Path $patchedFile) { Remove-Item -Path $patchedFile -Force }
@@ -171,12 +171,12 @@ function Do-Version {
 }
 
 function Do-Hash {
-    $currentFile = Join-Path $global:GAME_DIR "data.win"
-    $oldFile = Join-Path $global:GAME_DIR "data.win.old"
+    $currentFile = Join-Path $GAME_DIR "data.win"
+    $oldFile = Join-Path $GAME_DIR "data.win.old"
 
     if (-not (Test-Path -Path $currentFile -PathType Leaf)) {
         Write-Error "Error: Couldn't find file `"$currentFile`""
-        return 1
+        exit 1
     }
     
     $currentHash = Get-Sha256Hash $currentFile
@@ -189,29 +189,29 @@ function Do-Hash {
 }
 
 function Validate-GameDir {
-    if ([string]::IsNullOrEmpty($global:GAME_DIR)) {
-        $global:GAME_DIR = Find-GameDir $APPID
-        if (-not $global:GAME_DIR) {
+    if ([string]::IsNullOrEmpty($script:GAME_DIR)) {
+        $script:GAME_DIR = Find-GameDir $APPID
+        if (-not $script:GAME_DIR) {
             Write-Error "Error: Failed to automatically locate the Dark Deity install folder.`nIf you can locate the directory, you can specify it manually.`nExamples:`n    .\$SCRIPT_NAME -i `"C:\Steam\steamapps\common\Dark Deity`""
-            return 1
+            exit 1
         }    
     }
     
-    $currentFile = Join-Path $global:GAME_DIR "data.win"
+    $currentFile = Join-Path $script:GAME_DIR "data.win"
     if (-not (Test-Path -Path $currentFile -PathType Leaf)) {
         Write-Error "Error: file not found `"$currentFile`""
-        return 1
+        exit 1
     }
     
-    Write-Output "GAME_DIR = $global:GAME_DIR"
+    Write-Output "GAME_DIR = $script:GAME_DIR"
 }
 
 function Validate-PreHash {
     if ([string]::IsNullOrEmpty($prePatchHash)) {
-        return 0
+        return
     }
     
-    $currentFile = Join-Path $global:GAME_DIR "data.win"
+    $currentFile = Join-Path $GAME_DIR "data.win"
     $currentHash = Get-Sha256Hash $currentFile
     
     if ($currentHash -eq $postPatchHash) {
@@ -220,24 +220,24 @@ function Validate-PreHash {
     }
     
     if ($currentHash -eq $prePatchHash) {
-        return 0
+        return
     }
     
     $backupHash = ""
-    $oldFile = Join-Path $global:GAME_DIR "data.win.old"
+    $oldFile = Join-Path $GAME_DIR "data.win.old"
     if (Test-Path -Path $oldFile -PathType Leaf) {
         $backupHash = Get-Sha256Hash $oldFile
     }
 
     if ($backupHash -eq $prePatchHash) {
         Do-Uninstall
-        return 0
+        return
     }
 
-    if ($global:OVERRIDE) {
-        return 0
+    if ($OVERRIDE) {
+        return
     }
-        
+
     Write-Output "Expected pre-patch hash:  $prePatchHash"
     Write-Output "Expected post-patch hash: $postPatchHash"
     Write-Output "data.win hash:            $currentHash"
@@ -246,16 +246,16 @@ function Validate-PreHash {
     }
     Write-Error "Error: Dark Deity version mismatch."
     Write-Output "You can use the --override switch to force it to be applied."
-    return 1
+    exit 1
 }
 
 function Validate-PostHash {
-    if ([string]::IsNullOrEmpty($postPatchHash) -or $global:OVERRIDE) {
+    if ([string]::IsNullOrEmpty($postPatchHash) -or $OVERRIDE) {
         Write-Host "The patch installation was successful." -ForegroundColor Green
-        return 0
+        exit 0
     }
         
-    $currentFile = Join-Path $global:GAME_DIR "data.win"
+    $currentFile = Join-Path $GAME_DIR "data.win"
     $currentHash = Get-Sha256Hash $currentFile
     if ($currentHash -eq $postPatchHash) {
         Write-Output "Post-patch hash validation passed."
@@ -277,12 +277,11 @@ function Get-Sha256Hash {
 
 function Set-Action {
     param([string]$actionName)
-    Write-Host "Setting action to $actionName"
-    if (-not [string]::IsNullOrEmpty($global:ACTION)) { 
+    if (-not [string]::IsNullOrEmpty($script:ACTION)) { 
         Write-Error "Error: More than one command specified in arguments."
-        return 1
+        exit 1
     }
-    $global:ACTION = $actionName
+    $script:ACTION = $actionName
 }
         
 function Main-Process {
@@ -296,7 +295,7 @@ function Main-Process {
         }
         "uninstall" {
             Validate-GameDir
-            $oldFile = Join-Path $global:GAME_DIR "data.win.old"
+            $oldFile = Join-Path $GAME_DIR "data.win.old"
             if (-not (Test-Path -Path $oldFile -PathType Leaf)) {
                 @"
 There is no backup file "$oldFile".
@@ -325,7 +324,7 @@ If your problem is #3 then to uninstall you should:
         }
         Default {
             Write-Error "Internal error: No handler for command `"$ACTION`""
-            return 1
+            exit 1
         }
     }
 }
@@ -358,32 +357,32 @@ function Parse-Params {
                 break
             }
             '^(-v|--verbose)$' {
-                $global:VERBOSE_OUTPUT = $true
+                VERBOSE_OUTPUT = $true
                 break
             }
             '^(-o|--override)$' {
-                $global:OVERRIDE = $true
+                OVERRIDE = $true
                 break
             }
             '^-' {
                 Write-Error "Error: Unrecognized argument `"$arg`"."
-                return 1
+                exit 1
             }
             Default {    
-                if ([string]::IsNullOrEmpty($global:ACTION)) {
+                if ([string]::IsNullOrEmpty($ACTION)) {
                     Write-Error "Error: Command switch missing."
-                    return 1
+                    exit 1
                 }
                 
-                if ($global:ACTION -match '^(install|uninstall|hash)$') {        
+                if ($ACTION -match '^(install|uninstall|hash)$') {        
                     if (($argsList.Count - $i) -gt 1) {
                         Write-Error "Error: Optional path argument must be the last argument."
-                        return 1
+                        exit 1
                     }
-                    $global:GAME_DIR = $arg
+                    $GAME_DIR = $arg
                 } else {
                     Write-Error "Error: Unexpected argument `"$arg`"."
-                    return 1
+                    exit 1
                 }
             }
         }
