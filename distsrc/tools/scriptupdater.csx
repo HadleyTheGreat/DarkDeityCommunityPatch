@@ -14,7 +14,7 @@ var changesMade = false;
 EnsureDataLoaded();
 
 // This script should be running from a subfolder of the installation root directory
-string rootDir = Path.Combine(Path.GetDirectoryName(__FILE__),"..");
+string rootDir = Path.Combine(Path.GetDirectoryName(ScriptPath),"..");
 
 // The GML files should be located in the scripts subfolder of the installation
 string scriptsDir = Path.Combine(rootDir, "scripts");
