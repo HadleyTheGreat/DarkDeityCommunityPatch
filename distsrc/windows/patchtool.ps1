@@ -127,7 +127,7 @@ function Find-GameDir {
 function Do-Uninstall {
     $oldFile = Join-Path $GAME_DIR "data.win.old"
     $currentFile = Join-Path $GAME_DIR "data.win"
-    $removeScript = Join-Path $GAME_DIR "removepatch.ps1" # Changed extension for Windows
+    $removeScript = Join-Path $GAME_DIR "removepatch.bat" # Changed extension for Windows
 
     if (Test-Path -Path $oldFile -PathType Leaf) {
         Write-Output "--- Uninstalling existing patch ---"
@@ -159,10 +159,10 @@ function Do-Install {
     Write-Output "--- Renaming patched.win to data.win ---"
     Move-Item -Path $patchedFile -Destination $currentFile -Force
     
-    # Note: Copying removepatch.ps1 instead of .sh for Windows environments
-    $winTool = Join-Path $BASE_DIR "tools" | Join-Path -ChildPath "removepatch.ps1"
+    $winTool = Join-Path $BASE_DIR "tools" | Join-Path -ChildPath "removepatch.bat"
     if (Test-Path $winTool) {
-        Copy-Item -Path $winTool -Destination (Join-Path $GAME_DIR "removepatch.ps1") -Force
+	Write-Output "--- removepatch.bat copied to the Dark Diety directory ---"
+        Copy-Item -Path $winTool -Destination (Join-Path $GAME_DIR "removepatch.bat") -Force
     }
 }
 
@@ -251,16 +251,14 @@ function Validate-PreHash {
 
 function Validate-PostHash {
     if ([string]::IsNullOrEmpty($postPatchHash) -or $OVERRIDE) {
-        Write-Host "The patch installation was successful." -ForegroundColor Green
-        exit 0
+	return
     }
         
     $currentFile = Join-Path $GAME_DIR "data.win"
     $currentHash = Get-Sha256Hash $currentFile
     if ($currentHash -eq $postPatchHash) {
         Write-Output "Post-patch hash validation passed."
-        Write-Host "The patch installation was successful." -ForegroundColor Green
-        exit 0
+        return
     } else {    
         Write-Output "Expected hash: $postPatchHash"
         Write-Output "Actual hash: $currentHash"
@@ -292,6 +290,8 @@ function Main-Process {
             Validate-PreHash
             Do-Install
             Validate-PostHash
+            Write-Host "The patch installation was successful." -ForegroundColor Green
+            exit 0
         }
         "uninstall" {
             Validate-GameDir
@@ -311,6 +311,8 @@ If your problem is #3 then to uninstall you should:
 "@
             }
             Do-Uninstall
+            Write-Host "The patch was successfully uninstalled." -ForegroundColor Green
+            exit 0
         }
         "help" {
             Show-Usage

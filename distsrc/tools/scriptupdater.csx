@@ -42,8 +42,6 @@ if (dirFiles.Length == 0)
     return;
 }
 
-ScriptMessage($"DATA.WIN loaded successfully");
-
 // -------------------------
 // CREATE IMPORT GROUP
 // -------------------------
