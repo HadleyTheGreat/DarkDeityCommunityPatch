@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dark Deity Community Patch Installation</title>
+
+<style>
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 0 20px;
+    background: #f5f5f5;
+    color: #222;
+    line-height: 1.6;
+}
+
+h1 {
+    margin-bottom: 1rem;
+}
+
+ol {
+    padding-left: 1.5rem;
+}
+
+.code-block {
+    position: relative;
+    margin: 12px 0 24px;
+}
+
+pre {
+    margin: 0;
+    padding: 16px;
+    background: #1e1e1e;
+    color: #dcdcdc;
+    border-radius: 8px;
+    overflow-x: auto;
+    font-family: Consolas, Monaco, monospace;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.copy-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: #0078d4;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 6px 12px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.copy-btn:hover {
+    background: #005ea6;
+}
+
+.note {
+    margin: 6px 0 10px;
+    font-weight: bold;
+}
+</style>
+</head>
+
+<body>
+
+<h1>Command-Line Installation (Linux Versions)</h1>
+
+
+
+<p>
+Linux machines come with a variety of different terminal applications.  Start by opening your preferred terminal application.  The default terminal application is named <b>konsole</b> on SteamOS and you must be in Desktop mode to launch it. You can typically find a terminal application by searching for <b>terminal</b> in your launcher or by right-clicking a directory in your file manager and launching the terminal from the context menu.  Begin by launching your terminal then follow the steps below.
+</p>
+
+<h3>Command-line install steps:</h3>
+
+<ol>
+
+<li>
+Make a work directory somewhere the user has read, write, and execute permissions and change into that directory.
+</li>
+
+<div class="code-block">
+<button class="copy-btn">Copy</button>
+<pre><code>md ~/ddcp
+cd ~/ddcp</code></pre>
+</div>
+
+<li>
+Fetch the install zip file for Linux versions from GitHub.
+</li>
+
+<div class="code-block">
+<button class="copy-btn">Copy</button>
+<pre><code>curl https://github.com/HadleyTheGreat/DarkDeityCommunityPatch/releases/download/3.0.0/DarkDeityCommunityPatch-Linux-3.0.0.zip -o patch.zip</code></pre>
+</div>
+
+<li>
+Extract the zip file into a directory, then change into it.
+</li>
+
+<div class="code-block">
+<button class="copy-btn">Copy</button>
+<pre><code>md patch
+unzip patch.zip -d patch
+cd patch</code></pre>
+</div>
+
+<li>
+Run the patch tool with the <code>--install</code> or <code>-i</code> switch.
+</li>
+
+<p class="note">Steam version (automatically located directory):</p>
+
+<div class="code-block">
+<button class="copy-btn">Copy</button>
+<pre><code>./patchtool -i</code></pre>
+</div>
+
+<p class="note">Other versions (manually specified directory):</p>
+
+<div class="code-block">
+<button class="copy-btn">Copy</button>
+<pre><code>./patchtool -i "/wherever/dark/deity/is/installed"</code></pre>
+</div>
+
+<li>If all was successful it should have installed the Dark Deity community patch into Dark Deity.  Now you can change back out of the work directory and remove it to clean up, as it is no longer needed.
+</li>
+
+
+
+<div class="code-block">
+<button class="copy-btn">Copy</button>
+<pre><code>cd ../..
+rm -r ddcp
+</code></pre>
+</div>
+
+
+<li>
+And finally you can shut down the terminal application by closing the window or sending the exit command.
+</li>
+<div class="code-block">
+<button class="copy-btn">Copy</button>
+<pre><code>exit</code></pre>
+</code></pre>
+</div>
+
+
+</ol>
+
+<script>
+document.querySelectorAll(".copy-btn").forEach(button => {
+    button.addEventListener("click", async () => {
+        const code = button.nextElementSibling.innerText;
+
+        try {
+            await navigator.clipboard.writeText(code);
+
+            const original = button.textContent;
+            button.textContent = "Copied!";
+            button.disabled = true;
+
+            setTimeout(() => {
+                button.textContent = original;
+                button.disabled = false;
+            }, 1500);
+        } catch (err) {
+            alert("Copy failed.");
+        }
+    });
+});
+</script>
+
+</body>
+</html>
