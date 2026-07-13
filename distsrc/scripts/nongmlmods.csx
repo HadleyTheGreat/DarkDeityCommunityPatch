@@ -1,5 +1,4 @@
-
-// This script is for whatever can't be done by just updating the GML files, such as defining new objects or deleting existing ones.
+// This script is for modifications that can't be done by just updating the GML files, such as defining new game objects and adding instances of them to or removing instances of them from rooms. 
 
 using System;
 using System.ComponentModel;
@@ -18,11 +17,19 @@ EnsureDataLoaded();
 
 var room4 = Data.Rooms.ByName("room_ch_4");
 
-// Remove two obj_chapter4_prisoner instances from room 4 since they are no longer used
-ScriptMessage("room_ch_4: Removing instance 100705 of obj_chapter4_prisoners");
-room4.GameObjects.Remove(room4.GameObjects.ByInstanceID(100705));
-ScriptMessage("room_ch_4: Removing instance 100706 of obj_chapter4_prisoners");
-room4.GameObjects.Remove(room4.GameObjects.ByInstanceID(100706));
+var InstanceLayer = room4.Layers.First(l => l.LayerName.Content == "Instances");
+var obj_chatper4_prisoners = Data.GameObjects.ByName("obj_chapter4_prisoner");
+
+var prisonerInstances = InstanceLayer.InstancesData.Instances.Where(i => i.ObjectDefinition.Name.Content == "obj_chapter4_prisoners").ToList();
+
+foreach (var instance in prisonerInstances)
+{
+    ScriptMessage($"room_ch_4: Removing instance {instance.InstanceID} of {instance.ObjectDefinition.Name.Content}"); 
+    // Remove the instance from the instance layer
+    InstanceLayer.InstancesData.Instances.Remove(instance);
+    // Remove the instance from the room's GameObjects collection
+    room4.GameObjects.Remove(room4.GameObjects.ByInstanceID(instance.InstanceID));
+}
 
 ScriptMessage("room_ch_4: Adding new sprite prisoner_sophia to layer Assets_2 at (512, 448)");
 
