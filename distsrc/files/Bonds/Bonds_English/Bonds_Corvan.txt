@@ -1,0 +1,856 @@
+Aurima and Corvan
+Stage 1
+
+
+Corvan
+Aurima, pardon me, erm... I've read so much of your exploits-- and now to finally meet you, well, suffice it to say I'm honored you've decided to accompany us.
+Aurima
+You're shaking like a wet dog, elf. Have some dignity. 
+Corvan
+Why-- oh. I suppose I am. Perhaps there's a draft.
+Aurima
+Mm. So you are the one who led the others to my trial.
+Corvan
+Yes. And it was no trivial task. You did not make yourself easily discoverable.
+Aurima
+If I had, I expect you might have found me too late.
+Corvan
+Before another challenger bested you? I hardly think it likely.
+Aurima
+I do not claim to have the power to single handedly stem the tide of the armies of Aramor.
+Corvan
+Would armies have been sent after you?
+Aurima
+There are those with the power to send them who stand to gain much satisfaction from my death, even still.
+Corvan
+You speak of those responsible for your exile.
+Aurima
+I speak of whom I speak.
+Corvan
+Perhaps that was presumptuous of me to ask. Might we start at the beginning, then? 
+Corvan
+What was it like to grow up under the shadow of your father, the great Mirage of the Silent Sands?
+Aurima
+And how should I share my story with you, when I have yet to finish writing it myself?
+Corvan
+We all must share our stories while we yet live, or we risk them being rewritten by other, less reliable narrators.
+Aurima
+Is that a threat?
+Corvan
+Of course not. Merely a humble historian's advice.
+Aurima
+Hm. Come, then. Let us go where we might speak more privately. I will tell you of my father.
+Corvan
+Wonderful!
+
+
+Stage 2
+
+Corvan
+Ah, I do enjoy these moments of respite. Without them I'd hardly have a chance to pick up a pen.
+Aurima
+And with them I hardly have a chance to catch my breath.
+Corvan
+Shall we resume where we left off last time?
+Aurima
+If you start by reminding me where that was.
+Corvan
+I believe you were about to recount your match with Yerassi, the Proud.
+Aurima
+Hah. Yes. A fitting epithet. He was the first highborn challenger I ever contended with, though he would not be the last.
+Aurima
+I still remember his entrance with such clarity. He could hardly tear his gaze from the crowds to face me.
+Aurima
+It would have been a short match if that was my wish, but I pitied him. I wanted to give him a show for his noble friends. I thought maybe then he could return with his dignity.
+Aurima
+But I was an ignorant fool. Every minute the match dragged on and I evaded his blows, the crowds began to think I was taunting him, and his face grew twisted with humiliation.
+Aurima
+It became clear the only path to restore his pride would be to throw the match.
+Corvan
+I don't imagine you seriously considered that for long.
+Aurima
+No. Never seriously. Once I realized I had backed myself into a corner, I decided to put an end to it swiftly.
+Corvan
+Fascinating. You won't be surprised to know the rumormongers tell it differently.
+Aurima
+No, I'm not. 
+Aurima
+I'm sure you heard it was a vicious scrap-- the closest Aurima the Cenaari ever came to death-- that I crippled his leg and disgraced my honor to rescue victory from the jaws of certain defeat.
+Corvan
+Not so poetically, but yes, I heard something like that.
+Aurima
+Well, decide the truth for yourself. I will tell my part.
+Aurima
+I did strike him down with a blow to the leg, but he walked from that arena on his own two feet. I thought it strange when he did not join us at the baths that afternoon.
+Aurima
+A few days later, I heard the same rumors which I'm sure made their way to you: 
+Aurima
+That I had shattered his foot with a desperate blow, that the healers had no choice but to sever his leg at the knee, that he would not walk again, let alone fight, as long as he lived.
+Corvan
+If the rumors were false, would the people of Oasis not have known so as soon as Yerassi made his next public appearance?
+Aurima
+The rumors were partially true. His leg was severed.
+Corvan
+... Then you suspect he inflicted it on himself?
+Aurima
+Man will go to great lengths for his pride. And I have seen greater lengths than that.
+Corvan
+By Quintare... I don't know what to say. It's just unbelievable enough to be true.
+Aurima
+A strange way of looking at it, but I suppose so.
+Corvan
+The only way of looking at it. Yes... this is a story, indeed.
+Aurima
+Do me one favor please, Corvan. If you do decide to publish this, be sure I'm nowhere near Oasis.
+Corvan
+Mm. Well. Your exile should help with that.
+Aurima
+Hmph.
+
+
+Stage 3
+
+Aurima
+Corvan, I've grown accustomed to your visits. I'm expecting you to come clamoring for the truth about my exile.
+Corvan
+Hm? Oh. Yes. That itch has not left me. But I'll confess, this research into Akmenos and his staff has me a bit overwhelmed.
+Aurima
+Anything I can assist with?
+Corvan
+Not beyond what you've offered already. You did much to set us on the right path with the Aspects.
+Aurima
+I'm glad to have helped. I only wish there was more I could do.
+Corvan
+Well, you don't happen to have an extensive knowledge of soul anchors and their history, do you?
+Aurima
+That is a subject in which I would easily trust your expertise over mine.
+Corvan
+Mm. It was worth a shot.
+Aurima
+Always is.
+Corvan
+I do wish our recent days afforded time for old tales. 
+Aurima
+We'll simply have to forge ahead until we reach ones that do.
+Corvan
+Indeed. And then I will learn what really drove the longest standing champion of the arena from the height of his glory.
+Aurima
+The height of that time.
+Corvan
+Yes. Our greatest accomplishments lie beyond us, certainly.
+Aurima
+I hope so. But I'm glad to know I'll have my personal biographer assisting me in both making and chronicling those accomplishments.
+Corvan
+I would not have it otherwise. Our stories will be crucial to the world we hope to rebuild.
+Aurima
+Then we should hold nothing back in our examples.
+Corvan
+I very much intend not to.
+
+
+Corvan and Vesta
+
+Vesta
+It seems you hardly ever part with that quill, Corvan.
+Corvan
+Inspiration is a fickle lover. A faithful writer must be ready to reach for his pen at a moment's notice.
+Vesta
+And what about an unfaithful writer?
+Corvan
+I wouldn't know. I've never read any of their work.
+Vesta
+Fair point. 
+Corvan
+On the subject of inspiration, your background has sparked my curiosity. There are a few questions I might ask, if you had the time.
+Vesta
+I figured as much.
+Corvan
+Tell me, the trove of Aspects you kept at the temple, did you guard them alone? Or were there others with you?
+Vesta
+Corvan, I'm no hermit. Of course there were others. Those who supported my mission, the clerics who sent me to this temple, and so on.
+Corvan
+Naturally, but I mean actually with you, in the temple.
+Vesta
+Some local folk. All rather lovely. Merchants, farmers, travelers - pilgrims from all over Etlan. I grew fond of them.
+Corvan
+And yet, all that while, your mission was hidden from them.
+Vesta
+The defense of the Aspects was not my only task, Corvan. I am a cleric. My duty was to tend to the faithful.
+Corvan
+Of course. No doubt they relied on you to inspire their faith. And who inspired yours?
+Vesta
+One who prays is never far from the divine. 
+Corvan
+... 
+Vesta
+I'll admit, it was difficult at times, but there were little moments now and again that reminded me of my purpose, why I did what I did. Those moments sustained me.
+Vesta
+What interests you so much about my past, anyway?
+Corvan
+Just something I've always wondered about clerics. So many lean on them. How can they stand on their own two feet?
+Vesta
+Same as we march onwards now - together, supporting one another. It's no mystery, really.
+Corvan
+Good. In that case, our success depends on a proven strategy.
+Vesta
+I believe it does.
+Corvan
+Then may we all take inspiration from your faith.
+
+
+Stage 2
+
+Corvan
+Impressive craftsmanship, Vesta. I didn't take you for a seamstress.
+Vesta
+You'd be right not to. This is amateur work. I've hardly improved since my mother first taught me.
+Corvan
+And what's this here?
+Vesta
+A trim for Samara's hood. In my time in Aramor, I tried to learn the patterns of their craft. Their designs are quite intricate.
+Corvan
+Yes. I've studied their geometric architecture extensively.
+Vesta
+Of course you have.
+Corvan
+Nothing surprises you anymore, does it?
+Vesta
+On the contrary, Corvan. You're full of surprises. I suppose that's what I've gotten used to.
+Corvan
+A woman of self-contained paradoxes.
+Vesta
+That sounds a lot better than cracked in the head. 
+Vesta
+Speaking of surprises, I suspect some of my prayers of late have been misplaced.
+Corvan
+Oh? Our priestess having a crisis of faith?
+Vesta
+Your priestess is discovering the almighty hand of Soleric hasn't been striking down foes all around her, or at least not as consistently as the quick-bladed Corvan Gallivar.
+Corvan
+Ah, I see. Perhaps you're not wrong to thank Soleric. Have you considered I might be the answer to your prayers?
+Vesta
+Wouldn't that just go right to your head...
+Corvan
+It would be my greatest honor to serve the gods.
+Vesta
+For your sake, I hope the gods don't understand sarcasm.
+Corvan
+Oh I'm sure they do. I think I'm better off hoping they also have a sense of humor.
+Vesta
+Mm. Well if my life's any evidence, they certainly have that.
+Corvan
+Yes. I believe they do.
+
+
+Stage 3
+
+Vesta
+By Vosh, Corvan, you look terrible.
+Corvan
+Here I came to the priestess for words of kindness. Now she's made me the fool.
+Vesta
+You've made a fool of yourself concealing these wounds. What's happened to your arm?
+Corvan
+Oh, just a knick. Nothing that won't heal right up.
+Vesta
+So long as someone heals it.
+Corvan
+Vesta, please. 
+Vesta
+Corvan...
+Corvan
+Very well. You are stubborn, you know.
+Vesta
+I'm the stubborn one?
+Vesta
+... 
+Vesta
+There. Better, isn't it?
+Corvan
+If you must know.
+Vesta
+I can patch that bracer up too, if you like.
+Corvan
+Now really, that's not necessary.
+Vesta
+No. Not at all. You've learned to fight with both hands, anyway. You won't miss one.
+Corvan
+I can see I'm not getting out of this either. 
+Vesta
+No. Let me have a look.
+Vesta
+... 
+Vesta
+That's worse than I thought. Give me some time with it and I'll have something workable before you need it again.
+Corvan
+I sometimes wonder where we'd be without our priestess.
+Vesta
+Don't. You'll give yourself nightmares.
+Corvan
+Hah. You're all too right about that. What we're dealing with by day is nightmarish enough.
+Vesta
+Then be glad nightmares have ends. The world will soon awaken to a bright dawn.
+Corvan
+If we can help it.
+Vesta
+And we can. But only if we allow ourselves to rely on one another.
+Corvan
+We're not hermits, after all.
+Vesta
+No, we're not.
+Corvan
+Well, you know where to find me.
+Vesta
+When you're not holed up in a tree with your notebook.
+Corvan
+I feel so known!
+Vesta
+I'm sure you do.
+
+
+Corvan and Maeve
+
+Corvan
+Picture my surprise when the only half-elven inquisitor showed up to the council meeting. I've wanted to meet you for a long time.
+Maeve
+Oh? And what, pray tell, do you know of me that would merit such a desire?
+Corvan
+Aside from my cultural sensitivities and interest in the historically significant?
+Maeve
+Yes, aside from those things.
+Corvan
+Aside from the reasonable desire to know one's travelling companions and become friends?
+Maeve
+Point taken, Corvan, aside from those things. You have a look of recognition in your eyes that goes beyond any text.
+Corvan
+Mmm, you truly do the stories justice. Do you happen to know my surname?
+Maeve
+I take it you'll tell me if I don't?
+Corvan
+Quite right! My surname is that of a long running Moon Elf clan - Gallivar!
+Maeve
+YOU'RE Cormac's little nephew, Corvan?
+Corvan
+That I am, and we grew close before my travels to Etlan.
+Corvan
+He told me much of your time together.
+Maeve
+What a small world, nothing too bad, I hope?
+Corvan
+Nothing bad? The old elf practically worships you!
+Maeve
+No! He saved my hide just as much as I saved him! I spent a hundred years getting the best education on the continent, and he still knew a far sight more than I did.
+Corvan
+Well, he has, what, nearly a century of life on you?
+Maeve
+I can't quite remember. Hard to keep track - he presented himself much younger than he actually was.
+Corvan
+Yes, that he does, doesn't he? I'd love to pick your brain when we have a little more time.
+Maeve
+I think I'd be delighted for you to do that. It's been too long since I spent any real time with your kin.
+Corvan
+Excellent!
+
+
+Stage 2
+
+Maeve
+Corvan! Tell me, how did you come to find yourself among this ragtag crew of humans?
+Corvan
+Funnily enough, it all comes back to my research.
+Maeve
+I had no doubt of that, I'm more interested in the details.
+Corvan
+Of course, of course. Well, Sara and Samara had taken an interest in the Aspects, and I was staying at the royal palace in Aramor for a time.
+Corvan
+I was combing through the great library looking for information on the calamity temples on Etlan - a much different variety from the ones that are found on Verroa.
+Maeve
+Not that different. It's generally agreed upon that the same civilization built all of them, regardless of location.
+Corvan
+Ah, yes, but they used local materials - local styles. There is a great deal of variety even from nation to nation - lines on a map that no doubt didn't exist at the time.
+Maeve
+I see, I read of this but never really considered it of note.
+Corvan
+Most feel that way, but I had my suspicions that it might come into play. As the Order has so kindly neglected to tell us - there seem to be more Aspects on Etlan than in Verroa.
+Maeve
+Yes, I noticed that. What do you think is causing them to hold that information back?
+Corvan
+Oh, you've no idea how nice it is to be among my own kind for once - intellectuals, I mean.
+Corvan
+There must have been some seismic change, long long ago, where one of the Order grandmasters made the call to move them.
+Corvan
+From what I could gather in Oasis, the Etlan temples were never originally the holding place for them. You know what that tells me?
+Maeve
+I don't know that I do.
+Corvan
+Somebody was digging. Someone had them shook up enough to move them across the whole world - a prospect infinitely more dangerous than leaving them in hiding.
+Maeve
+There haven't been any major situations with the Aspects in a long time.
+Corvan
+Maybe they simply made the smart move moving them. Plenty of upheavals are caused by a single Aspect - these times where so many are disappearing are unprecedented.
+Maeve
+I see it! Whoever is taking them now must have had access to a great deal of historical information to know where to go after them.
+Corvan
+Indeed, and perhaps more privileged archives as well.
+Maeve
+Perhaps... You've given me a good deal to think on, and I prefer to do so alone. We'll talk soon. 
+
+
+Stage 3
+
+Maeve
+This staff is running me in circles, Corvan. I need help with something.
+Corvan
+Of course, anything you need. What is the trouble in particular?
+Maeve
+We've identified the composition, at least partially, but how in the world has it held up for so long? It seems as if it were just ripped off the bark?
+Corvan
+Perhaps the soul magic that infuses it allows it to retain vigor? I am unsure.
+Maeve
+What I wouldn't give to have Vesta in here right now.
+Corvan
+I can go grab her if you think it would help?
+Maeve
+No... She's with the wounded - that's more important than a hunch with something that might not matter regardless.
+Maeve
+I've never come across a problem I couldn't solve - nothing even close to this.
+Corvan
+Oh, but that can't be true. You're classically educated amongst the Threllisar elite schools - don't they teach impossible thought as early as forty?
+Maeve
+Well yes, but those are intended to be unsolvable.
+Corvan
+Ah, then you didn't understand the tradition of the exercise.
+Maeve
+How do you mean?
+Corvan
+Your schools teach impossible thought as a tool - a way to refine your process and understand when you aren't capable of tackling a problem.
+Corvan
+Useful, yes, but not the pure intent of the exercise.
+Corvan
+The problems presented in traditional versions of impossible thought actually are solvable - we simply don't know how yet. It is not intended to teach you when to stop, but rather how to continue.
+Maeve
+I can't help but feel cheated...
+Corvan
+No point, what you learned was equally valuable - simply not for our current situation.
+Maeve
+Right, we should focus up.
+Corvan
+What a delightful treat to be able to speak on that to someone who understands. I've missed my time in Verroa dearly.
+Maeve
+But you wouldn't trade the adventure of it all?
+Corvan
+No, no I wouldn't... Let's get to it - we have a lot to learn.
+
+Corvan and Thae'Lanel
+Stage 1
+
+Thae'Lanel
+I am pleased to find one of your kind among our current travelling companions.
+Corvan
+The same goes to you, Thae'Lanel. The Exiled are a rare sight indeed - nowadays especially.
+Thae'Lanel
+We have built an incredible life for ourselves such that we need not lend our services as often.
+Corvan
+So I've read - tell me, how many of your people are contracted out at the moment?
+Thae'Lanel
+Even if I know, I would not tell you. I'm sure you understand that matters of Fauldaren's security are taken as carefully as possible.
+Corvan
+Of course, of course. My interest is purely academic, I assure you.
+Thae'Lanel
+Many of my people have found themselves dissected by interests 'purely academic'. I believe you, truly, but I am cautious nonetheless. That is my privilege and my curse.
+Corvan
+Fascinating the loyalty you feel to Fauldaren. You carry a great deal of responsibility with you as a representative to the world.
+Thae'Lanel
+Yes, I do. I have done so for a long, long time. I intend to continue doing so until I no longer can.
+Corvan
+How much of your income does Fauldaren keep?
+Thae'Lanel
+That... Is a question I can answer, for my answer is different from the other exiled.
+Thae'Lanel
+I keep none of my income, save for that which I require to sustain myself. When my trips are completed and I return home, I unload all of my earnings that I still retain.
+Corvan
+Incredible... How do you sustain yourself when you're home, then?
+Thae'Lanel
+I am... Of a certain... I am unsure how to explain. Things are different in Fauldaren - we do not have use for money quite as the other cultures of this world do.
+Corvan
+You share things freely?
+Thae'Lanel
+Not quite - we do have currency. I have earned such a rank among my people so that I am allowed what I need. If I head to the market and request something, it is simply given.
+Corvan
+Then you are royalty among your people?
+Thae'Lanel
+A funny thought, but no. I have spent centuries bringing prosperity to Fauldaren - at great risk to my personal safety.
+Corvan
+And so they respect that, and you are taken care of... The cultural unity is pleasing to hear of, I must admit.
+Thae'Lanel
+Mmm. It truly is, though as you know, it does not come free.
+Corvan
+Of course not...
+
+
+Stage 2
+
+Thae'Lanel
+Might I ask you of your home?
+Corvan
+Of course. I miss the Verroan mountains dearly.
+Thae'Lanel
+My apologies, I mean more of your childhood than the locale itself.
+Corvan
+Ah, but the two are linked in my mind. Asking of one brings visions of the other.
+Thae'Lanel
+Understandable, I suppose either is interesting enough, if not equal in my intent to reveal.
+Thae'Lanel
+I was curious about your customs regarding the visual arts. Many know of my people's appreciation for such things, but I've never heard the same said of the Moon Elves.
+Corvan
+An interesting question, if I do say so myself. I don't believe I've ever fielded a personal question about artistry.
+Corvan
+Moon Elves appreciate art, but my people have a singular focus. History is unyielding, and covers all subjects - this means that there are those among us whose priorities are cataloguing important art.
+Corvan
+My uncle, Cormac, was such an elf. His studies leaned towards the arts.
+Corvan
+But to my knowledge, not that he ever made much sense to me, he studied art in a purely historic fashion - he knew how to look for beauty and quality.
+Thae'Lanel
+But cared little for them save for their ability to help him catalogue?
+Corvan
+Precisely.
+Thae'Lanel
+I think that our peoples could learn a great deal from one another.
+Corvan
+I think we all know that and simply don't want to admit it.
+Thae'Lanel
+I'm not so sure that this realization is consistent. I have heard unkind words spoken of the Moon Elves too many times.
+Corvan
+Understanding and realization I have found come in different waves. They will understand one day.
+Thae'Lanel
+I hope so. I have a great deal of respect for you and your kind.
+Corvan
+And I for yours. The fear that the Exiled are treated with has always struck me as strange. Who are we to judge other people's culture, when our own has a myriad of concerns as well?
+Thae'Lanel
+It has taken me many years to come to terms with the revulsion I bring everywhere that I go. People are afraid of that which they do not understand.
+Thae'Lanel
+That is simple enough on its own, but they also fear that which is different from themselves. These two together brew a hatred that burns restlessly.
+Corvan
+Too true. You have a kind soul, Thae'Lanel. I hope you know that.
+Thae'Lanel
+Aleithos says the same...
+
+
+Stage 3
+
+Corvan
+You mentioned before that you have entered a soul anchor...
+Thae'Lanel
+Yes. This was not my first encounter with such a thing.
+Corvan
+You mentioned that it is forbidden to speak of. I would like to hear and record the story. I promise you that I will not allow its release until after you have passed.
+Thae'Lanel
+...
+Corvan
+I understand that I am asking something that goes against your code.
+Thae'Lanel
+No. I will do this. I have lived a thousand legendary moments, none of which have been recorded.
+Thae'Lanel
+This story deserves to be heard. Knowing that someone may draw courage from it in the future - that is enough to bypass my code.
+Corvan
+Please - go ahead.
+Thae'Lanel
+Nearly three centuries ago, I was contracted as a bodyguard for a powerful councilman in Naja - someone who had aggravated the wrong mystics.
+Thae'Lanel
+This man, who shall remain nameless, became my friend. We spent every waking moment together, as the threats to his safety were constant. He was the first outside of my home that I grew to respect.
+Thae'Lanel
+He taught me of the world, opened my eyes to the prejudice I saw other cultures with. He changed the course of my life, and in doing so saved the lives of many others.
+Thae'Lanel
+When the attack came, it was furious. I was yet to achieve the peak of my abilities, and could not hold them off. He was taken.
+Thae'Lanel
+The mystic who was after him had prolonged his life - much like I believe Akmenos had done - consuming souls of the wealthy.
+Thae'Lanel
+She had painted wealth as the peak of evil, and used that sentiment to feed an evil of her own. I would not allow my friend to suffer the same fate as his predecessors.
+Thae'Lanel
+I share a deep bond with my wife, Aleithos - one bound by the ancient magic of our blood. We can communicate over long distances, and she strengthens me in times of need.
+Thae'Lanel
+I gave chase to the mystic, who fled into the anchor. Still, I chased. I was consumed by the magic of the stone.
+Thae'Lanel
+Aleithos was my link to the mortal plane - with me as if there in body and soul. She linked our minds, and I believe our souls as well, in that moment.
+Thae'Lanel
+It gave me enough time to march to my friend, who I dragged out - ragged and out of his mind. We escaped the anchor, and he lived a long life. He never regained control of his mind.
+Thae'Lanel
+The power of my bond with Aleithos was all that allowed me to retain my sanity and mortality when I entered the anchor. I'm not sure that any other could have survived the power of the artifact.
+Thae'Lanel
+It was my proudest moment, when I found the will to sacrifice my own life to save a man who I owed nothing. I have tried to live up to it since.
+Corvan
+A beautiful story.
+Thae'Lanel
+One with a final note. When I returned to Fauldaren, I found Aleithos had slipped into a deep coma - awakening several weeks after my return.
+Thae'Lanel
+Even with a magic-strengthened bond and the most powerful blood on Terrazael, that anchor nearly killed both myself and Aleithos.
+Corvan
+Incredible... Are you alright?
+Thae'Lanel
+I am... saddened. Our bond is weakening as we age, and I travel further. We cannot commune as we once did. The lack of her presence now is like missing an arm.
+Corvan
+I'm so sorry...
+Thae'Lanel
+Don't be. We have lived four hundred beautiful years together. All things must end in time.
+Corvan
+You have lived a beautiful life.
+Thae'Lanel
+I have. I hope the same for you. I would call you friend.
+
+
+Corvan and Fenton
+
+Fenton
+Corvan! These bones are aching for a good song.
+Corvan
+Mm. I enjoy one myself, now and again.
+Fenton
+That was me making a request.
+Corvan
+Oh. You'll forgive me, but I don't sing.
+Fenton
+Don't sing? Irving said you were a historian!
+Corvan
+I am. I've devoted myself to the histories of the past, and hope to write one of our own time someday.
+Fenton
+Write? If my people wrote all their histories down, there'd not be a stone left on Etlan.
+Corvan
+Yes, well, perhaps that's why paper is my medium of choice.
+Fenton
+Leaflets are only good for blowing in the wind. If it's worth writing down, it should be written in stone.
+Corvan
+But as you've correctly pointed out, that would present a problem for long works like histories.
+Fenton
+That's why we sing ours. A book can be destroyed, or cast aside. But walk on the roads in Everhearth, and you'll hear the songs of our ancestors, whether you intend to or not.
+Corvan
+That sounds... intriguing. I might like to experience that myself, someday. Perhaps when we--
+Fenton
+I know a fair number of them myself. If you insist, I might be able to muster my strength, but you'd best make yourself comfortable. They're each of them quite long.
+Corvan
+Oh that's quite alright. I think I'll--
+Fenton
+Ahem-- Before the mountains rose up from the earth, when gemstones shone with none to judge their worth...
+
+
+Stage 2
+
+Fenton
+Ah, Corvan, there you are! You've such a natural gift for stealth, I'd have judged you were hiding from me if I didn't know you better.
+Corvan
+Hiding? How absurd... 
+Fenton
+Now I've had a mind to ask what you thought of that history I sang for you. Hoh, you should've seen yourself, must've drifted off a wee bit just at the end there. 
+Fenton
+You looked just like a dwarfling the morning after his nameday - conked out cold. I'd have asked what you thought then, but you looked as peaceful as a babe. I'd have hated to disturb you.
+Corvan
+Ah, yes, forgive me. If I recall, that was a long day.
+Fenton
+Not a problem. In fact, I'd say I'm warmed up. I can sing that last bit again if you fancy.
+Corvan
+Oh, that won't be necessary. Come to think of it, I think I remember it quite well. Yes, it was striking.
+Fenton
+Aye, wasn't it? Greatest  bit of the song, some say, and I might agree. Leads right up to the lords who rule over the great dwarven houses today.
+Corvan
+That is quite an extensive history. It's a wonder you remember it all.
+Fenton
+They're hard to escape back home.
+Corvan
+Do you suspect the songs have changed as they were handed down? Of course, new history is added, but what about the earlier lines? Have any bits of history become legend?
+Fenton
+Not in the slightest. The songs weren't meant to be sung alone. Each one has at least a dozen harmonies. When one dwarf strays from the lyrics, it's impossible not to notice.
+Corvan
+Fascinating.
+Fenton
+Don't you have any songs in the Expanse?
+Corvan
+We do, but not so much in the place of recorded histories. Though we do have some historical art. Poems mostly.
+Fenton
+I don't know that I've heard a poem.
+Corvan
+It's a kind of... hm. Somewhat difficult to describe actually. It's a type of artistic writing, where the words can rhyme, though they don't have to, and they're often spoken.
+Fenton
+Sounds like a song to me.
+Corvan
+Yes, it is rather like a song, although without notes.
+Fenton
+There doesn't seem much of a point in that.
+Corvan
+I should have something with me. Let me see... Here. A small collection of Moon Elf poetry. That should be well enough to get you started. 
+Fenton
+I'll have a look. Thank you, kindly.
+Corvan
+My pleasure.
+
+
+Stage 3
+
+Corvan
+So, Fenton, made any headway with that poetry collection?
+Fenton
+Aye, I've read it several times over. Noteless music... fascinating.
+Fenton
+In fact, I began to try my hand at a poem of my own. Though I'm not sure it's quite ready to be shared.
+Corvan
+Did you really? Well I'm not one to rush the creative process, but when the time is right, I'd be happy to offer my critique.
+Fenton
+Hah. Roguish as you are, Corvan, you're terrible at concealing your excitement. Since you insist, here's what I've got:
+Fenton
+There's an elf in a tree, writing on the leaves.
+Fenton
+And a dwarf run aground, draining taps in every town.
+Fenton
+We have lived to see strange times pass under the sun.
+Corvan
+...
+Fenton
+That's it.
+Corvan
+Ah. Not a bad start, Fenton, really! I'm impressed. I do wonder if--
+Fenton
+Agh, stop that. I know what you're thinking... 
+Fenton
+It would sound a lot better with notes.
+Corvan
+Well, actually--
+Fenton
+No need to honey coat it. It could use some more breadth to it as well. 
+Fenton
+They don't call me Fenton stone-browed for nothing. I've never backed down from  a challenge, and I won't start now.
+Fenton
+I'll stick with it, and maybe I'll scrape together something that could last us the road to the Voidmaws!
+Corvan
+That's quite a long road, Fenton. Perhaps you should pursue a more reasonable ambition for your first project.
+Fenton
+Corvan, Corvan. Never underestimate a dwarf!
+Corvan
+Hah. Yes, you're right. You've certainly taught me better than to do that.
+Fenton
+Aye. Very good. Now where was I? Under the sun... What rhymes with sun. Onion. Bunion. Hm... 
+
+
+Corvan and Liberty
+
+Liberty
+Corvan, come here for a moment.
+Corvan
+Is there something you need?
+Liberty
+Yes, now hush for a moment.
+Corvan
+...
+Corvan
+...
+Corvan
+Do you thi-
+Liberty
+Alright I've got it. I was trying to remember why you look so familiar.
+Corvan
+Here we go again...
+Liberty
+You're Cormac's kin, aren't you? I've always had a hard time telling you Moonies apart.
+Corvan
+Moonies... Cormac is my uncle. Have you spent much time around my kin?
+Liberty
+Not half as much as would be helpful, and twice as much as I'd like. There are usually a couple back in Chelebons at any given time.
+Corvan
+Of course, combing through the Order of Eternal's archives, no doubt.
+Liberty
+Combing through what we allow them to, at least.
+Corvan
+Naturally. Have you been through them yourself?
+Liberty
+Many times... I was more curious a child than I am an adult. 
+Liberty
+I read the ancient histories when I was barely a teenager. Now I wish I'd brought some of them with me to Etlan.
+Corvan
+I would give my right arm to get access to those archives.
+Liberty
+If you gave your right arm you wouldn't be able to write down what you found.
+Corvan
+Fair point. Left leg perhaps?
+
+
+Stage 2
+
+Liberty
+I have a hunch about Akmenos, but I need your honest opinion on something.
+Corvan
+Certainly, you know I never mince my words.
+Liberty
+Fair enough. What do you think the odds are that Cosmere university would grant full archival access to a non-master?
+Corvan
+None. They follow their laws as strictly as any place I've ever been, and the deep archives are known to be restricted as heavily as just about anything.
+Liberty
+Not even for an exceptional student? Or perhaps a very important politician in need of information?
+Corvan
+No, although it seems possible to me that they might fetch information for said person.
+Liberty
+No, this would require unadulterated access.
+Corvan
+What is the 'this' that you are referring to, exactly?
+Liberty
+The heist of the millennium.
+Corvan
+They would know if volumes were missing, they're painstakingly cared for.
+Liberty
+I'm not talking about the volumes.
+Corvan
+You're talking about the knowledge held within the volumes. Say it is a possibility, what then would they have taken?
+Liberty
+Obviously that's what I'm trying to figure out. There has never been any public research on the Aspects, so whoever is collecting them has privileged knowledge.
+Corvan
+Or no idea what they're doing.
+Liberty
+That seems unlikely, doesn't it?
+Corvan
+I think that in this unprecedented time, it is our obligation to consider the unlikely.
+Liberty
+You're making a good point here. So what if they really aren't in the know...
+
+
+Stage 3
+
+Liberty
+What do you know of the Astral Plane?
+Corvan
+Not half as much as I would like. Moon Elf culture often references its existence, but it's a boogeyman of sorts - I never suspected it existed in an interactable sense.
+Liberty
+Hah! I would never have expected you to deny such things.
+Corvan
+I think denial is a harsh term here - I never had much reason to think about it truthfully. I'd read of Astral Seekers and other travelers, but nothing more than that.
+Liberty
+Well, we better be sure we're leveraging all the information we have, what do you know of seekers?
+Corvan
+Classical knowledge would classify them as a myth, though we both know that is patently false.
+Corvan
+What I do know is that even in the most outrageous tale of a seeker, they never stay in the plane for long.
+Corvan
+In fact, we've already been in longer than I think I've ever heard of. All of us, together. There is no chance that that bodes well.
+Liberty
+It has to be the Aspects. How many are missing, hundreds? They amplify power, Corvan.
+Corvan
+Yes, it's the only explanation. I can't think of any way someone would be able to group them together. The astral energy would have to be deadly.
+Liberty
+Moon Elves are resistant to astral energy, are they not?
+Corvan
+A rumor, if you could even call it that. How could one plausibly or humanely test such a thing?
+Liberty
+Well, the Prodigy was an eclipse elf, was he not?
+Corvan
+He was, a rather famous case actually. Relationships with Sun and Moon elves are exceptionally rare - and progeny much more so.
+Liberty
+Do you think it's possible that his genetic composition makes him better suited to handling astral energy?
+Corvan
+Possible, but how would we ever find out?
+Liberty
+I think that, whatever is keeping us in the Astral Plane, we're likely to run into it soon.
+Corvan
+So, assume your hunch is correct. What does it do for us?
+Liberty
+Probably nothing, unfortunately. I'm just grasping at straws for anything that could possibly help.
+Corvan
+I know the feeling. We'll figure something out.
+Liberty
+Thank you for humoring me. Time will tell if it was worth anything...
+Corvan
+It always does, Liberty. It always does.
