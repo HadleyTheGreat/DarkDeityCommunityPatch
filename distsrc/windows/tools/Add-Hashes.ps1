@@ -2,24 +2,24 @@ param (
     [Parameter(Mandatory = $true)]
     [string]$Name,
     [Parameter(Mandatory = $true)]
-    [string]$d,
+    [string]$s,
     [Parameter(Mandatory = $true)]
-    [string]$s
+    [string]$d
 )
 
 # Define your file paths here
-$BeforeFile = Join-Path "$d" "data.win"
+$BeforeFile = Join-Path "$d" "$data.win" 
 $AfterFile  = Join-Path "$d" "patched.win"
-$CsvPath    = "$s"
+$CsvPath    = $s
 
-if (-not (Test-Path $BeforeFile)) {
-    Write-Error "File not found `"$BeforeFile`""
-    exit 1
+if (-not Test-Path $BeforeFile) {
+    Write-Error "File not found \"$BeforeFile\"
+    exit 1"
 }
 
-if (-not (Test-Path $AfterFile)) {
-    Write-Error "File not found `"$AfterFile`""
-    exit 1
+if (-not Test-Path $AfterFile) {
+    Write-Error "File not found \"$AfterFile\"
+    exit 1"
 }
 
 # Calculate SHA256 hashes (.Hash is always uppercase by default)

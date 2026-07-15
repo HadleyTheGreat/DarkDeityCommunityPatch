@@ -22,7 +22,7 @@
 		<Curl>curl.exe</Curl>
 		<LocalUtmtDir>$(ImportsDir)\utmt_cli</LocalUtmtDir>
 		<Utmt>$(LocalUtmtDir)\UndertaleModCli.exe</Utmt>
-		<BuildToolsDir>$(DistSrcDir)\windows\buildtools</BuildToolsDir>		
+		<BuildToolsDir>$(DistSrcDir)\windows\buildtools</BuildToolsDir>
 	</PropertyGroup>
 
 	<PropertyGroup
@@ -31,7 +31,7 @@
 		<Curl>curl</Curl>
 		<LocalUtmtDir>$(ImportsDir)\utmt_cli_linux</LocalUtmtDir>
 		<Utmt>$(LocalUtmtDir)\UndertaleModCli</Utmt>
-		<BuildToolsDir>$(DistSrcDir)\linux\buildtools</BuildToolsDir>	
+		<BuildToolsDir>$(DistSrcDir)\linux\buildtools</BuildToolsDir>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -39,11 +39,18 @@
 			Include="$(MSBuildProjectDirectory)\distsrc\**\*"
 			Exclude="$(MSBuildProjectDirectory)\distsrc\windows\**\*;$(MSBuildProjectDirectory)\distsrc\linux\**\*;$(MSBuildProjectDirectory)\distsrc\**\.gitignore" />
 
-		<DistWindowsSources 
-			Include="$(MSBuildProjectDirectory)\distsrc\windows\**\*" 
+		<DistWindowsSources
+			Include="$(MSBuildProjectDirectory)\distsrc\windows\**\*"
 			Exclude="$(MSBuildProjectDirectory)\distsrc\windows\**\.gitignore;$(MSBuildProjectDirectory)\distsrc\windows\buildtools\**\*" />
 
 		<DistSources Include="@(DistCommonSources);@(DistWindowsSources)" />
+		<Distro Include="Steam"/>
+		<Distro Include="GOG"/>
+		<Distro Include="Epic Games"/>
+
+		<CompatibleVersions
+			Include="$(MSBuildProjectDirectory)\images\GOG00;$(MSBuildProjectDirectory)\images\Steam;$(MSBuildProjectDirectory)\images\Epic Games">
+		</CompatibleVersions>
 	</ItemGroup>
 
 	<Target
@@ -106,27 +113,32 @@
 
 	<Target
 		Name="Dist"
-		DependsOnTargets="DistCreateFolders;DistCopySources;DistExtractImports;GeneratePostImage;GenerateHashFile">
+		DependsOnTargets="DistCreateFolders;DistCopySources;DistExtractImports;GenerateVersions">
+	</Target>
+
+	<Target
+		Name="Test"
+		DependsOnTargets="DistCreateFolders;DistCopySources;DistExtractImports;GenerateFakeVersions">
 	</Target>
 
 	<Target Name="DistClean">
 		<RemoveDir Directories="$(DistDir)"/>
 	</Target>
 
-	<Target 
-		Name="BeforeRelease" 
+	<Target
+		Name="BeforeRelease"
 		BeforeTargets="Release"
 		DependsOnTargets="LocateGameFolder">
 
 		<Delete Files="$(GameDir)\patched.win" />
 	</Target>
-	
+
 	<Target
 		Name="Release" DependsOnTargets="Dist;LocateGameFolder">
-	
+
 		<Delete Files="$(ReleaseZipFile)" />
 		<Delete Files="$(GameDir)\patched.win" />
-		
+
 		<RemoveDir Directories="$(DistDir)\originals"/>
 
 		<MakeDir Directories="$(ArtifactsDir)" />
@@ -193,12 +205,12 @@
 		BeforeTargets="GeneratePostImageWindows;GeneratePostImageLinux"
 		Condition="Exists('$(GameDir)\data.win.old')"
 		>
-		
-    	<Move 
-    		SourceFiles="$(GameDir)\data.win.old" 
-         	DestinationFiles="$(GameDir)\data.win" 
+
+		<Move
+    		SourceFiles="$(GameDir)\data.win.old"
+         	DestinationFiles="$(GameDir)\data.win"
           	OverwriteReadOnlyFiles="true" />
-    </Target>
+	</Target>
 
 	<Target
 		Name="GeneratePostImage"
@@ -242,6 +254,162 @@
 			Command='powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$(BuildToolsDir)\Generate-HashFile.ps1" "$(DistDir)/scripts"' />
 	</Target>
 
+	<PropertyGroup>
+		<GOGDir>C:\Program Files (x86)\GOG Galaxy\Games\Dark Deity Complete Edition</GOGDir>
+		<SteamDir>C:\Program Files (x86)\Steam\steamapps\common\Dark Deity</SteamDir>
+		<DataWin>$(GOGDir)\data.win</DataWin>
+		<PatchedWin>$(GOGDir)\patched.win</PatchedWin>
+		<DataWinSteam>$(SteamDir)\data.win</DataWinSteam>
+		<PatchedWinSteam>$(SteamDir)\patched.win</PatchedWinSteam>
+		<ScriptsDir>$(MSBuildProjectDirectory)\distsrc\scripts</ScriptsDir>
+		<Script1>$(ScriptsDir)\nongmlmods.csx</Script1>
+		<Script2>$(ScriptsDir)\scriptupdater.csx</Script2>
+		<HashesGOG>$(ArtifactsDir)\hashes_gog.csv</HashesGOG>
+		<HashesAll>$(DistDir)\scripts\versions.csv</HashesAll>
+		<HashesSteam>$(ArtifactsDir)\hashes_steam.csv</HashesSteam>
+		<BuildToolsDir>$(MSBuildProjectDirectory)\distsrc\windows\buildtools</BuildToolsDir>
+		<GenerateHashFile>$(BuildToolsDir)\Create-HashFile.ps1</GenerateHashFile>
+		<HashFileMerge>$(BuildToolsDir)\Merge-Csv.ps1</HashFileMerge>
+	</PropertyGroup>
+	
+	<ItemGroup>
+		<ScriptSources
+			Include="$(MSBuildProjectDirectory)\distsrc\scripts\*.gml;$(MSBuildProjectDirectory)\distsrc\scripts\*.csx"/>
+	</ItemGroup>
+
+	<Target
+		Name="GeneratePatchedGOG"
+		Inputs="$(DataWin);@(ScriptSources)"
+		Outputs="$(PatchedWin)">
+		<Exec
+			WorkingDirectory="$(DistDir)"
+			Command='"$(Utmt)" load "$(DataWin)" -s "$(Script1)" -s "$(Script2)" -o "$(PatchedWin)"'/>
+	</Target>
+
+	<Target
+		Name="GeneratePatchedSteam"
+		Inputs="$(DataWinSteam);@(ScriptSources)"
+		Outputs="$(PatchedWinSteam)">
+		<Exec
+			WorkingDirectory="$(DistDir)"
+			Command='"$(Utmt)" load "$(DataWinSteam)" -s "$(Script1)" -s "$(Script2)" -o "$(PatchedWinSteam)"'/>
+	</Target>
+
+	<Target
+		Name="BuildAllImages"
+		Inputs="$(MSBuildProjectDirectory\images\%(Distro.Identity)\data.win;@(ScriptSources)"
+		Outputs="$(MSBuildProjectDirectory\images\%(Distro.Identity)\patched.win">
+		<PropertyGroup>
+			<ImagesDir>$(MSBuildProjectDirectory)\images\%(Distro.Identity)</ImagesDir>
+			<UnpatchedData>$(ImagesDir)\data.win</UnpatchedData>
+			<PatchedData>$(ImagesDir)\patched.win</PatchedData>
+		</PropertyGroup>
+		<Exec
+			WorkingDirectory="$(DistDir)"
+			Command='"$(Utmt)" load "$(UnpatchedData)" -s "$(Script1)" -s "$(Script2)" -o "$(PatchedData)"'/>
+	</Target>		
+	
+	<Target
+		Name="GenerateAllHashes"
+		DependsOnTargets="BuildAllImages"
+		Inputs="$(MSBuildProjectDirectory)\images\%(Distro.Identity)\data.win;$(MSBuildProjectDirectory)\images\%(Distro.Identity)\patched.win"
+		Outputs="$(MSBuildProjectDirectory)\images\%(Distro.Identity)\hashes.csv">
+		<PropertyGroup>
+			<GenerateHashFile Condition="$([MSBuild]::IsOSPlatform('Linux'))">$(BuildToolsDir)\Generate-HashFile.sh</GenerateHashFile>
+			<GenerateHashFile Condition="$([MSBuild]::IsOSPlatform('Windows'))">$(BuildToolsDir)\Generate-HashFile.ps1</GenerateHashFile>
+			<ImagesDir>$(MSBuildProjectDirectory)\images\%(Distro.Identity)</ImagesDir>
+			<Unpatched>$(ImagesDir)\data.win</Unpatched>
+			<Patched>$(ImagesDir)\patched.win</Patched>
+			<HashFile>$(ImagesDir)\hashes.csv</HashFile>
+		</PropertyGroup>
+
+		<Delete Files="$(HashFile)" Condition="Exists('$(HashFile)')"/>
+		<Exec
+			Condition="$([MSBuild]::IsOSPlatform('Windows'))"
+			WorkingDirectory="$(DistDir)"
+			Command='powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$(GenerateHashFile)" "%(Distro.Identity)" -d "$(ImagesDir)" -s "$(HashFile)"'/>
+		<Exec
+			Condition="$([MSBuild]::IsOSPlatform('Linux'))"
+			WorkingDirectory="$(DistDir)"
+			Command='bash "$(GenerateHashFile)" "%(Distro.Identity)" -d "$(ImagesDir)" -s "$(HashFile)"'/>
+	</Target>
+
+	<Target
+		Name="GenerateVersions"
+		DependsOnTargets="GenerateAllHashes"
+		Inputs="@(Distro -> '$(MSBuildProjectDirectory)\images\%(Identity)\hashes.csv)')"
+		Outputs="$(ScriptsDir)\versions.csv">
+		
+		<Exec
+			Condition="$([MSBuild]::IsOSPlatform('Windows'))"
+			WorkingDirectory="$(DistDir)"
+			Command='powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$(BuildToolsDir)\Generate-Versions.ps1" "$(MSBuildProjectDirectory)\images" "$(DistDir)\scripts\versions.csv"'/>		
+	</Target>
+	
+	<Target
+		Name="GenerateFakeVersions">
+		<PropertyGroup>
+			<FileContent>"Name","BeforeHash","AfterHash"
+"Epic Games","77C9FEB80267D58CD8FBD41ECFB447376CE1A379EAB3F23E5A095D51E50B388D",""
+"GOG","753CD3DB8B572EADD3D6EEC196AD9E8FBCD1A6994CDB2E42895D81341076B92D",""
+"Steam","77C9FEB80267D58CD8FBD41ECFB447376CE1A379EAB3F23E5A095D51E50B388D",""</FileContent>
+		</PropertyGroup>
+
+		<Message
+			Text="Generating fake versions.csv file"
+			Importance="high" />
+		<WriteLinesToFile
+			File="$(DistDir)\scripts\versions.csv"	
+			Lines="$(FileContent)"
+			Overwrite="true"
+			Encoding="UTF-8" />
+	</Target>
+	
+	<Target
+		Name="GenerateHashGOG"
+		DependsOnTargets="GeneratePatchedGOG"
+		Inputs="$(GOGDir)\data.win;$(GOGDir)\patched.win"
+		Outputs="$(HashesGOG)">
+		<Delete Files="$(HashesGOG)" Condition="Exists('$(HashesGOG)')"/>
+		<Exec
+			Condition="$([MSBuild]::IsOSPlatform('Windows'))"
+			WorkingDirectory="$(DistDir)"
+			Command='powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$(GenerateHashFile)" "GOG Galaxy" -d "$(GOGDir)" -s "$(HashesGOG)"'/>
+		<Exec
+			Condition="$([MSBuild]::IsOSPlatform('Linux'))"
+			WorkingDirectory="$(DistDir)"
+			Command='bash "$(GenerateHashFile)" "GOG Galaxy" -d "$(GOGDir)" -s "$(HashesGOG)"'/>
+	</Target>
+
+	<Target
+		Name="GenerateHashSteam"
+		DependsOnTargets="GeneratePatchedSteam"
+		Inputs="$(SteamDir)\data.win;$(SteamDir)\patched.win"
+		Outputs="$(HashesSteam)">
+		
+		<Delete Files="$(HashesSteam)" Condition="Exists('$(HashesSteam)')"/>
+		<Exec
+			Condition="$([MSBuild]::IsOSPlatform('Windows'))"
+			WorkingDirectory="$(DistDir)"
+			Command='powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$(GenerateHashFile)" "Steam" -d "$(SteamDir)" -s "$(HashesSteam)'/>
+		<Exec
+			Condition="$([MSBuild]::IsOSPlatform('Linux'))"
+			WorkingDirectory="$(DistDir)"
+			Command='bash "$(GenerateHashFile)" "Steam" -d "$(SteamDir)" -s "$(HashesSteam)"'/>
+	</Target>
+
+
+	<Target
+		Name='WriteHashFile' 
+		Inputs="$(ArtifactsDir)\hashes_gog.csv;$(ArtifactsDir)\hashes_steam.csv"
+		Outputs="$(DistDir)\scripts\versions.csv"
+		DependsOnTargets="GenerateHashSteam;GenerateHashGOG">
+
+		<Exec
+			WorkingDirectory="$(DistDir)"
+			Command='powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$(HashFileMerge)" -sourceFolder "$(ArtifactsDir)" -outputFile "$(DistDir)\scripts\versions.csv"'/>
+	</Target>
+	
 	<Target
 		Name="GenerateHashFileLinux"
 		Condition="$([MSBuild]::IsOSPlatform('Linux'))"
