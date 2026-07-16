@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dark Deity Community Patch Installation</title>
+
+<style>
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 0 20px;
+    background: #f5f5f5;
+    color: #222;
+    line-height: 1.6;
+}
+
+h1 {
+    margin-bottom: 1rem;
+}
+
+ol {
+    padding-left: 1.5rem;
+}
+
+.code-block {
+    position: relative;
+    margin: 12px 0 24px;
+}
+
+pre {
+    margin: 0;
+    padding: 16px;
+    background: #1e1e1e;
+    color: #dcdcdc;
+    border-radius: 8px;
+    overflow-x: auto;
+    font-family: Consolas, Monaco, monospace;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.copy-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: #0078d4;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 6px 12px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.copy-btn:hover {
+    background: #005ea6;
+}
+
+.note {
+    margin: 6px 0 10px;
+    font-weight: bold;
+}
+</style>
+</head>
+
+<body>
+
+<h1>File Explorer Installation (Steam/Windows version)</h1>
+
+<h3>Install steps:</h3>
+
+<ol>
+
+<li>
+Download the latest Windows version of the the patch package from the bottom of the page at <a href="https://www.github.com/HadleyTheGreat/DarkDeityCommunityPatch/releases/latest">https://www.github.com/HadleyTheGreat/DarkDeityCommunityPatch/releases/latest</a> with your web-browser.
+</li>
+
+<li>
+In the Windows file explorer, locate the file you downloaded, right-click it then click on Extract All.  Extract it somewhere the user has read, write, and execute access, such as a subfolder of the Documents, Downloads, or Desktop folders.
+</li>
+
+<li>
+In the Windows file explorer, navigate into the folder that you extracted the files.
+</li>
+
+<li>
+Right-click on the file named APPLYPATCH.BAT (or just APPLYPATCH if you don't show file extensions) and select Open.  If you have default Windows security settings, Windows will warn you that you are about to execute a script file and ask you for permission.  You must grant it permissions to do the patch installation.
+</li>
+
+<li>
+Once the installation is complete, you will have no more need for the zip file you downloaded or the folder you extracted and you can safely delete them by right-clicking them in the file explorer and selecting Delete.
+</li>
+</ol>
+
+<script>
+document.querySelectorAll(".copy-btn").forEach(button => {
+    button.addEventListener("click", async () => {
+        const code = button.nextElementSibling.innerText;
+
+        try {
+            await navigator.clipboard.writeText(code);
+
+            const original = button.textContent;
+            button.textContent = "Copied!";
+            button.disabled = true;
+
+            setTimeout(() => {
+                button.textContent = original;
+                button.disabled = false;
+            }, 1500);
+        } catch (err) {
+            alert("Copy failed.");
+        }
+    });
+});
+</script>
+
+</body>
+</html>
