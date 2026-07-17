@@ -1,6 +1,8 @@
 @echo off
 setlocal enabledelayedexpansion
 
+for /F %%A in ('echo prompt $E^| cmd') do set "ESC=%%A"
+
 :: Get the directory where the script is located
 set "BASE_DIR=%~dp0..\"
 
@@ -9,7 +11,7 @@ if exist "%BASE_DIR%data.win" (
         echo --- Removing data.win ---
         del "%BASE_DIR%data.win"
         echo --- Renaming data.win.old to data.win ---
-        move "%BASE_DIR%patch\backup\data.win" "data.win"
+        move "%BASE_DIR%patch\backup\data.win" "%BASE_DIR%data.win"
     )
 
     echo --- Resstoring previous version files from backup ---
@@ -29,10 +31,11 @@ if exist "%BASE_DIR%data.win" (
         )
     )
     
+    cd /d "%BASE_DIR%"
     rmdir /s /q "%BASE_DIR%patch"
             
     :: ANSI escape sequences for green text work natively in Windows 10/11 CMD
-    echo [32mPatch has been successfully removed.[0m
+    echo %ESC%[32mPatch has been successfully removed.%ESC%[0m
     pause
     exit
 )
