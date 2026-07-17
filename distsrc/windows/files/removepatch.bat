@@ -5,17 +5,32 @@ setlocal enabledelayedexpansion
 set "BASE_DIR=%~dp0"
 
 if exist "%BASE_DIR%data.win" (
-    if exist "%BASE_DIR%data.win.old" (
+    if exist "%BASE_DIR%patch\backup\data.win" (
         echo --- Removing data.win ---
         del "%BASE_DIR%data.win"
         echo --- Renaming data.win.old to data.win ---
-        ren "%BASE_DIR%data.win.old" "data.win"
-    ) else (
-        echo There is no data.win.old file.
-        echo The patch appears to have been uinstalled already.
+        move "%BASE_DIR%patch\backup\data.win" "data.win"
     )
-    echo --- Cleaning up the removal script ---
-    del "%~f0"
+
+    echo --- Resstoring previous version files from backup ---
+    xcopy /e /y "%BASE_DIR%\patch\backup" "%BASE_DIR%"
+    
+    echo --- Deleting new files created by the patch ---
+    if exist "%BASE_DIR%patch\addedfiles.txt" (    
+        :: Added 'usebackq' here to read INSIDE the file, not the path string itself
+        for /f "usebackq delims=" %%a in ("%BASE_DIR%patch\addedfiles.txt") do (        
+            :: We check and delete relative to the game's base directory
+            if exist "%BASE_DIR%%%a" (
+                del /q "%BASE_DIR%%%a"
+                echo Deleted: %%a
+            ) else (
+                echo Not found: %%a
+            )
+        )
+    )
+    
+    rmdir /s /q "%BASE_DIR%patch"
+            
     :: ANSI escape sequences for green text work natively in Windows 10/11 CMD
     echo [32mPatch has been successfully removed.[0m
     pause
