@@ -14,6 +14,7 @@ $VERBOSE_OUTPUT = $false
 $APPID = "1374840"
 $GAME_DIR = ""
 $BACKUP_DIR = ""
+$PATCH_DIR = ""
 $ACTION = ""
 $OVERRIDE = $false
 $PROMPT = $false
@@ -109,137 +110,157 @@ function Find-GameDir {
 }
 
 function Install-FilesWithBackup {
-    $SourcePath = Join-Path $BASE_DIR files
-    $TargetDir = $GAME_DIR
-    $BackupDir = Join-Path $GAME_DIR "PatchBackup"
+    $SourceDir = Join-Path $BASE_DIR files
+    $addedFiles = Join-Path $PATCH_DIR "addedfiles.txt"
 
-    # Resolve paths to absolute paths so the script is highly reliable
-    #$SourcePath = Resolve-Path -Path $SourceDir -ErrorAction SilentlyContinue
-    #if (-not $SourcePath) {
-    #    Write-Error "Source directory '$SourceDir' does not exist."
-    #    return
-    #}
+    # Create patch directory if it doesn't exist
+    if (-not (Test-Path -Path $PATCH_DIR)) {
+        New-Item -ItemType Directory -Path $PATCH_DIR -Force | Out-Null
+    }
 
-    # Create Backup directory if it doesn't exist
-    if (-not (Test-Path -Path $BackupDir)) {
-        New-Item -ItemType Directory -Path $BackupDir -Force | Out-Null
+    # Create backup directory if it doesn't exist
+    if (-not (Test-Path -Path $BACKUP_DIR)) {
+        New-Item -ItemType Directory -Path $BACKUP_DIR -Force | Out-Null
     }
 
     # Get all files from the source directory
-    $files = Get-ChildItem -Path $SourcePath -File
+    $files = Get-ChildItem -Path $SourceDir -Name -Recurse -File
 
     if (-not $files) {
         Write-Host "No files found in source directory." -ForegroundColor Yellow
         return
     }
 
-    $addedFiles = Join-Path $BackupDir "addedfiles.txt"
-    Write-Host "ADDED_FILES = $addedFiles"
     foreach ($file in $files) {
-        $destinationPath = Join-Path -Path $TargetDir -ChildPath $file.Name
-        $backupPath = Join-Path -Path $BackupDir -ChildPath $file.Name
+        $destinationPath = Join-Path -Path $GAME_DIR -ChildPath $file
+        $backupPath = Join-Path -Path $BACKUP_DIR -ChildPath $file
+        $sourcePath = Join-Path -Path $SourceDir -ChildPath $file
 
         if (Test-Path -Path $destinationPath) {
-            # Is there already an earlier backup version of this file?
+        # Is there already an earlier backup version of this file?
             if (-not (Test-Path -Path $backupPath)) {
+                $folder = Split-Path -Path $backupPath -Parent
+                if (-not (Test-Path -Path $folder)) {
+                    New-Item -ItemType Directory -Path $folder -Force | Out-Null
+                }
+
+                if ($VERBOSE_OUTPUT) { Write-Output "$file" }           
                 # No earlier backup, so store this file as a backup
                 Move-Item -Path $destinationPath -Destination $backupPath
             }
         } else {
+            if ($VERBOSE_OUTPUT) { Write-Output "$file" }
             # Keep a list of files that have been added that didn't overwrite an existing file
             # This will be used to delete them later on an uninstall
-            Add-Content -Path $addedFiles -Value $file.Name
+            Add-Content -Path $addedFiles -Value $file
         }
 
-        # Step 2: Copy the source file to the target directory
-        Write-Host "Installing file '$($file.Name)'" -ForegroundColor Green
-        Copy-Item -Path $file.FullName -Destination $destinationPath -Force
+        # Copy the source file to the target directory
+        Copy-Item -Path $sourcePath -Destination $destinationPath -Force
     }
 }
 
 function Uninstall-FilesFromBackup {
-    param (
-        [Parameter(Mandatory = $false)]
-        [string]$BackupDir,
+    $VerbosePreference = 'Continue'
 
-        [Parameter(Mandatory = $false)]
-        [string]$TargetDir,
-
-        [Parameter(Mandatory = $false)]
-        [string]$FileListPath
-    )
-
+    # This function restores previously backed up files from $BACKUP_DIR to $GAME_DIR, recursively.  After that it, deletes files that were added to $GAME_DIR that were not present before the patch, then finally it removes $BACKUP_DIR.
     if (-not $GAME_DIR) {
         Write-Error "Game directory was unset"
         exit 1
     }
 
-    $BackupDir = Join-Path $GAME_DIR "PatchBackup"
-    $TargetDir = $GAME_DIR
-    $FileListPath = Join-Path $BackupDir "addedfiles.txt"
+    $addedFiles = Join-Path $PATCH_DIR "addedfiles.txt"
 
-    # --- Part 1: Copy files from Backups to Target ---
-    if (Test-Path -Path $BackupDir -PathType Container) {
-        Write-Verbose "Copying contents from '$BackupDir' to '$TargetDir'..."
-        $files2 = Get-ChildItem -Path $BackupDir -File | Where-Object Name -NotIn "addedfiles.txt"
-        $files2 | Get-ChildItem | Write-Host -ForegroundColor Cyan
-        $files2 |
-            Move-Item -Destination $TargetDir -Force
-        Write-Verbose "Copy operation completed."
+    # --- Restore files backed up in the backup directory ---
+    if (Test-Path -Path $BACKUP_DIR -PathType Container) {
+        Write-Output "--- Restoring previous version files from backup ---"
+        if ($VERBOSE_OUTPUT) { Write-Output "BACKUP_DIR = $BACKUP_DIR" }
+        $files2 = Get-ChildItem -Path $BACKUP_DIR -Name -Recurse -File
+        foreach ($file in $files2)
+        {
+            if ($VERBOSE_OUTPUT) { Write-Output "$file" }
+            Move-Item (Join-Path $BACKUP_DIR $file) (Join-Path $GAME_DIR $file) -Force
+        }
+
+        # Remove the backup folder now that all the files have been restored
+        Remove-Item -Path "$BACKUP_DIR" -Recurse -Force
     } else {
-        Write-Warning "Backups directory '$BackupDir' does not exist. Skipping copy."
+        if ($VERBOSE_OUTPUT) { Write-Output "Backup directory '$BACKUP_DIR' does not exist.  Nothing to restore there." }
     }
 
-    # --- Part 2: Read 'addedfiles.txt' and Delete specified files ---
-    if (Test-Path $FileListPath) {
-        Write-Verbose "Reading file deletion list from '$FileListPath'..."
+    # --- Read 'addedfiles.txt' and Delete the files that were added during install ---
+    Write-Output "--- Deleting new files added by the patch ---"
+    if (Test-Path $addedFiles) {
+        if ($VERBOSE_OUTPUT) { Write-Output "Reading file deletion list from '$addedFiles'..." }
             
         # Read lines, filtering out empty lines or spaces
-        $filesToDelete = Get-Content -Path $FileListPath | Where-Object { -not [string]::IsNullOrWhiteSpace($_) }
+        $filesToDelete = Get-Content -Path $addedFiles | Where-Object { -not [string]::IsNullOrWhiteSpace($_) }
 
         foreach ($file in $filesToDelete) {
             # Make path relative to target directory if it is not already an absolute path
-            if (-not [System.IO.Path]::IsPathRooted($file)) {
-                $file = Join-Path $TargetDir $file
-            }
-
-            if (Test-Path $file) {
-                Remove-Item -Path $file -Force
-                Write-Verbose "Deleted: $file"
+            if ([System.IO.Path]::IsPathRooted($file)) {
+                $fullPath = $file 
             } else {
-                Write-Verbose "Skipped (File not found): $file"
+                $fullPath = Join-Path $GAME_DIR $file
+            } 
+            
+
+            if (Test-Path $fullPath) {
+                Remove-Item -Path $fullPath -Force
+                if ($VERBOSE_OUTPUT) { Write-Output "Deleted: $file" }
+            } else {
+                if ($VERBOSE_OUTPUT) { Write-Output "Skipped (File not found): $file" }
             }
         }
     } else {
-        Write-Warning "File list '$FileListPath' not found. Skipping deletions."
+        if ($VERBOSE_OUTPUT) { Write-Output "File list '$addedFiles' not found. Skipping deletions." }
     }
+}
 
-    if (Test-Path -Path $BackupDir -PathType Container) {
-        Remove-Item -Path "$BackupDir" -Recurse -Force
+function Do-LegacyUninstall {
+    $oldFile = Join-Path $GAME_DIR "data.win.old"
+    $dataWin = Join-Path $GAME_DIR "data.win"
+    $removeScript = Join-Path $GAME_DIR "removepatch.bat" # Changed extension for Windows
+
+    if ((Test-Path $oldFile) -or (Test-Path $removeScript))
+    {        
+        # Remove or restore legacy files that might be present from earlier versions of the patch
+        Write-Output "--- Removing legacy install files ---"
+        if (Test-Path -Path $oldFile) { 
+            if ($VERBOSE_OUTPUT) { Write-Output "$oldFile" }
+            Remove-Item -Path $dataWin -Force
+            Move-Item -Path $oldFile -Destination $dataWin -Force        
+        }
+        if (Test-Path -Path $removeScript) { 
+            if ($VERBOSE_OUTPUT) { Write-Output "$removeScript" }                
+            Remove-Item -Path $removeScript -Force
+        }
     }
 }
 
 function Do-Uninstall {
-    $oldFile = Join-Path $GAME_DIR "data.win.old"
-    $currentFile = Join-Path $GAME_DIR "data.win"
-    $removeScript = Join-Path $GAME_DIR "removepatch.bat" # Changed extension for Windows
-
-    if (Test-Path -Path $oldFile -PathType Leaf) {
-        Write-Output "--- Uninstalling existing patch ---"
-        if (Test-Path -Path $currentFile) { Remove-Item -Path $currentFile -Force }
-        Move-Item -Path $oldFile -Destination $currentFile -Force
+    if (Test-Path $BACKUP_DIR) {
+        Uninstall-FilesFromBackup
     }
 
-    Uninstall-FilesFromBackup
+    # Once all the restore is done, remove the patch folder
+    if (Test-Path $PATCH_DIR -PathType Container) {
+        Write-Output "--- Removing patch folder ---"
+        Remove-Item $PATCH_DIR -Recurse -Force
+    }
+
+    Do-LegacyUninstall
 }
 
 function Do-Install {
     $currentFile = Join-Path $GAME_DIR "data.win"
-    $patchedFile = Join-Path $GAME_DIR "patched.win"
     $oldFile = Join-Path $GAME_DIR "data.win.old"
     $removePatch = Join-Path $GAME_DIR "removepatch.bat"
     
-    Write-Output "--- Building patched.win ---"
+    $filesDir = Join-Path $BASE_DIR "files"
+    $patchedFile = Join-Path $filesDir "data.win"
+
+    Write-Output "--- Rebuilding data.win ---"
     if (Test-Path -Path $patchedFile) { Remove-Item -Path $patchedFile -Force }
     
     $cliExe = Join-Path $BASE_DIR "utmt_cli" | Join-Path -ChildPath "UndertaleModCli.exe"
@@ -248,19 +269,8 @@ function Do-Install {
     
     # Execute UndertaleModCli
     & $cliExe load "$currentFile" -s "$script1" -s "$script2" -o "$patchedFile"
-    
-    Write-Output "--- Renaming data.win to data.win.old to save as a backup ---"
-    if (Test-Path -Path $oldFile) { Remove-Item -Path $oldFile -Force }
-    Move-Item -Path $currentFile -Destination $oldFile -Force
-    
-    Write-Output "--- Renaming patched.win to data.win ---"
-    Move-Item -Path $patchedFile -Destination $currentFile -Force
-    
-    Write-Output "--- Installing other files ---"
-    # Make sure removepatch.bat isn't left over from a previous install
-    if (Test-Path -Path $removePatch -PathType Leaf) {
-        Remove-Item $removePatch
-    }
+      
+    Write-Output "--- Installing patch files ---"
     Install-FilesWithBackup
 }
 
@@ -333,13 +343,16 @@ function Resolve-GameDir {
     }
     
     Write-Output "GAME_DIR = $script:GAME_DIR"
+    $script:PATCH_DIR = Join-Path $GAME_DIR "patch"
+    $script:BACKUP_DIR = Join-Path $PATCH_DIR "backup"
 }
 
 function Validate-PostHash {
     if ([string]::IsNullOrEmpty($postPatchHash) -or $OVERRIDE) {
 	    return
     }
-        
+    
+    Write-Output "--- Validating data.win ---"
     $currentFile = Join-Path $GAME_DIR "data.win"
     $currentHash = Get-Sha256Hash $currentFile
     if ($currentHash -eq $postPatchHash) {
@@ -365,6 +378,20 @@ function Get-InstallState {
         exit 1
     }
 
+    $dataWinOld = Join-Path $GAME_DIR "data.win.old"
+    if (Test-Path -Path $dataWinOld) {
+        # A patch is already installed, but it isn't this one
+        # Return 3: Old patch detected - Uninstall needed
+        return 3
+    }
+
+    $removePatch = Join-Path $GAME_DIR "removepatch.bat"
+    if (Test-Path -Path $removePatch) {
+        # A patch is already installed, but it isn't this one
+        # Return 3: Old patch detected - Uninstall needed
+        return 3
+    }
+
     $inputFile = Join-Path $GAME_DIR "data.win"
     $currentHash = Get-Sha256Hash $inputFile
     $match = Import-Csv -Path $hash_file | Where-Object { $_.AfterHash -eq $currentHash } | 
@@ -374,6 +401,12 @@ function Get-InstallState {
         return 1
     }
 
+    if (Test-Path -Path $PATCH_DIR) {
+        # A patch is already installed, but it isn't this one
+        # Return 3: Old patch detected - Uninstall needed
+        return 3
+    }
+
     $match = Import-Csv -Path $hash_file | Where-Object { $_.BeforeHash -eq $currentHash } | 
                 Select-Object -First 1
     if ($null -ne $match) {
@@ -381,87 +414,11 @@ function Get-InstallState {
         # The patch is not installed, but data.win is the right version to install on
         # Return 2: Do-Install OK
         return 2
-    } else {
-        # if the hash of data.win didn't match, see if there's a backup in data.win.old
-        $inputFile = Join-Path $GAME_DIR "data.win.old"
-        if (Test-Path -Path "$inputFile") {
-            # data.win.old exists so check its hash
-            $currentHash = Get-Sha256Hash $inputFile
-            $match = Import-Csv -Path "$hash_file" | Where-Object { $_.BeforeHash -eq $currentHash } |
-                        Select-Object -First 1
-            if ($null -ne $match) {
-                # The patch is not installed, but data.win.old is the right version to install on
-                # Return 3: Do-Install OK only after Do-Uninstall
-                $script:postPatchHash = $match.AfterHash
-                return 3
-            }
-        }
     }
 
-    # Neither data.win or data.win.old has the right pre-patch hash
+    # data.win does doesn't match any expected version
     # Return 0: Dark Deity version mismatch 
     return 0
-}
-
-function Validate-GameVersion {
-    # This function will only return if $GAME_DIR\data.win is a patchable version
-    # If the current version is already patched, it'll let the user know and exit the application.
-    # if the current version cannot be patched, it'll signal an error and exit the application
-    if (-not (Test-Path -Path "$SCRIPTS_DIR" -PathType Container)) {
-        Write-Error "Error: Scripts directory missing at`"$SCRIPTS_DIR`""
-        exit 1
-    }
-    
-    $hash_file = Join-Path $SCRIPTS_DIR "versions.csv"
-    if (-not (Test-Path -Path "$hash_file" -PathType Leaf)) {
-        Write-Error "Error: Versions file is missing at `"$hash_file`""
-        exit 1
-    }  
-    
-    $inputFile = Join-Path $GAME_DIR "data.win"
-    $currentHash = Get-Sha256Hash $inputFile
-    $match = Import-Csv -Path $hash_file | Where-Object { $_.AfterHash -eq $currentHash } | 
-                Select-Object -First 1
-    if ($null -ne $match) {
-        Write-Host "Patch is already installed. Nothing to do." -ForegroundColor Yellow
-        exit 0
-    }
-
-    $match = Import-Csv -Path $hash_file | Where-Object { $_.BeforeHash -eq $currentHash } | 
-                Select-Object -First 1
-    if ($null -ne $match) {
-        # if it found a hash matching one in the versions list then data.win can be patched
-        # Return value of 1 indicates data.win can be patched
-        $script:postPatchHash = $match.AfterHash
-        return
-    } else {
-        # if the hash of data.win didn't match, see if there's a backup in data.win.old
-        $inputFile = Join-Path $GAME_DIR "data.win.old"
-        if (Test-Path -Path "$inputFile") {
-            # data.win.old exists so check its hash
-            $currentHash = Get-Sha256Hash $inputFile
-            $match = Import-Csv -Path "$hash_file" | Where-Object { $_.BeforeHash -eq $currentHash } |
-                        Select-Object -First 1
-            if ($null -ne $match) {
-                # if the hash matched, then the validation has passed so we won't exit with an error
-                # Return value of 0 indicates data.win.old can be patched
-                # On a return value of 0, Do-Uninstall needs to be called to remove the previous Patch
-                # before Do-Install is called
-                $script:postPatchHash = $match.AfterHash
-                Do-Uninstall
-                return
-            }
-        }
-    }
-
-    if ($OVERRIDE -ne $true) {
-        Write-Error @"
-Error: Dark Deity version mismatch.
-This patch is only intended for version 1.58 of Dark Deity.
-You can use the --override command-line switch to override and install anyway.
-"@  
-        exit 1
-    }
 }
 
 function Get-Sha256Hash {
@@ -520,6 +477,18 @@ function PromptFor-Reinstall {
     $choice = $Host.UI.PromptForChoice($title, $message, $choices, $default)
     if ($choice -eq 0) {
         Do-Uninstall
+        $state = Get-InstallState
+        if ($state -eq 0) {
+            Write-Host "Error: Dark Deity version mismatch." -ForegroundColor Red
+            Write-Host "This patch is intended only for version 1.58 of Dark Deity."
+            exit 1
+        }
+        if ($state -ne 2)
+        {
+            Write-Host "Error: Previous patch removal resulted in an inconsistent state."
+            Write-Host "Please uninstall and reinstall Dark Deity or validate the integrity of the install."
+            exit 1
+        }
         Do-Install
         Validate-PostHash
         Write-Host "The patch installation was successful." -ForegroundColor Green
@@ -585,13 +554,13 @@ function Main-Process {
             $state = Get-InstallState
             switch ($state)
             {
-                # State 0: The game patch is not the right version, but the user can override install.
+                # State 0: The game patch is not the right version  The user can override install.
                 0 { PromptFor-OverrideInstall }                        
-                # State 1: The game patch is installed already.
+                # State 1: The game patch is installed already.  The user can uninstall.
                 1 { PromptFor-Uninstall }
-                # State 2: The game patch can be installed now.
+                # State 2: The game patch can be installed now.  The user can install.
                 2 { PromptFor-Install }
-                # State 3: The game patch can only be installed after the previous is uninstalled.
+                # State 3: The game patch can only be installed after the previous is uninstalled.  The user can reinstall.
                 3 { PromptFor-Reinstall }
             }
             exit 0
@@ -599,6 +568,10 @@ function Main-Process {
         "install" {
             Resolve-GameDir
             $state = Get-InstallState
+            if ($state -eq 3) {
+                Do-Uninstall
+                $state = Get-InstallState
+            }
             if ($state -eq 1) {
                 Write-Host "The patch is already installed.  Nothing to do." -ForegroundColor Yellow
                 exit 0
@@ -607,25 +580,36 @@ function Main-Process {
                 Write-Host "Dark Deity version mismatch.  Operation aborted." -ForegroundColor Red
                 exit 1
             }
-            if ($state -eq 3) {
-                Do-Uninstall
+            if ($state -eq 2) {
+                Do-Install
+                Validate-PostHash
+                Write-Host "The patch installation was successful." -ForegroundColor Green
+                exit 0
             }
-            Do-Install
-            Validate-PostHash
-            Write-Host "The patch installation was successful." -ForegroundColor Green
-            exit 0
         }
         "uninstall" {
             Resolve-GameDir
-            $oldFile = Join-Path $GAME_DIR "data.win.old"
-            if (-not (Test-Path -Path $oldFile -PathType Leaf)) {
-                Write-Output "Backup file `"data.win.old`" does not exist."
-                Write-Host "The patch is not installed.  Nothing to do." -ForegroundColor Yellow
-                exit 1
+            $state = Get-InstallState
+            switch ($state)
+            {
+                3 { 
+                    Do-Uninstall
+                    Write-Host "The patch was successfully uninstalled." -ForegroundColor Green
+                    exit 0                
+                }
+                2 {
+                    Write-Host "The patch is not currently installed, but this version is supported." -ForegroundColor Yellow
+                }
+                1 {
+                    Do-Uninstall
+                    Write-Host "The patch was successfully uninstalled." -ForegroundColor Green
+                    exit 0   
+                }
+                0 {
+                    Write-Host "The patch is not currently installed, but it is not intended for this version." -ForegroundColor Yellow
+                    exit 0
+                }
             }
-            Do-Uninstall
-            Write-Host "The patch was successfully uninstalled." -ForegroundColor Green
-            exit 0
         }
         "test" {
             Resolve-GameDir
@@ -708,7 +692,7 @@ function Parse-Params {
                 break
             }
             '^(-o|--override)$' {
-                $scrpit:OVERRIDE = $true
+                $script:OVERRIDE = $true
                 break
             }
             '^(-p|--prompt)$' {
