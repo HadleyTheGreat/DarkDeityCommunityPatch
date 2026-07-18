@@ -259,7 +259,7 @@ function Do-Install {
     $patchedData = Join-Path $BASE_DIR "files" | Join-Path -ChildPath "data.win"
  
     Write-Output "--- Rebuilding data.win ---"
-    if (Test-Path -Path $patchedFile) { Remove-Item -Path $patchedFile -Force }
+    if (Test-Path -Path $patchedData) { Remove-Item -Path $patchedData -Force }
     
     $cliExe = Join-Path $BASE_DIR "utmt_cli" | Join-Path -ChildPath "UndertaleModCli.exe"
     $script1 = Join-Path $BASE_DIR "scripts" | Join-Path -ChildPath "nongmlmods.csx"

@@ -3,7 +3,7 @@
 		<GameDir></GameDir>
 		<DistRoot>$(MSBuildProjectDirectory)\dist</DistRoot>
 		<DistDir>$(DistRoot)\windows</DistDir>
-		<ScriptsDir>$(DistDir)\scripts<ScriptsDir>
+		<ScriptsDir>$(DistDir)\scripts</ScriptsDir>
 		<ToolsDir>$(DistDir)\tools</ToolsDir>
 		<DistSrcDir>$(MSBuildProjectDirectory)\distsrc</DistSrcDir>
 		<ArtifactsDir>$(MSBuildProjectDirectory)\artifacts</ArtifactsDir>
@@ -203,7 +203,6 @@
 		<Script1>$(ScriptsDir)\nongmlmods.csx</Script1>
 		<Script2>$(ScriptsDir)\scriptupdater.csx</Script2>
 		<HashesAll>$(DistDir)\scripts\versions.csv</HashesAll>
-		<BuildToolsDir>$(MSBuildProjectDirectory)\distsrc\windows\buildtools</BuildToolsDir>
 	</PropertyGroup>
 	
 	<ItemGroup>

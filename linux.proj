@@ -201,7 +201,6 @@
 		<Script1>$(ScriptsDir)\nongmlmods.csx</Script1>
 		<Script2>$(ScriptsDir)\scriptupdater.csx</Script2>
 		<HashesAll>$(DistDir)\scripts\versions.csv</HashesAll>
-		<BuildToolsDir>$(MSBuildProjectDirectory)\distsrc\linux\buildtools</BuildToolsDir>
 	</PropertyGroup>
 
 	<Target
@@ -236,7 +235,7 @@
 		<Exec
 			Condition="$([MSBuild]::IsOSPlatform('Windows'))"
 			WorkingDirectory="$(DistDir)"
-			Command='powershell.exe -NoProfile -ExecutionPolicy Bypass -File -n "$(GenerateHashFile)" "%(Distro.Identity)" -d "$(ImagesDir)" -s "$(HashFile)"'/>
+			Command='powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$(GenerateHashFile)" -n "%(Distro.Identity)" -d "$(ImagesDir)" -s "$(HashFile)"'/>
 		<Exec
 			Condition="$([MSBuild]::IsOSPlatform('Linux'))"
 			WorkingDirectory="$(DistDir)"
