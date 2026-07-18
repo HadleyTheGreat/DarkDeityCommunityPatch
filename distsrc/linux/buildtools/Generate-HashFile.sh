@@ -1,43 +1,65 @@
 #!/bin/bash
 
-set -euo pipefail
+# Exit immediately if a command exits with a non-zero status
+set -e
 
-if [ "$#" -ne 1 ]; then
-    echo "Error: Missing argument."
-    echo "Usage: $0 {path to folder}"
+# Initialize variables
+NAME=""
+DIR=""
+CSV_PATH=""
+
+# Parse command line options
+while getopts "n:d:s:" opt; do
+  case ${opt} in
+    n ) NAME=$OPTARG ;;
+    d ) DIR=$OPTARG ;;
+    s ) CSV_PATH=$OPTARG ;;
+    \? ) 
+        echo "Usage: $0 -n Name -d Directory -s CsvPath" >&2
+        exit 1
+        ;;
+  esac
+done
+
+# Ensure all mandatory parameters are provided
+if [ -z "$NAME" ] || [ -z "$DIR" ] || [ -z "$CSV_PATH" ]; then
+    echo "Error: Missing mandatory parameters." >&2
+    echo "Usage: $0 -n Name -d Directory -s CsvPath" >&2
     exit 1
 fi
 
-TARGET_DIR="$1"
+# Define your file paths
+BEFORE_FILE="${DIR}/data.win"
+AFTER_FILE="${DIR}/patched.win"
 
-if [ ! -d "$TARGET_DIR" ]; then
-    echo "Error: '$TARGET_DIR' is not a valid directory."
+# Check if files exist
+if [ ! -f "$BEFORE_FILE" ]; then
+    echo "Error: File not found \"$BEFORE_FILE\"" >&2
     exit 1
 fi
 
-# Get the directory where the script is located
-BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-echo "BASE_DIR = $BASE_DIR"
-
-GAME_DIR=$($BASE_DIR/Get-SteamAppPath.sh 1374840)
-echo "GAME_DIR = $GAME_DIR"
-
-# Define paths (handling relative paths)
-CSV_PATH="$(realpath "$TARGET_DIR/hashes.csv")"
-
-# Ensure the destination directory for the CSV exists
-mkdir -p "$(dirname "$CSV_PATH")"
+if [ ! -f "$AFTER_FILE" ]; then
+    echo "Error: File not found \"$AFTER_FILE\"" >&2
+    exit 1
+fi
 
 # Calculate SHA256 hashes
-# 'sha256sum' outputs: "[hash] [file_path]". We use 'awk' to grab just the hash.
-PRE_PATCH=$(sha256sum "$GAME_DIR/data.win" | awk '{print $1}')
-POST_PATCH=$(sha256sum "$GAME_DIR/patched.win" | awk '{print $1}')
+# 'sha256sum' outputs lowercase hashes; we pipe to 'tr' to convert them to uppercase
+# and 'awk' to grab just the hash portion (ignoring the file name)
+BEFORE_HASH=$(sha256sum "$BEFORE_FILE" | awk '{print tolower($1)}')
+AFTER_HASH=$(sha256sum "$AFTER_FILE" | awk '{print tolower($1)}')
 
-# Write to CSV format (sorted alphabetically by key: postPatch then prePatch)
-{
-    echo '"id","sha256hash"'
-    echo "\"postPatch\",\"$POST_PATCH\""
-    echo "\"prePatch\",\"$PRE_PATCH\""
-} > "$CSV_PATH"
+# Format CSV line (handling quoting in case Name contains spaces or special characters)
+# We replace any internal quotes in NAME with double-quotes to conform to CSV standards
+SAFE_NAME=$(echo "$NAME" | sed 's/"/""/g')
+CSV_ROW="\"$SAFE_NAME\",\"$BEFORE_HASH\",\"$AFTER_HASH\""
 
-echo "Hashes successfully written to $CSV_PATH"
+# Create CSV header if the file doesn't exist yet
+if [ ! -f "$CSV_PATH" ]; then
+    echo '"Name","BeforeHash","AfterHash"' > "$CSV_PATH"
+fi
+
+# Append the row to the CSV
+echo "$CSV_ROW" >> "$CSV_PATH"
+
+echo "Successfully logged hashes for '$NAME' to $CSV_PATH"

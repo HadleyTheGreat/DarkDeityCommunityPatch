@@ -217,6 +217,8 @@ function Uninstall-FilesFromBackup {
     }
 }
 
+
+
 function Do-LegacyUninstall {
     $oldFile = Join-Path $GAME_DIR "data.win.old"
     $dataWin = Join-Path $GAME_DIR "data.win"
@@ -243,7 +245,7 @@ function Do-Uninstall {
         Uninstall-FilesFromBackup
     }
 
-    # Once all the restore is done, remove the patch folder
+    # Once the restore is done, remove the patch folder
     if (Test-Path $PATCH_DIR -PathType Container) {
         Write-Output "--- Removing patch folder ---"
         Remove-Item $PATCH_DIR -Recurse -Force
@@ -253,13 +255,9 @@ function Do-Uninstall {
 }
 
 function Do-Install {
-    $currentFile = Join-Path $GAME_DIR "data.win"
-    $oldFile = Join-Path $GAME_DIR "data.win.old"
-    $removePatch = Join-Path $GAME_DIR "removepatch.bat"
-    
-    $filesDir = Join-Path $BASE_DIR "files"
-    $patchedFile = Join-Path $filesDir "data.win"
-
+    $unpatchedData = Join-Path $GAME_DIR "data.win"
+    $patchedData = Join-Path $BASE_DIR "files" | Join-Path -ChildPath "data.win"
+ 
     Write-Output "--- Rebuilding data.win ---"
     if (Test-Path -Path $patchedFile) { Remove-Item -Path $patchedFile -Force }
     
@@ -268,7 +266,7 @@ function Do-Install {
     $script2 = Join-Path $BASE_DIR "tools" | Join-Path -ChildPath "scriptupdater.csx"
     
     # Execute UndertaleModCli
-    & $cliExe load "$currentFile" -s "$script1" -s "$script2" -o "$patchedFile"
+    & $cliExe load "$unpatchedData" -s "$script1" -s "$script2" -o "$patchedData"
       
     Write-Output "--- Installing patch files ---"
     Install-FilesWithBackup

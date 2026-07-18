@@ -1,85 +1,120 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
-# Exit immediately if a command exits with a non-zero status,
-# treat unset variables as an error, and catch pipeline failures.
+################################################################################
+# Dark Deity Community Patch installation and removal tool for Linux.
+################################################################################
+
+# Enforce strict error handling
 set -euo pipefail
 
 # Script global variables
 SCRIPT_NAME=$(basename "$0")
 VERSION="3.0.0"
-VERBOSE=false
+VERBOSE_OUTPUT=false
 APPID="1374840"
 GAME_DIR=""
+BACKUP_DIR=""
+PATCH_DIR=""
 ACTION=""
 OVERRIDE=false
+PROMPT=false
 
 # Get the directory where the script is located
 BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-
 SCRIPTS_DIR="$BASE_DIR/scripts"
 
-# Default install locations for Steam
+# Default Steam locations on Linux
 STEAM_ROOTS=(
-    "$HOME/.local/share/Steam"
     "$HOME/.steam/steam"
+    "$HOME/.steam/root"
+    "$HOME/.local/share/Steam"
 )
 
-load_hashes() {
-	if [[ ! -d "$SCRIPTS_DIR" ]]; then
-    	echo "Error: \"$SCRIPTS_DIR\" directory not found."
-    	exit 1
-	fi
-	
-	local hash_file="$SCRIPTS_DIR/hashes.csv"
-	if [[ ! -f "$hash_file" ]]; then
-		prePatchHash=""
-		postPatchHash=""
-    	echo "Hash file not present.  Version validation will be skipped." >&2
-	else
-		# Read hashes from CSV
-		prePatchHash=$(awk -F'"' '$2=="prePatch" {print $4}' "$hash_file")
-		postPatchHash=$(awk -F'"' '$2=="postPatch" {print $4}' "$hash_file")
-	fi
-}
+# Global hash variables
+prePatchHash=""
+postPatchHash=""
 
-# Display usage instructions
-usage() {
+# Initialize color variables as empty strings (fallback for no color)
+RED=""
+GREEN=""
+YELLOW=""
+BLUE=""
+C5=""
+C6=""
+C7=""
+NC="" # No Color (Reset)
+
+# 1. Check if stdout is a terminal (not a file or pipe)
+# 2. Check if the terminal supports at least 8 colors
+if [[ -t 1 ]] && tput colors &>/dev/null && [[ "$(tput colors)" -ge 8 ]]; then
+    # Terminal supports color! Define the ANSI sequences.
+    RED="$(tput setaf 1)"
+    GREEN="$(tput setaf 2)"
+    YELLOW="$(tput setaf 3)"
+    BLUE="$(tput setaf 4)"
+    C5="$(tput setaf 5)"
+    C6="$(tput setaf 6)"
+    C7="$(tput setaf 7)"
+    NC="$(tput sgr0)"
+fi
+
+
+################################################################################
+# Function: Show-Usage
+# Display usage information
+################################################################################
+show_usage() {
     cat << EOF
 Dark Deity Community Patch installation and removal tool for Linux
 
-This patch should support SteamOS, Ubuntu, and most other x86-based 
-Linux distributions.  The patch is for Dark Deity version 1.5.8.
+This patch is for Dark Deity version 1.58 on x86-based Windows or Linux platforms.
 
 Usage: 
-  ./${SCRIPT_NAME} COMMAND [FLAGS] [directory]
-COMMAND can be one of
-  -h, -?, --help  Show this help	
+  ./$SCRIPT_NAME COMMAND [flags] [directory]
+
+COMMAND can be one of:
+  -h, -?, --help  Show this help    
   -i, --install   Install the patch
   -u, --uninstall Uninstall the patch
+  -a, --auto      Install the patch or prompt the user to remove it
   -c, --hash      Calculate the hash of data.win and data.win.old if it exists
-FLAGS can be one or more of
-  -o, --override    Ignore pre-patch validation failures and patch anyway
-	
-[directory] optionally specifies the directory of the Dark Deity executable 
+
+Optional flags can be:
+  -o, --override  Ignore version mismatch and attempt to patch anyway
+  -p, --prompt    Show a GUI prompt to select the Dark Deity directory.
+  -v, --verbose   Show verbose output
+
+If directory is omitted, the Steam version of the game will be located automatically.
+For non-Steam versions, use the -p flag or specify the directory on the command-line.
 
 Examples:
-./${SCRIPT_NAME} -i
-./${SCRIPT_NAME} -i "$HOME/.steam/steam/steamapps/common/Dark Deity"
-./${SCRIPT_NAME} -u ~/.steam/steam/steamapps/common/"Dark Deity"
-./${SCRIPT_NAME} --hash "/usr/games/Dark Deity"
+  ./$SCRIPT_NAME -i
+  ./$SCRIPT_NAME -i -p
+  ./$SCRIPT_NAME -i "$HOME/.local/share/Steam/steamapps/common/Dark Deity"
+  ./$SCRIPT_NAME -u "$HOME/Games/Dark Deity Complete Edition"
+  ./$SCRIPT_NAME --hash "$HOME/.local/share/Steam/steamapps/common/Dark Deity"
 EOF
 }
 
-find_libraryfolders_vdf() {
+################################################################################
+# Function: find_library_folders_vdf
+# Find the libraryfolders.vdf file in Steam directories
+################################################################################
+find_library_folders_vdf() {
     for root in "${STEAM_ROOTS[@]}"; do
-        if [[ -f "$root/steamapps/libraryfolders.vdf" ]]; then
-            echo "$root/steamapps/libraryfolders.vdf"
+        local vdf_path="$root/steamapps/libraryfolders.vdf"
+        if [[ -f "$vdf_path" ]]; then
+            echo "$vdf_path"
             return 0
         fi
     done
     return 1
 }
 
+################################################################################
+# Function: get_library_paths
+# Extract library paths from libraryfolders.vdf
+################################################################################
 get_library_paths() {
     local vdf="$1"
 
@@ -89,11 +124,15 @@ get_library_paths() {
     sed 's#\\\\#/#g'
 }
 
+################################################################################
+# Function: find_game_dir
+# Find the Dark Deity installation directory using Steam metadata
+################################################################################
 find_game_dir() {
     local appid="$1"
     local vdf
 
-    vdf=$(find_libraryfolders_vdf) || {
+    vdf=$(find_library_folders_vdf) || {
         echo "Steam libraryfolders.vdf not found" >&2
         return 1
     }
@@ -117,264 +156,654 @@ find_game_dir() {
     return 1
 }
 
+################################################################################
+# Function: install_files_with_backup
+# Install patch files with backup of original files
+################################################################################
+install_files_with_backup() {
+    local source_dir="$BASE_DIR/files"
+    local added_files="$PATCH_DIR/addedfiles.txt"
+    
+    # Check source directory FIRST before creating folders or writing files
+    if [[ ! -d "$source_dir" ]]; then
+        echo "Error: No files found in source directory." >&2
+        exit 1 
+    fi
+    
+    mkdir -p "$PATCH_DIR"
+    mkdir -p "$BACKUP_DIR"
+    : > "$added_files"    
+    
+    # Process substitution prevents subshell side-effects
+    while read -r source_path; do
+        local rel_path="${source_path#$source_dir/}"
+        local destination_path="$GAME_DIR/$rel_path"
+        local backup_path="$BACKUP_DIR/$rel_path"
+        
+        mkdir -p "$(dirname "$destination_path")"
+        
+        if [[ -f "$destination_path" ]]; then
+            if [[ ! -f "$backup_path" ]]; then
+                mkdir -p "$(dirname "$backup_path")"
+                if [[ "$VERBOSE_OUTPUT" == "true" ]]; then echo "Backing up: $rel_path"; fi
+                mv "$destination_path" "$backup_path"
+            fi
+        else
+            if [[ "$VERBOSE_OUTPUT" == "true" ]]; then echo "Adding: $rel_path"; fi
+            echo "$rel_path" >> "$added_files"
+        fi
+        
+        cp "$source_path" "$destination_path"
+    done < <(find "$source_dir" -type f | sort)
+}
+
+################################################################################
+# Function: uninstall_files_from_backup
+# Restore backed up files and remove added files
+################################################################################
+uninstall_files_from_backup() {
+    if [[ -z "$GAME_DIR" ]]; then
+        echo "Error: Game directory was unset" >&2
+        return 1
+    fi
+    
+    local added_files="$PATCH_DIR/addedfiles.txt"
+    
+    # --- Restore files backed up in the backup directory ---
+    if [[ -d "$BACKUP_DIR" ]]; then
+        echo "--- Restoring previous version files from backup ---"
+        if [[ "$VERBOSE_OUTPUT" == "true" ]]; then echo "BACKUP_DIR = $BACKUP_DIR"; fi
+        
+        find "$BACKUP_DIR" -type f | while read -r backup_file; do
+            local rel_path="${backup_file#$BACKUP_DIR/}"
+            local target_path="$GAME_DIR/$rel_path"
+            
+            if [[ "$VERBOSE_OUTPUT" == "true" ]]; then echo "Restoring: $rel_path"; fi
+            mkdir -p "$(dirname "$target_path")"
+            mv "$backup_file" "$target_path"
+        done
+        
+        # Remove the backup folder safely
+        rm -rf "${BACKUP_DIR:?}"
+    else
+        if [[ "$VERBOSE_OUTPUT" == "true" ]]; then echo "Backup directory '$BACKUP_DIR' does not exist. Nothing to restore there."; fi
+    fi
+    
+    # --- Read 'addedfiles.txt' and delete the files that were added during install ---
+    echo "--- Deleting new files added by the patch ---"
+    if [[ -f "$added_files" ]]; then
+        if [[ "$VERBOSE_OUTPUT" == "true" ]]; then echo "Reading file deletion list from '$added_files'..."; fi
+        
+        # Read lines, filtering out empty lines
+        while IFS= read -r file; do
+            if [[ -z "$file" || "$file" =~ ^[[:space:]]*$ ]]; then continue; fi
+            
+            local full_path
+            if [[ "$file" = /* ]]; then
+                full_path="$file"
+            else
+                full_path="$GAME_DIR/$file"
+            fi
+            
+            if [[ -f "$full_path" ]]; then
+                rm -f "$full_path"
+                if [[ "$VERBOSE_OUTPUT" == "true" ]]; then echo "Deleted: $file"; fi
+            else
+                if [[ "$VERBOSE_OUTPUT" == "true" ]]; then echo "Skipped (File not found): $file"; fi
+            fi
+        done < "$added_files"
+    else
+        if [[ "$VERBOSE_OUTPUT" == "true" ]]; then echo "File list '$added_files' not found. Skipping deletions."; fi
+    fi
+}
+
+################################################################################
+# Function: do_legacy_uninstall
+# Remove legacy patch files from previous versions
+################################################################################
+do_legacy_uninstall() {
+    local old_file="$GAME_DIR/data.win.old"
+    local data_win="$GAME_DIR/data.win"
+    local remove_script="$GAME_DIR/removepatch.sh"
+    
+    if [[ -f "$old_file" ]] || [[ -f "$remove_script" ]]; then
+        echo "--- Removing legacy install files ---"
+        
+        if [[ -f "$old_file" ]]; then
+            if [[ "$VERBOSE_OUTPUT" == "true" ]]; then echo "Removing: $old_file"; fi
+            rm -f "$data_win"
+            mv "$old_file" "$data_win"
+        fi
+        
+        if [[ -f "$remove_script" ]]; then
+            if [[ "$VERBOSE_OUTPUT" == "true" ]]; then echo "Removing: $remove_script"; fi
+            rm -f "$remove_script"
+        fi
+    fi
+}
+
+################################################################################
+# Function: do_uninstall
+# Perform complete uninstallation
+################################################################################
 do_uninstall() {
-    if [[ -f "${GAME_DIR}/data.win.old" ]]; then
-        echo "--- Uninstalling existing patch ---"
-        rm -f "${GAME_DIR}/data.win"
-        mv "${GAME_DIR}/data.win.old" "${GAME_DIR}/data.win"
-     	if [[ -f "$GAME_DIR/removepatch.sh" ]]; then
-    		rm "$GAME_DIR/removepatch.sh"
-    	fi
-   	fi
+    if [[ -d "$BACKUP_DIR" ]]; then
+        uninstall_files_from_backup
+    fi
+    
+    # Remove the patch folder safely
+    if [[ -d "$PATCH_DIR" ]]; then
+        echo "--- Removing patch folder ---"
+        rm -rf "${PATCH_DIR:?}"
+    fi
+    
+    do_legacy_uninstall
 }
 
+################################################################################
+# Function: do_install
+# Perform complete installation
+################################################################################
 do_install() {
-    echo "--- Building patched.win ---"
-    rm -f "$GAME_DIR/patched.win"
-    $BASE_DIR/utmt_cli/UndertaleModCli load "$GAME_DIR/data.win" -s "$BASE_DIR/scripts/nongmlmods.csx" -s "$BASE_DIR/tools/scriptupdater.csx" -o "${GAME_DIR}/patched.win"
-    echo "--- Renaming data.win to data.win.old to save as a backup ---"
-    rm -f "$GAME_DIR/data.win.old"
-    mv "$GAME_DIR/data.win" "$GAME_DIR/data.win.old"
-    echo "--- Renaming patched.win to data.win ---"
-    mv "$GAME_DIR/patched.win" "$GAME_DIR/data.win"	
-    cp "$BASE_DIR/tools/removepatch.sh" "$GAME_DIR/removepatch.sh"              
+    local unpatched_data="$GAME_DIR/data.win"
+    local patched_data="$BASE_DIR/files/data.win"
+    
+    echo "--- Rebuilding data.win ---"
+    [[ -f "$patched_data" ]] && rm -f "$patched_data"
+    
+    local utmt_cli="$BASE_DIR/utmt_cli/UndertaleModCli"
+    local script1="$BASE_DIR/scripts/nongmlmods.csx"
+    local script2="$BASE_DIR/tools/scriptupdater.csx"
+    
+    # Execute UndertaleModCli safely with error handling
+    if ! "$utmt_cli" load "$unpatched_data" -s "$script1" -s "$script2" -o "$patched_data"; then
+        echo "Error: UndertaleModCli failed execution." >&2
+        return 1
+    fi
+    
+    echo "--- Installing patch files ---"
+    install_files_with_backup
 }
 
+################################################################################
+# Function: do_version
+# Display script version
+################################################################################
 do_version() {
     echo "$VERSION"
 }
 
+################################################################################
+# Function: do_hash
+# Calculate SHA256 hash of data.win files
+################################################################################
 do_hash() {
-	if [[ ! -f "$GAME_DIR/data.win" ]]; then
-		echo "Error: Couldn't find file \"$GAME_DIR/data.win\""
-		return 1
-	fi
-    local currentHash=$(get_sha256_hash "$GAME_DIR/data.win")
-    echo "data.win: $currentHash"
+    local current_file="$GAME_DIR/data.win"
+    local old_file="$GAME_DIR/data.win.old"
     
-	if [[ -f "$GAME_DIR/data.win.old" ]]; then		
-    	local backupHash=$(get_sha256_hash "$GAME_DIR/data.win.old")
-    	echo "data.win.old: $backupHash"
+    if [[ ! -f "$current_file" ]]; then
+        echo "Error: Couldn't find file \"$current_file\"" >&2
+        return 1
+    fi
+    
+    local current_hash
+    current_hash=$(sha256sum "$current_file" | awk '{print $1}')
+    echo "data.win: $current_hash"
+    
+    if [[ -f "$old_file" ]]; then
+        local backup_hash
+        backup_hash=$(sha256sum "$old_file" | awk '{print $1}')
+        echo "data.win.old: $backup_hash"
     fi
 }
 
-validate_gamedir() {
-    if [[ -z "$GAME_DIR" ]]; then
-        if ! GAME_DIR=$(find_game_dir "$APPID"); then
-             cat << EOF >&2
-Error: Failed to automatically locate the Dark Deity install folder.
-If you can locate the directory, you can specify it manually.
-Examples:
-    ${SCRIPT_NAME} -i "$HOME/.steam/steam/steamapps/common/Dark Deity"
-    ${SCRIPT_NAME} -u "/usr/games/steam/steamapps/common/Dark Deity"
-EOF
-            return 1
-        fi    
+################################################################################
+# Function: prompt_for_game_dir
+# Show a GUI prompt to select game directory
+################################################################################
+prompt_for_game_dir() {
+    local mydir
+    
+    # Try zenity first (GNOME), then kdialog (KDE)
+    if command -v zenity &> /dev/null; then
+    	selected=$(zenity \
+    		--file-selection \
+    		--title="Please locate the Dark Deity executable" \
+    		--filename="$HOME/Desktop/" 2>/dev/null) || return 1
+    elif command -v kdialog &> /dev/null; then
+		selected=$(kdialog \
+    		--getopenfilename "$HOME/Desktop/" \
+    		--title="Please locate the Dark Deity executable" 2>/dev/null) || return 1
+    else
+        echo "Error: No GUI dialog tool found (zenity or kdialog required)" >&2
+        return 1
     fi
     
-    if [[ ! -f "$GAME_DIR/data.win" ]]; then
-        echo "Error: file not found \"$GAME_DIR/data.win\""
-        return 1
+    mydir=$(dirname -- "$selected")
+    echo "$mydir"
+}
+
+################################################################################
+# Function: resolve_game_dir
+# Resolve the game directory from various sources
+################################################################################
+resolve_game_dir() {
+    if [[ "$PROMPT" == "true" ]]; then
+        if ! GAME_DIR=$(prompt_for_game_dir); then
+            echo "Prompt for game directory was cancelled. Operation aborted."
+            return 1
+        fi
+    elif [[ -z "$GAME_DIR" ]]; then
+        if ! GAME_DIR=$(find_game_dir "$APPID"); then
+            echo "Error: Failed to automatically locate the Dark Deity install folder."
+            echo "Please specify the install folder on the command-line."
+            echo "Examples:" >&2
+            echo "    ./$SCRIPT_NAME -i \"\$HOME/.local/share/Steam/steamapps/common/Dark Deity\""
+            echo "    ./$SCRIPT_NAME -i \"\$HOME/Games/Dark Deity\""
+            return 1
+        fi
     fi
     
     echo "GAME_DIR = $GAME_DIR"
-}
-
-validate_prehash() {
-	# If there's no hash to check against, then validation always succeeds
-    if [[ -z "$prePatchHash" ]]; then
-    	return 0
-    fi
-    
-    # If data.win already matches the post hash then the patch is already installed
-    local currentHash=$(get_sha256_hash "$GAME_DIR/data.win")
-    if [[ "$currentHash" = "$postPatchHash" ]]; then
-        echo "Patch was already installed.  Nothing to do."
-        exit 0
-    fi
-	
-	# If the data.win matches the pre-hash then we're ready to patch
-    if [[ "$currentHash" = "$prePatchHash" ]]; then
-        return 0
-    fi
-    
-    # If the data.win file didn't have the right starting hash, check data.old.win
-    local backupHash=""
-    if [[ -f "$GAME_DIR/data.win.old" ]]; then
-        backupHash=$(get_sha256_hash "$GAME_DIR/data.win.old")
-    fi
-
-    if [[ "$backupHash" = "$prePatchHash" ]]; then
-        # if data.old.win is the right version, then run do_uninstall to restore data.win 
-        # from it before starting the patch process
-        do_uninstall
-        return 0
-    fi
-
-	# Normally validation should fail here, but if the user wants to override validation then just allow patching data.win anyway, even though its not the version the patch was designed for.
-    if [[ $OVERRIDE = true ]]; then
-    	return 0
-   	fi
-        	
-    # Neither data.win nor data.win.old is the right version and the user doesn't want to override, so the patch can't be applied.  Give some info and signal failure.
-    echo "Expected pre-patch hash:  $prePatchHash"
-    echo "Expected post-patch hash: $postPatchHash"
-    echo "data.win hash:            $currentHash"
-    if [[ -n "$backupHash" ]]; then
-        echo "data.win.old hash:    $backupHash"
-    fi
-    echo "Error: Dark Deity version mismatch."
-    echo "You can use the --override switch to force it to be applied."
-    return 1
-}
-
-validate_posthash() {
-	# If there's no hash or it is being overridden, then validation always succeeds
-    if [[ -z "$postPatchHash" || $OVERRIDE = true ]]; then
-		echo -e "\033[32mThe patch installation was successful.\033[0m"
-    	return 0
-    fi
-		
-	# Report whether the final hash matches the expected then end the script.
-	local currentHash=$(get_sha256_hash "$GAME_DIR/data.win")
-	if [[ "$currentHash" = "$postPatchHash" ]]; then
-		echo "Post-patch hash validation passed."
-		echo -e "\033[32mThe patch installation was successful.\033[0m"
-		exit 0
-	else	
-		echo "Experted hash: $postPatchHash"
-		echo "Actual hash: $currentHash"
-		echo -e "\033[31mPost-patch hash validation failed.\033[0m"
-		exit 1
-	fi
-}
-
-get_sha256_hash() {
-    sha256sum "$1" | awk '{print $1}'
-}
-
-set_action() {
-    if [[ -n "$ACTION" ]]; then 
-        echo "Error: More than one command specified in arguments." >&2
+    local current_file="$GAME_DIR/data.win"
+    if [[ ! -f "$current_file" ]]; then
+        echo "Error: file not found \"$current_file\"" >&2
         return 1
     fi
-    ACTION="$1"
+    
+    PATCH_DIR="$GAME_DIR/patch"
+    BACKUP_DIR="$PATCH_DIR/backup"
 }
-       
-# Main application logic
-main() {
+
+################################################################################
+# Function: validate_post_hash
+# Validate the hash of data.win after patching
+################################################################################
+validate_post_hash() {
+    if [[ -z "$postPatchHash" ]] || [[ "$OVERRIDE" == "true" ]]; then
+        return 0
+    fi
+    
+    echo "--- Validating data.win ---"
+    local current_file="$GAME_DIR/data.win"
+    local current_hash
+    current_hash=$(sha256sum "$current_file" | awk '{print $1}')
+    
+    if [[ "$current_hash" == "$postPatchHash" ]]; then
+        echo "Post-patch hash validation passed."
+        return 0
+    else
+        echo "Expected hash: $postPatchHash"
+        echo "Actual hash: $current_hash"
+        echo "Post-patch hash validation failed." >&2
+        return 1
+    fi
+}
+
+################################################################################
+# Function: get_install_state
+# Determine the current installation state
+################################################################################
+get_install_state() {
+    if [[ ! -d "$SCRIPTS_DIR" ]]; then
+        echo "Error: Scripts directory missing at \"$SCRIPTS_DIR\""
+        return 1
+    fi
+    
+    local hash_file="$SCRIPTS_DIR/versions.csv"
+    if [[ ! -f "$hash_file" ]]; then
+        echo "Error: Versions file is missing at \"$hash_file\""
+        return 1
+    fi
+    
+    # Check for legacy install files
+    if [[ -f "$GAME_DIR/data.win.old" ]] || [[ -f "$GAME_DIR/removepatch.sh" ]]; then
+        echo "3"  # Old patch detected
+        return 0
+    fi
+    
+    local input_file="$GAME_DIR/data.win"
+    local current_hash
+    current_hash=$(sha256sum "$input_file" | awk '{print $1}')
+    	
+	found=false
+	version_name=""
+	
+	while IFS=, read -r name before_hash after_hash; do
+    	# Remove surrounding quotes
+    	name=${name//\"/}
+    	before_hash=${before_hash//\"/}
+    	after_hash=${after_hash//\"/}
+	
+    	if [[ "$after_hash" == "$current_hash" ]]; then
+    		echo "1"   #Already installed
+    		return 0;
+    	fi
+	done < <(tail -n +2 "$hash_file")    
+
+	while IFS=, read -r name before_hash after_hash; do
+    	# Remove surrounding quotes
+    	name=${name//\"/}
+    	before_hash=${before_hash//\"/}
+    	after_hash=${after_hash//\"/}
+	
+    	if [[ "$before_hash" == "$current_hash" ]]; then
+    		echo "2"   #Ready to install
+    		# Set the hashes because the user may follow up with Do-Install
+    		postPatchHash=$after_hash
+    		prePatchHash=$before_hash
+    		return 0;
+    	fi
+	done < <(tail -n +2 "$hash_file")
+        
+    # Check if old patch is installed
+    if [[ -d "$PATCH_DIR" ]]; then
+        echo "3"  # Old patch detected
+        return 0
+    fi
+    
+    echo "0"  # Version mismatch
+    return 0
+}
+
+################################################################################
+# Function: prompt_for_uninstall
+# Prompt user to confirm uninstall when patch is already installed
+################################################################################
+prompt_for_uninstall() {
+    echo "This patch is already installed." >&2
+    read -p "Do you want to uninstall the patch? (y/N): " -n 1 -r
+    echo
+    
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+        echo "Restoring the original DATA.WIN from the backup file"
+        do_uninstall
+        echo "The patch was successfully uninstalled."
+        exit 0
+    else
+        echo "You chose No. No changes have been made." >&2
+        exit 0
+    fi
+}
+
+################################################################################
+# Function: prompt_for_reinstall
+# Prompt user to confirm replacing an old patch version
+################################################################################
+prompt_for_reinstall() {
+    echo "Another version of the community patch is currently installed."
+    read -p "Do you want to replace it with this version? (y/N): " -n 1 -r
+    echo
+    
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+        do_uninstall
+        local state
+        state=$(get_install_state)
+        
+        if [[ $state -eq 0 ]]; then
+            echo "Error: Dark Deity version mismatch."
+            echo "This patch is intended only for version 1.58 of Dark Deity."
+            exit 1
+        fi
+        
+        if [[ $state -ne 2 ]]; then
+            echo "Error: Previous patch removal resulted in an inconsistent state." >&2
+            echo "Please uninstall and reinstall Dark Deity or validate the integrity of the install." >&2
+            exit 1
+        fi
+        
+        do_install
+        validate_post_hash
+        echo "The patch installation was successful."
+        exit 0
+    else
+        echo "You chose No. No changes have been made." >&2
+        exit 0
+    fi
+}
+
+################################################################################
+# Function: prompt_for_install
+# Prompt user to confirm installation
+################################################################################
+prompt_for_install() {
+    echo "The patch is not installed, but can be installed to this version of Dark Deity." >&2
+    read -p "Do you want to install the patch? (y/N): " -n 1 -r
+    echo
+    
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+        do_install
+        validate_post_hash
+        echo "The patch installation was successful."
+        exit 0
+    else
+        echo "You chose No. No changes have been made." >&2
+        exit 0
+    fi
+}
+
+################################################################################
+# Function: prompt_for_override_install
+# Prompt user to confirm installing despite version mismatch
+################################################################################
+prompt_for_override_install() {
+    echo "The patch is not installed, but it was not intended for this version of Dark Deity." >&2
+    read -p "Do you want to override and install the patch anyway? (y/N): " -n 1 -r
+    echo
+    
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+        do_install
+        echo "The patch installation was successful."
+        exit 0
+    else
+        echo "You chose No. No changes have been made." >&2
+        exit 0
+    fi
+}
+
+################################################################################
+# Function: main_process
+# Main processing logic based on selected action
+################################################################################
+main_process() {
     case "$ACTION" in
-        "install")
-        	load_hashes
-            validate_gamedir
-            validate_prehash
-            do_install
-            validate_posthash
+        auto)
+            resolve_game_dir
+            local state
+            state=$(get_install_state)
+            
+            case $state in
+                0) prompt_for_override_install ;;
+                1) prompt_for_uninstall ;;
+                2) prompt_for_install ;;
+                3) prompt_for_reinstall ;;
+            esac
+            exit 0
             ;;
-        "uninstall")
-            validate_gamedir
-            if [[ ! -f "$GAME_DIR/data.win.old" ]]; then
-                cat << EOF 
-There is no backup file "$GAME_DIR/data.win.old".
-Either:
-   1) The patch was never installed.
-   2) The patch was installed but it has already been uninstalled.
-   3) The patch is still installed but you deleted the backup file.
-If your problem is #3 then to uninstall you should:
-   - Go to your Library in Steam
-   - Right-click Dark Deity and select Properties->Installed Files
-   - Click on Verify integrity of game files
-   This will cause Steam to check the game files and re-download data.win if necesary.
-EOF
+        
+        install)
+            resolve_game_dir
+            local state
+            state=$(get_install_state)
+            
+            if [[ $state -eq 3 ]]; then
+                do_uninstall
+                state=$(get_install_state)
             fi
-            do_uninstall
+            
+            if [[ $state -eq 1 ]]; then
+                echo "The patch is already installed. Nothing to do." >&2
+                exit 0
+            fi
+            
+            if [[ $state -eq 0 ]] && [[ "$OVERRIDE" != "true" ]]; then
+                echo "Dark Deity version mismatch. Operation aborted." >&2
+                exit 1
+            fi
+            
+            if [[ $state -eq 2 ]]; then
+                do_install
+                validate_post_hash
+                echo "The patch installation was successful."
+                exit 0
+            fi
             ;;
-        "help")
-            usage
+        
+        uninstall)
+            resolve_game_dir
+            local state
+            state=$(get_install_state)
+            
+            case $state in
+                3)
+                    do_uninstall
+                    echo "The patch was successfully uninstalled."
+                    exit 0
+                    ;;
+                2)
+                    echo "The patch is not currently installed, but this version is supported." >&2
+                    ;;
+                1)
+                    do_uninstall
+                    echo "The patch was successfully uninstalled."
+                    exit 0
+                    ;;
+                0)
+                    echo "The patch is not currently installed, but it is not intended for this version." >&2
+                    exit 0
+                    ;;
+            esac
             ;;
-        "hash")
-        	validate_gamedir
+        
+        test)
+            resolve_game_dir
+            local state
+            state=$(get_install_state)          
+            
+            case $state in
+                0)
+                    echo "The patch is not installed and this is not the correct version to install on."
+                    exit 0
+                    ;;
+                3)
+                    echo "The patch is not installed, but can be installed after the old version is uninstalled."
+                    exit 0
+                    ;;
+                2)
+                    echo "The patch is not installed, but this is the correct version to install on."
+                    exit 0
+                    ;;
+                1)
+                    echo "The patch is already installed."
+                    exit 0
+                    ;;
+            esac
+            ;;
+        
+        help)
+            show_usage
+            ;;
+        
+        hash)
+            resolve_game_dir
             do_hash
             ;;
-        "version")
+        
+        version)
             do_version
             ;;
+        
         *)
-            echo "Internal error: No handler for command \"$ACTION\"" >&2
-            return 1
+            echo "Error: Internal error - No handler for command \"$ACTION\"" >&2
+            exit 1
             ;;
     esac
 }
 
-
-# Parse command-line arguments safely
+################################################################################
+# Function: parse_params
+# Parse command-line arguments
+################################################################################
 parse_params() {
     while [[ $# -gt 0 ]]; do
-        case "$1" in
-            #  --- COMMANDS ---
+        local arg="$1"
+        
+        case "$arg" in
             -h|-\?|--help)
-                shift 
-                set_action "help"
-                ;; 
-            -i|--install)
+                ACTION="help"
                 shift
-                set_action "install";
+                ;;
+            -a|--auto)
+                ACTION="auto"
+                shift
+                ;;
+            -i|--install)
+                ACTION="install"
+                shift
                 ;;
             -u|--uninstall)
+                ACTION="uninstall"
                 shift
-                set_action "uninstall";
                 ;;
             -c|--hash)
+                ACTION="hash"
                 shift
-                set_action "hash";
                 ;;
             --version)
+                ACTION="version"
                 shift
-                set_action "version";
                 ;;
-                
-            # --- OPTIONS ---
-            # verbose is not currently used but it is implemented here for possible future use
-            -v|--verbose)
+            -t|--test)
+                ACTION="test"
                 shift
-                VERBOSE=true
+                ;;
+            -v|--verbose)
+                VERBOSE_OUTPUT=true
+                shift
                 ;;
             -o|--override)
-            	shift
-            	OVERRIDE=true
-            	;;
-            -*)
-                echo "Error: Unrecognized argument \"$1\"." >&2
-                return 1
+                OVERRIDE=true
+                shift
                 ;;
-            *)    
+            -p|--prompt)
+                PROMPT=true
+                shift
+                ;;
+            -*)
+                echo "Error: Unrecognized argument \"$arg\"." >&2
+                exit 1
+                ;;
+            *)
+                # This should be a directory path
                 if [[ -z "$ACTION" ]]; then
                     echo "Error: Command switch missing." >&2
-                    return 1
+                    exit 1
                 fi
                 
-                if [[ "$ACTION" = "install" || "$ACTION" = "uninstall" || "$ACTION" = "hash" ]]; then        
+                if [[ "$ACTION" =~ ^(install|uninstall|hash|test)$ ]]; then
                     if [[ $# -gt 1 ]]; then
                         echo "Error: Optional path argument must be the last argument." >&2
-                        echo "If you want use a path with a space in it, be sure to enclose it in quotation marks." >&2
-                        return 1
+                        exit 1
                     fi
-
-                    GAME_DIR="$1"
+                    GAME_DIR="$arg"
+                    shift
                 else
-                    echo "Error: Unexpected argument \"$1\"." >&2
-                    return 1
+                    echo "Error: Unexpected argument \"$arg\"." >&2
+                    exit 1
                 fi
-                shift
                 ;;
         esac
     done
 }
 
+################################################################################
 # Script entry point
+################################################################################
 parse_params "$@"
+
 if [[ -z "$ACTION" ]]; then
-    usage
+    show_usage
     exit 0
 fi
-main "$@"
+
+main_process

@@ -1,6 +1,6 @@
 param (
     [Parameter(Mandatory = $true)]
-    [string]$Name,
+    [string]$n,
     [Parameter(Mandatory = $true)]
     [string]$d,
     [Parameter(Mandatory = $true)]
@@ -28,7 +28,7 @@ $AfterHash  = (Get-FileHash -Path $AfterFile -Algorithm SHA256).Hash
 
 # Create a custom object to hold the row data
 $RowData = [PSCustomObject]@{
-    Name       = $Name
+    Name       = $n
     BeforeHash = $BeforeHash
     AfterHash  = $AfterHash
 }
