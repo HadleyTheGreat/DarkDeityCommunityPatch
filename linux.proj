@@ -3,6 +3,7 @@
 		<GameDir></GameDir>
 		<DistRoot>$(MSBuildProjectDirectory)\dist</DistRoot>
 		<DistDir>$(DistRoot)\linux</DistDir>
+		<ScriptsDir>$(DistDir)\scripts</ScriptsDir>
 		<ToolsDir>$(DistDir)\tools</ToolsDir>
 		<DistSrcDir>$(MSBuildProjectDirectory)\distsrc</DistSrcDir>
 		<ArtifactsDir>$(MSBuildProjectDirectory)\artifacts</ArtifactsDir>		
@@ -197,20 +198,10 @@
 	</Target>
 
 	<PropertyGroup>
-		<GOGDir>C:\Program Files (x86)\GOG Galaxy\Games\Dark Deity Complete Edition</GOGDir>
-		<SteamDir>C:\Program Files (x86)\Steam\steamapps\common\Dark Deity</SteamDir>
-		<DataWin>$(GOGDir)\data.win</DataWin>
-		<PatchedWin>$(GOGDir)\patched.win</PatchedWin>
-		<DataWinSteam>$(SteamDir)\data.win</DataWinSteam>
-		<PatchedWinSteam>$(SteamDir)\patched.win</PatchedWinSteam>
-		<ScriptsDir>$(MSBuildProjectDirectory)\distsrc\scripts</ScriptsDir>
 		<Script1>$(ScriptsDir)\nongmlmods.csx</Script1>
 		<Script2>$(ScriptsDir)\scriptupdater.csx</Script2>
-		<HashesGOG>$(ArtifactsDir)\hashes_gog.csv</HashesGOG>
 		<HashesAll>$(DistDir)\scripts\versions.csv</HashesAll>
-		<HashesSteam>$(ArtifactsDir)\hashes_steam.csv</HashesSteam>
 		<BuildToolsDir>$(MSBuildProjectDirectory)\distsrc\linux\buildtools</BuildToolsDir>
-		<HashFileMerge>$(BuildToolsDir)\Merge-Csv.ps1</HashFileMerge>
 	</PropertyGroup>
 
 	<Target
