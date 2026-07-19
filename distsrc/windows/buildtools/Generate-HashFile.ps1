@@ -23,8 +23,8 @@ if (-not (Test-Path $AfterFile)) {
 }
 
 # Calculate SHA256 hashes (.Hash is always uppercase by default)
-$BeforeHash = (Get-FileHash -Path $BeforeFile -Algorithm SHA256).Hash
-$AfterHash  = (Get-FileHash -Path $AfterFile -Algorithm SHA256).Hash
+$BeforeHash = (Get-FileHash -Path $BeforeFile -Algorithm SHA256).Hash.ToLower()
+$AfterHash  = (Get-FileHash -Path $AfterFile -Algorithm SHA256).Hash.ToLower()
 
 # Create a custom object to hold the row data
 $RowData = [PSCustomObject]@{
