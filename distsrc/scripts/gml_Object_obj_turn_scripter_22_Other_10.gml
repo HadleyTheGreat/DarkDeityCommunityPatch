@@ -1,6 +1,5 @@
 alarm[6] = 10;
 P += 1;
-
 if ((turn % 2) == 0)
 {
     if (global.map[49][14].occupant == -4)
@@ -17,7 +16,6 @@ if ((turn % 2) == 0)
             global.map[GridX][GridY].occupant = id;
         }
     }
-    
     if (global.map[49][15].occupant == -4)
     {
         with (instance_create(1568, 480, obj_enemy_delian_knight))
@@ -32,7 +30,6 @@ if ((turn % 2) == 0)
             global.map[GridX][GridY].occupant = id;
         }
     }
-    
     if (global.map[49][5].occupant == -4)
     {
         with (instance_create(1568, 160, obj_enemy_delian_knight))
@@ -47,7 +44,6 @@ if ((turn % 2) == 0)
             global.map[GridX][GridY].occupant = id;
         }
     }
-    
     if (global.map[49][6].occupant == -4)
     {
         with (instance_create(1568, 192, obj_enemy_delian_knight))

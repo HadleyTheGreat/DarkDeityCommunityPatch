@@ -3,14 +3,18 @@ name = "Dragon";
 level = 30;
 xpvalue = 40;
 tempHP = 2500;
-
 if (global.difficulty == "Deity")
+{
     HP = 2800;
+}
 else if (global.difficulty == "Demigod")
+{
     HP = 2500;
+}
 else if (global.difficulty == "Mortal")
+{
     HP = 2200;
-
+}
 strength = 40;
 magic = 35;
 pwr = 45;

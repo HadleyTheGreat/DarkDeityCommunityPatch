@@ -1,42 +1,41 @@
 nodeimon = global.map[GridX][GridY];
-
 if (instance_exists(obj_animator))
 {
     if (id == global.attacker || id == global.attacker.attacktarget)
     {
         if (frame < sprite_get_number(combsprite))
+        {
             frame += 0.2;
+        }
         else
+        {
             frame = 0;
+        }
     }
 }
-
 switch (state)
 {
     case "idle":
         break;
-    
     case "deciding action":
         if (name != "Dragon" && name != "Akmenos")
         {
             if (hostile == true || temprush == true)
             {
                 wanttoattack = false;
-                
                 if (placeholder == false)
                 {
                     i = 1;
-                    
                     with (obj_actor)
                     {
                         if (army == 20 || army == 30)
+                        {
                             other.i += 1;
+                        }
                     }
-                    
                     targets = ds_grid_create(3, i);
                     targetmove = -4;
                     i = 0;
-                    
                     with (obj_actor)
                     {
                         if (army == 20 || army == 30)
@@ -48,22 +47,20 @@ switch (state)
                             other.i += 1;
                         }
                     }
-                    
                     scr_wipe_nodes();
                     scr_movement_range_ai(global.map[GridX][GridY], move, actions);
                     ds_grid_sort(targets, 0, false);
-                    
                     for (ii = 0; ii <= i; ii += 1)
                     {
                         if (ds_exists(targets, ds_type_grid))
+                        {
                             targetselect = ds_grid_get(targets, 1, ii);
-                        
+                        }
                         if (targetselect != 0)
                         {
                             targetspot = targetselect.nodeimon;
                             current = -4;
                             targetmove = -4;
-                            
                             if (onlyranged || attacktype == "ranged")
                             {
                                 if (ds_exists(nodeimon.viewneighborsranged, ds_type_list))
@@ -83,7 +80,6 @@ switch (state)
                                     state = "begin attack";
                                 }
                             }
-                            
                             with (obj_node)
                             {
                                 if (movenode && (occupant == -4 || occupant == other) && passable)
@@ -123,9 +119,7 @@ switch (state)
                                     }
                                 }
                             }
-                            
                             targetmove = current;
-                            
                             if (targetmove != -4)
                             {
                                 attacktarget = targetselect;
@@ -134,7 +128,6 @@ switch (state)
                                 break;
                             }
                         }
-                        
                         if (ii == i && state == "deciding action")
                         {
                             if (rusher)
@@ -144,7 +137,6 @@ switch (state)
                                 targetselect = ds_grid_get(targets, 1, 0);
                                 targetmove = -4;
                                 scr_movement_range_ai(nodeimon, 1000, 1);
-                                
                                 with (obj_actor)
                                 {
                                     if (army == 20)
@@ -160,17 +152,23 @@ switch (state)
                                                 if (room == room_l20)
                                                 {
                                                     if ((x > 490 && other.targetselect.x > 490) || (x < 490 && other.targetselect.x < 490))
+                                                    {
                                                         other.targetselect = id;
+                                                    }
                                                 }
                                                 else if (room == room_l22)
                                                 {
                                                     if ((x > 1550 && other.targetselect.x > 1550) || (x < 1550 && other.targetselect.x < 1550))
+                                                    {
                                                         other.targetselect = id;
+                                                    }
                                                 }
                                                 else if (room == room_l22)
                                                 {
                                                     if ((y > 1000 && other.targetselect.y > 1000) || (y < 1000 && other.targetselect.y < 1000))
+                                                    {
                                                         other.targetselect = id;
+                                                    }
                                                 }
                                                 else
                                                 {
@@ -180,11 +178,9 @@ switch (state)
                                         }
                                     }
                                 }
-                                
                                 nodes = ds_priority_create();
                                 nodefinder = -4;
                                 tempnodedist = 0;
-                                
                                 with (obj_node)
                                 {
                                     if (movenode)
@@ -201,10 +197,8 @@ switch (state)
                                         }
                                     }
                                 }
-                                
                                 current = nodefinder;
                                 var ji = 0;
-                                
                                 if (current != -4)
                                 {
                                     while (current.parent != -4 && current.occupant != id)
@@ -217,17 +211,16 @@ switch (state)
                                         }
                                     }
                                 }
-                                
                                 scr_movement_range_ai(nodeimon, move, actions);
-                                
                                 while (targetmove == -4)
                                 {
                                     var cur = ds_priority_delete_min(nodes);
-                                    
                                     if (cur != 0)
                                     {
                                         if (cur.movenode && cur.occupant == -4)
+                                        {
                                             targetmove = cur;
+                                        }
                                     }
                                     else
                                     {
@@ -236,16 +229,13 @@ switch (state)
                                         targetmove = 0;
                                     }
                                 }
-                                
                                 ds_priority_destroy(nodes);
-                                
                                 if (targetmove != 0)
                                 {
                                     if (targetmove == global.map[GridX][GridY] || targetmove.movenode == false || targetmove.occupant != -4)
                                     {
                                         ds_grid_destroy(targets);
                                         alarm[6] = 1;
-                                        
                                         if (targetmove == global.map[GridX][GridY])
                                         {
                                             state = "move to target";
@@ -288,7 +278,6 @@ switch (state)
                 healtarget = -4;
                 healtargets = ds_grid_create(3, 10);
                 l = 0;
-                
                 with (obj_actor)
                 {
                     if (army == 10)
@@ -302,9 +291,7 @@ switch (state)
                         }
                     }
                 }
-                
                 ds_grid_sort(healtargets, 2, true);
-                
                 if (deciding1 == true)
                 {
                     for (ii = 0; ii <= 15; ii += 1)
@@ -312,14 +299,12 @@ switch (state)
                         if (ds_grid_get(healtargets, 2, ii) > 0)
                         {
                             healtarget = ds_grid_get(healtargets, 0, ii);
-                            
                             if (healtarget == id)
                             {
                                 targetmove = global.map[GridX][GridY];
                                 wanttoheal = true;
                                 state = "move to healtarget";
                             }
-                            
                             if (distance_to_object(healtarget) <= ((move * 32) + 64) && healtarget.GridX > 1 && healtarget.GridY > 1)
                             {
                                 if (ds_list_find_value(healtarget.nodeimon.neighbors, 0).movenode && (ds_list_find_value(healtarget.nodeimon.neighbors, 0).occupant == -4 || ds_list_find_value(healtarget.nodeimon.neighbors, 0).occupant == id))
@@ -328,7 +313,6 @@ switch (state)
                                     wanttoheal = true;
                                     state = "move to healtarget";
                                 }
-                                
                                 if (ds_list_find_value(healtarget.nodeimon.neighbors, 1).movenode && (ds_list_find_value(healtarget.nodeimon.neighbors, 1).occupant == -4 || ds_list_find_value(healtarget.nodeimon.neighbors, 1).occupant == id))
                                 {
                                     targetmove = ds_list_find_value(healtarget.nodeimon.neighbors, 1);
@@ -336,7 +320,6 @@ switch (state)
                                     state = "move to healtarget";
                                     break;
                                 }
-                                
                                 if (ds_list_find_value(healtarget.nodeimon.neighbors, 2).movenode && (ds_list_find_value(healtarget.nodeimon.neighbors, 2).occupant == -4 || ds_list_find_value(healtarget.nodeimon.neighbors, 2).occupant == id))
                                 {
                                     targetmove = ds_list_find_value(healtarget.nodeimon.neighbors, 2);
@@ -344,7 +327,6 @@ switch (state)
                                     state = "move to healtarget";
                                     break;
                                 }
-                                
                                 if (ds_list_find_value(healtarget.nodeimon.neighbors, 3).movenode && (ds_list_find_value(healtarget.nodeimon.neighbors, 3).occupant == -4 || ds_list_find_value(healtarget.nodeimon.neighbors, 3).occupant == id))
                                 {
                                     targetmove = ds_list_find_value(healtarget.nodeimon.neighbors, 3);
@@ -352,7 +334,6 @@ switch (state)
                                     state = "move to healtarget";
                                     break;
                                 }
-                                
                                 if (global.map[healtarget.GridX + 2][healtarget.GridY].movenode && global.map[healtarget.GridX + 2][healtarget.GridY].occupant == -4)
                                 {
                                     targetmove = global.map[healtarget.GridX + 2][healtarget.GridY];
@@ -360,7 +341,6 @@ switch (state)
                                     state = "move to healtarget";
                                     break;
                                 }
-                                
                                 if (global.map[healtarget.GridX - 2][healtarget.GridY].movenode && global.map[healtarget.GridX - 2][healtarget.GridY].occupant == -4)
                                 {
                                     targetmove = global.map[healtarget.GridX - 2][healtarget.GridY];
@@ -368,7 +348,6 @@ switch (state)
                                     state = "move to healtarget";
                                     break;
                                 }
-                                
                                 if (global.map[healtarget.GridX + 1][healtarget.GridY + 1].movenode && global.map[healtarget.GridX + 1][healtarget.GridY + 1].occupant == -4)
                                 {
                                     targetmove = global.map[healtarget.GridX + 1][healtarget.GridY + 1];
@@ -376,7 +355,6 @@ switch (state)
                                     state = "move to healtarget";
                                     break;
                                 }
-                                
                                 if (global.map[healtarget.GridX - 1][healtarget.GridY + 1].movenode && global.map[healtarget.GridX - 1][healtarget.GridY + 1].occupant == -4)
                                 {
                                     targetmove = global.map[healtarget.GridX - 1][healtarget.GridY + 1];
@@ -384,7 +362,6 @@ switch (state)
                                     state = "move to healtarget";
                                     break;
                                 }
-                                
                                 if (global.map[healtarget.GridX + 1][healtarget.GridY - 1].movenode && global.map[healtarget.GridX + 1][healtarget.GridY - 1].occupant == -4)
                                 {
                                     targetmove = global.map[healtarget.GridX + 1][healtarget.GridY - 1];
@@ -392,7 +369,6 @@ switch (state)
                                     state = "move to healtarget";
                                     break;
                                 }
-                                
                                 if (global.map[healtarget.GridX - 1][healtarget.GridY - 1].movenode && global.map[healtarget.GridX - 1][healtarget.GridY - 1].occupant == -4)
                                 {
                                     targetmove = global.map[healtarget.GridX - 1][healtarget.GridY - 1];
@@ -400,7 +376,6 @@ switch (state)
                                     state = "move to healtarget";
                                     break;
                                 }
-                                
                                 if (global.map[healtarget.GridX][healtarget.GridY + 2].movenode && global.map[healtarget.GridX][healtarget.GridY + 2].occupant == -4)
                                 {
                                     targetmove = global.map[healtarget.GridX][healtarget.GridY + 2];
@@ -408,7 +383,6 @@ switch (state)
                                     state = "move to healtarget";
                                     break;
                                 }
-                                
                                 if (global.map[healtarget.GridX][healtarget.GridY - 2].movenode && global.map[healtarget.GridX][healtarget.GridY - 2].occupant == -4)
                                 {
                                     targetmove = global.map[healtarget.GridX][healtarget.GridY - 2];
@@ -418,9 +392,10 @@ switch (state)
                                 }
                             }
                         }
-                        
                         if (ii >= 15)
+                        {
                             deciding1 = false;
+                        }
                     }
                 }
                 else
@@ -447,7 +422,9 @@ switch (state)
                         if (army == 20)
                         {
                             if (random_range(0, 20) < 2)
+                            {
                                 other.attacktarget = id;
+                            }
                         }
                     }
                 }
@@ -460,78 +437,80 @@ switch (state)
                     if (army == 20)
                     {
                         if (other.attacktarget == -4)
+                        {
                             other.attacktarget = id;
+                        }
                         else if ((tempHP / HP) > (other.attacktarget.tempHP / other.attacktarget.HP))
+                        {
                             other.attacktarget = id;
+                        }
                     }
                 }
             }
-            
             wanttoattack = true;
             state = "begin attack";
         }
-        
         break;
-    
     case "move to target":
         if (pack != -4)
         {
             with (obj_ai_controller)
             {
                 if (pack == other.pack)
+                {
                     rusher = true;
+                }
             }
         }
-        
         camera_set_view_target(view_camera[0], id);
         camera_set_view_border(view_camera[0], 100, 100);
         camera_set_view_speed(view_camera[0], 8, 8);
         temprush = false;
-        
         if (targetmove == global.map[GridX][GridY])
+        {
             state = "attacking";
+        }
         else
+        {
             state = "moving to target";
-        
+        }
         break;
-    
     case "move to healtarget":
         camera_set_view_target(view_camera[0], id);
         camera_set_view_border(view_camera[0], 100, 100);
         camera_set_view_speed(view_camera[0], 8, 8);
         temprush = false;
         ds_grid_destroy(healtargets);
-        
         if (targetmove == global.map[GridX][GridY])
+        {
             state = "find target";
+        }
         else
+        {
             state = "moving to target";
-        
+        }
         break;
-    
     case "moving to target":
         if (targetmove != -4 || current != -4)
         {
             current = targetmove;
             path = ds_priority_create();
             ds_priority_add(path, current, current.G);
-            
             while (current.parent != -4)
             {
                 ds_priority_add(path, current.parent, current.parent.G);
                 current = current.parent;
-                
                 if (ds_priority_size(path) > 200)
+                {
                     break;
+                }
             }
-            
             do
             {
                 current = ds_priority_delete_min(path);
                 path_add_point(movementpath, current.x, current.y, 100);
             }
             until (ds_priority_empty(path));
-            
             ds_priority_destroy(path);
             global.map[GridX][GridY].occupant = -4;
             GridX = targetmove.GridX;
@@ -546,27 +525,25 @@ switch (state)
             alarm[6] = 1;
             state = "idle";
         }
-        
         break;
-    
     case "begin path":
         if (i)
         {
             if (obj_game.enemyturnskip)
+            {
                 path_start(movementpath, 1000, path_action_stop, true);
+            }
             else
+            {
                 path_start(movementpath, global.movespeed, path_action_stop, true);
-            
+            }
             actions -= 1;
             alarm[2] = 60;
             state = "moving";
         }
-        
         break;
-    
     case "find target":
         scr_wipe_nodes();
-        
         if (attacktarget != -4 && wanttoattack)
         {
             state = "begin attack";
@@ -580,37 +557,35 @@ switch (state)
             obj_game.alarm[1] = 1;
             state = "idle";
         }
-        
         break;
-    
     case "begin attack":
         global.attacker = id;
         attackactions -= 1;
         attacktarget.attacktarget = id;
         state = "attacking";
         break;
-    
     case "attack waiting one":
         if (i || skipper)
+        {
             state = "continue attacking";
-        
+        }
         break;
-    
     case "attacking":
         obj_cursor.cursor_active = false;
-        
         if (obj_game.enemyturnskip || global.animations != true || attacktarget.army == 30)
+        {
             skipper = true;
+        }
         else
+        {
             skipper = false;
-        
+        }
         global.attacker = id;
         scr_melee_attack();
         i = false;
         alarm[10] = 30;
         state = "attack waiting one";
         break;
-    
     case "continue attacking":
         global.attacker = id;
         scr_skills_precombat();
@@ -618,15 +593,16 @@ switch (state)
         truedamage = scr_attack_damage(accuracy, damagetype, damagesubtype, pwr, attacktarget.constitution, attacktarget.fortitude, attacktarget.dodge, attacktarget.dtype, masmod, id, attacktarget);
         tempdamage = 0;
         scr_skills_modifydamage();
-        
         if (skipper)
+        {
             tempdamage = scr_do_damage_skip();
+        }
         else
+        {
             tempdamage = scr_do_damage();
-        
+        }
         attackactions -= 1;
         scr_skills_midcombat();
-        
         if ((attacktarget.tempHP - tempdamage) > 0 && tempHP > 0)
         {
             if ((abs(abs(GridY - attacktarget.GridY) + abs(GridX - attacktarget.GridX)) == 1 && attacktarget.cancountermelee) || (abs(abs(GridY - attacktarget.GridY) + abs(GridX - attacktarget.GridX)) == 2 && attacktarget.cancounterranged))
@@ -646,15 +622,13 @@ switch (state)
             i = false;
             state = "ending attack";
         }
-        
         break;
-    
     case "waiting for counter":
         if (i || skipper)
+        {
             state = "countering";
-        
+        }
         break;
-    
     case "countering":
         with (attacktarget)
         {
@@ -665,13 +639,15 @@ switch (state)
             truedamage = scr_attack_damage(accuracy, damagetype, damagesubtype, pwr, other.constitution, other.fortitude, other.dodge, other.dtype, masmod, id, attacktarget);
             scr_skills_counter();
             scr_skills_modifydamage();
-            
             if (other.skipper)
+            {
                 tempdamage = scr_do_counter_damage_skip();
+            }
             else
+            {
                 tempdamage = scr_do_counter_damage();
+            }
         }
-        
         if ((tempHP - attacktarget.tempdamage) > 0 && attacktarget.tempHP > 0)
         {
             scr_update_equipment_all();
@@ -685,15 +661,13 @@ switch (state)
             i = false;
             state = "ending attack";
         }
-        
         break;
-    
     case "precheck for double":
         if (i || skipper)
+        {
             state = "check for double";
-        
+        }
         break;
-    
     case "check for double":
         if (eff_spd > (attacktarget.eff_spd + 4) && class != "Champion")
         {
@@ -713,30 +687,30 @@ switch (state)
             alarm[10] = 20;
             state = "ending attack";
         }
-        
         break;
-    
     case "waiting for double":
         if (doubleattackvar == true)
         {
             ds_list_clear(obj_game.combatskills);
             ds_list_clear(obj_game.combatskillscounter);
             status = scr_hit_calculation(accuracy, attacktarget.dodge, crit, id, attacktarget);
-            
             if (ds_grid_value_exists(skillslots, 0, 0, 1, 10, "Quick Hands"))
             {
                 if (status == "miss")
+                {
                     status = "hit";
+                }
             }
-            
             truedamage = scr_attack_damage(accuracy, damagetype, damagesubtype, pwr, attacktarget.constitution, attacktarget.fortitude, attacktarget.dodge, attacktarget.dtype, masmod, id, attacktarget);
             scr_skills_modifydamage();
-            
             if (skipper)
+            {
                 tempdamage = scr_do_damage_skip();
+            }
             else
+            {
                 tempdamage = scr_do_damage();
-            
+            }
             comefromdouble = true;
             i = false;
             state = "ending attack";
@@ -746,28 +720,29 @@ switch (state)
         {
             ds_list_clear(obj_game.combatskills);
             ds_list_clear(obj_game.combatskillscounter);
-            
             if ((abs(abs(GridY - attacktarget.GridY) + abs(GridX - attacktarget.GridX)) == 1 && attacktarget.cancountermelee) || (abs(abs(GridY - attacktarget.GridY) + abs(GridX - attacktarget.GridX)) > 1 && attacktarget.cancounterranged))
             {
                 with (attacktarget)
                 {
                     status = scr_hit_calculation(accuracy, other.dodge, crit, id, other.id);
-                    
                     if (ds_grid_value_exists(skillslots, 0, 0, 1, 10, "Quick Hands"))
                     {
                         if (status == "miss")
+                        {
                             status = "hit";
+                        }
                     }
-                    
                     truedamage = scr_attack_damage(accuracy, damagetype, damagesubtype, pwr, other.constitution, other.fortitude, other.dodge, other.dtype, masmod, id, attacktarget);
                     scr_skills_modifydamage();
-                    
                     if (other.skipper)
+                    {
                         tempdamage = scr_do_counter_damage_skip();
+                    }
                     else
+                    {
                         tempdamage = scr_do_counter_damage();
+                    }
                 }
-                
                 comefromdouble = true;
                 i = false;
                 state = "ending attack";
@@ -784,38 +759,36 @@ switch (state)
         {
             state = "double buffer";
         }
-        
         break;
-    
     case "double buffer":
         state = "waiting for double";
         break;
-    
     case "ending attack":
         if (i || skipper)
         {
             i = false;
-            
             if (attacktarget.army == 30)
+            {
                 state = "end attack";
+            }
             else
+            {
                 state = "giving xp";
+            }
         }
-        
         break;
-    
     case "giving xp":
         scr_update_equipment_all();
         scr_skills_postcombat();
-        
         with (attacktarget)
+        {
             scr_skills_postcombat();
-        
+        }
         with (attacktarget)
+        {
             scr_update_equipment_all();
-        
+        }
         attacktarget.needtolevel = false;
-        
         if (attacktarget.tempHP > 0)
         {
             if (tempHP <= 0)
@@ -830,7 +803,6 @@ switch (state)
                         addition = obj_room_info.goldper;
                     }
                 }
-                
                 if (attacktarget.name == "Irving")
                 {
                     with (obj_irving)
@@ -840,40 +812,47 @@ switch (state)
                             if (army == 20)
                             {
                                 if ((abs(GridX - other.GridX) + abs(GridY - other.GridY)) < 3)
+                                {
                                     xp = min(xp + 5, 99);
+                                }
                             }
                         }
                     }
                 }
-                
                 if (ds_grid_value_y(obj_room_info.gamestats, 0, 0, 7, 29, attacktarget.name) != -1)
                 {
                     ds_grid_set(obj_room_info.gamestats, 4, ds_grid_value_y(obj_room_info.gamestats, 0, 0, 7, 29, attacktarget.name), ds_grid_get(obj_room_info.gamestats, 4, ds_grid_value_y(obj_room_info.gamestats, 0, 0, 7, 29, attacktarget.name)) + 1);
-                    
                     if (attacktarget.class == "Assassin")
                     {
                         if ((ds_grid_get(obj_room_info.gamestats, 4, ds_grid_value_y(obj_room_info.gamestats, 0, 0, 7, 29, attacktarget.name)) % 5) == 0)
                         {
                             with (instance_create(0, 0, obj_cruelefficiency))
+                            {
                                 owner = other.attacktarget;
+                            }
                         }
                     }
-                    
                     if (ds_grid_get(obj_room_info.gamestats, 4, ds_grid_value_y(obj_room_info.gamestats, 0, 0, 7, 29, attacktarget.name)) >= 15)
+                    {
                         steam_set_achievement("Achieve_25");
+                    }
                 }
-                
                 if (level > attacktarget.level)
+                {
                     attacktarget.xptogive = round(max(min(xpvalue * (1 + ((level - attacktarget.level) / 10)), 100), 1));
+                }
                 else
+                {
                     attacktarget.xptogive = round(max(min(xpvalue * (1 + ((level - attacktarget.level) / 4)), 100), 1));
-                
+                }
                 with (attacktarget)
+                {
                     scr_skills_xp();
-                
+                }
                 if (attacktarget.xptogive > 100)
+                {
                     attacktarget.xptogive = 100;
-                
+                }
                 if (obj_game.enemyturnskip == false)
                 {
                     with (instance_create(0, 0, obj_animator_4))
@@ -888,7 +867,6 @@ switch (state)
                 else
                 {
                     attacktarget.xp += min(round(attacktarget.xptogive * (global.randomXPmodifier / 100)), 100);
-                    
                     if (attacktarget.xp >= 100)
                     {
                         attacktarget.xp -= 100;
@@ -899,7 +877,6 @@ switch (state)
             else if (tempHP > 0)
             {
                 attacktarget.xptogive = round(max(min(xpvalue * (0.33 + ((level - attacktarget.level) / 15)), 100), 1));
-                
                 if (obj_game.enemyturnskip == false)
                 {
                     with (instance_create(0, 0, obj_animator_4))
@@ -914,7 +891,6 @@ switch (state)
                 else
                 {
                     attacktarget.xp += min(round(attacktarget.xptogive * (global.randomXPmodifier / 100)), 100);
-                    
                     if (attacktarget.xp >= 100)
                     {
                         attacktarget.xp -= 100;
@@ -926,39 +902,36 @@ switch (state)
         else
         {
             with (obj_animator)
+            {
                 alarm[7] = 1;
-            
+            }
             alarm[10] = 20;
         }
-        
         i = false;
         state = "waiting to level";
         break;
-    
     case "waiting to level":
         if (!instance_exists(obj_animator_4) && !instance_exists(obj_animator_levelupyee))
         {
             i = false;
             state = "leveling";
         }
-        
         break;
-    
     case "leveling":
         if (instance_exists(obj_animator_4))
         {
             with (obj_animator_4)
             {
                 if ((startingxp + xptogive) > 99)
+                {
                     other.attacktarget.needtolevel = true;
+                }
             }
         }
-        
         if (attacktarget.needtolevel)
         {
             instance_destroy(obj_animator);
             scr_level_up_1(attacktarget.personalarray, attacktarget.HPG, attacktarget.STRG, attacktarget.SPDG, attacktarget.CONG, attacktarget.DEXG, attacktarget.MAGG, attacktarget.FORG, attacktarget.id, attacktarget.MASG, attacktarget.LCKG);
-            
             if (obj_game.enemyturnskip)
             {
                 with (instance_create(0, 0, obj_animator_levelup))
@@ -967,7 +940,6 @@ switch (state)
                     aigivingxp = other.id;
                     skippy = true;
                 }
-                
                 obj_game.enemyturnskip = false;
                 i = false;
             }
@@ -979,7 +951,6 @@ switch (state)
                     aigivingxp = other.id;
                 }
             }
-            
             i = false;
             state = "waiting to end";
         }
@@ -988,15 +959,13 @@ switch (state)
             i = true;
             state = "waiting to end";
         }
-        
         break;
-    
     case "waiting to end":
         if ((i || skipper) && !instance_exists(obj_animator_levelup) && !instance_exists(obj_animator_4))
+        {
             state = "item drop";
-        
+        }
         break;
-    
     case "item drop":
         if (tempHP <= 0 && attacktarget.tempHP > 0)
         {
@@ -1005,44 +974,52 @@ switch (state)
                 if (global.randomitems)
                 {
                     droppable_item = random_range(0, 100);
-                    
                     if (droppable_item < 60)
+                    {
                         droppable_item = choose(321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 340, 341, 342, 343, 495);
+                    }
                     else if (droppable_item < 80)
+                    {
                         droppable_item = choose(370, 371, 372, 373, 374, 375, 376, 377, 378, 496, 497);
+                    }
                     else
+                    {
                         droppable_item = choose(400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 439, 498);
+                    }
                 }
-                
                 if (droppable_item < 494)
                 {
                     if (attacktarget.Itemycoord5 == 0)
                     {
                         ds_grid_set(attacktarget.personalarray, 3, 5, droppable_item);
-                        
                         with (instance_create(0, 0, obj_dropped_item))
+                        {
                             droppeditem = other.droppable_item;
+                        }
                     }
                     else if (attacktarget.Itemycoord6 == 0)
                     {
                         ds_grid_set(attacktarget.personalarray, 3, 6, droppable_item);
-                        
                         with (instance_create(0, 0, obj_dropped_item))
+                        {
                             droppeditem = other.droppable_item;
+                        }
                     }
                     else if (attacktarget.Itemycoord7 == 0)
                     {
                         ds_grid_set(attacktarget.personalarray, 3, 7, droppable_item);
-                        
                         with (instance_create(0, 0, obj_dropped_item))
+                        {
                             droppeditem = other.droppable_item;
+                        }
                     }
                     else if (attacktarget.Itemycoord8 == 0)
                     {
                         ds_grid_set(attacktarget.personalarray, 3, 8, droppable_item);
-                        
                         with (instance_create(0, 0, obj_dropped_item))
+                        {
                             droppeditem = other.droppable_item;
+                        }
                     }
                     else
                     {
@@ -1054,17 +1031,16 @@ switch (state)
                                 break;
                             }
                         }
-                        
                         with (instance_create(0, 0, obj_dropped_item))
                         {
                             droppeditem = other.droppable_item;
                             pickuptype = "Storage Received ";
                         }
                     }
-                    
                     with (attacktarget)
+                    {
                         scr_update_equipment();
-                    
+                    }
                     i = false;
                     alarm[10] = 90;
                     state = "waiting to end 2";
@@ -1074,7 +1050,6 @@ switch (state)
                     if (droppable_item == 495)
                     {
                         ds_grid_set(obj_game_data.data, 0, 6, ds_grid_get(obj_game_data.data, 0, 6) + 1);
-                        
                         with (instance_create(0, 0, obj_dropped_item))
                         {
                             droppeditem = 495;
@@ -1084,7 +1059,6 @@ switch (state)
                     else if (droppable_item == 496)
                     {
                         ds_grid_set(obj_game_data.data, 0, 7, ds_grid_get(obj_game_data.data, 0, 7) + 1);
-                        
                         with (instance_create(0, 0, obj_dropped_item))
                         {
                             droppeditem = 496;
@@ -1094,7 +1068,6 @@ switch (state)
                     else if (droppable_item == 497)
                     {
                         ds_grid_set(obj_game_data.data, 0, 8, ds_grid_get(obj_game_data.data, 0, 8) + 1);
-                        
                         with (instance_create(0, 0, obj_dropped_item))
                         {
                             droppeditem = 497;
@@ -1104,17 +1077,16 @@ switch (state)
                     else if (droppable_item == 498)
                     {
                         ds_grid_set(obj_game_data.data, 0, 9, ds_grid_get(obj_game_data.data, 0, 9) + 1);
-                        
                         with (instance_create(0, 0, obj_dropped_item))
                         {
                             droppeditem = 498;
                             pickuptype = "Gained one ";
                         }
                     }
-                    
                     with (attacktarget)
+                    {
                         scr_update_equipment();
-                    
+                    }
                     i = false;
                     alarm[10] = 90;
                     state = "waiting to end 2";
@@ -1129,28 +1101,27 @@ switch (state)
         {
             state = "end attack";
         }
-        
         break;
-    
     case "waiting to end 2":
         if (!instance_exists(obj_dropped_item))
+        {
             state = "end attack";
-        
+        }
         break;
-    
     case "end attack":
         scr_update_equipment_all();
         scr_skills_postcombat();
-        
         if (attacktarget != -4)
         {
             with (attacktarget)
+            {
                 scr_skills_postcombat();
+            }
         }
-        
         if (instance_exists(obj_animator))
+        {
             instance_destroy(obj_animator);
-        
+        }
         if (attacktarget != -4)
         {
             if (attacktarget.tempHP <= 0)
@@ -1169,7 +1140,6 @@ switch (state)
                         character = other.attacktarget;
                         scr_grave_wound();
                     }
-                    
                     obj_cursor.selectedactor = -4;
                     global.map[attacktarget.GridX][attacktarget.GridY].occupant = -4;
                     comefromdouble = false;
@@ -1179,11 +1149,11 @@ switch (state)
             {
                 attackedHP2 = attacktarget.tempHP;
             }
-            
             if (instance_exists(attacktarget))
+            {
                 attacktarget.attacktarget = -4;
+            }
         }
-        
         if (tempHP <= 0)
         {
             attackerHP2 = 0;
@@ -1191,26 +1161,25 @@ switch (state)
             global.map[GridX][GridY].occupant = -4;
             instance_destroy(id);
         }
-        
         attacktarget = -4;
-        
         if (army == 20)
+        {
             obj_game.blueturnkeeper -= 1;
-        
+        }
         if (army == 10)
+        {
             obj_game.redturnkeeper -= 1;
-        
+        }
         actiontimer -= 1;
-        
         if (actiontimer <= 0)
+        {
             obj_cursor.selectedactor = -4;
-        
+        }
         comefromdouble = false;
         obj_game.alarm[1] = 5;
         attacktarget = -4;
         state = "idle";
         break;
-    
     case "begin heal":
         global.readiedspell = "Heal";
         scr_spell_cast(healtarget, global.readiedspell);

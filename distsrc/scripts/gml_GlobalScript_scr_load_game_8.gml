@@ -39,10 +39,10 @@ function scr_load_game_8()
         ds_grid_read(obj_game_data.data, ini_read_string("Game Data", 0, "Null"));
         ds_grid_read(obj_game_data.characters, ini_read_string("Game Data", 3, "Null"));
         ds_grid_set(obj_game_data.characters, ds_grid_value_x(obj_game_data.characters, 0, 0, 29, 5, "Irving"), 3, 1119);
-        
         if (ini_read_real("Game Data", "1", 0) > 82)
+        {
             ds_grid_set(obj_game_data.characters, ds_grid_value_x(obj_game_data.characters, 0, 0, 29, 5, "Irving"), 3, 1122);
-        
+        }
         ds_grid_set(obj_game_data.characters, ds_grid_value_x(obj_game_data.characters, 0, 0, 29, 5, "Irving"), 0, 38);
         ds_grid_set(obj_game_data.characters, ds_grid_value_x(obj_game_data.characters, 0, 0, 29, 5, "Irving"), 1, 290);
         ds_grid_set(obj_game_data.characters, ds_grid_value_x(obj_game_data.characters, 0, 0, 29, 5, "Garrick"), 3, 1084);
@@ -132,14 +132,18 @@ function scr_load_game_8()
         ds_grid_set(obj_game_data.characters, ds_grid_value_x(obj_game_data.characters, 0, 0, 29, 5, "Liberty"), 3, 1181);
         ds_grid_set(obj_game_data.characters, ds_grid_value_x(obj_game_data.characters, 0, 0, 29, 5, "Liberty"), 0, 59);
         ds_grid_set(obj_game_data.characters, ds_grid_value_x(obj_game_data.characters, 0, 0, 29, 5, "Liberty"), 1, 319);
-        
         if (ini_read_real("Save Flag", "1", 0) == 0)
+        {
             room_goto(scr_level_select(ini_read_real("Game Data", "1", 0)));
+        }
         else if (ini_read_real("Save Flag", "1", 0) == 1)
+        {
             room_goto(ini_read_real("Game Data", "1", 0) - room_scene_7_1);
+        }
         else
+        {
             room_goto(ini_read_real("Game Data", "1", 0));
-        
+        }
         ini_close();
         global.difficulty = ds_grid_get(obj_game_data.data, 0, 4);
         global.deathsetting = ds_grid_get(obj_game_data.data, 0, 5);
@@ -155,20 +159,18 @@ function scr_load_game_8()
         global.enemylck = ds_grid_get(obj_game_data.data, 2, 14);
         global.randomenemyaptitudes = ds_grid_get(obj_game_data.data, 2, 5);
         global.randomclassaptitudes = ds_grid_get(obj_game_data.data, 1, 11);
-        
         if (global.randomclassaptitudes == 1)
         {
             with (obj_game_data)
             {
                 random_set_seed(ds_grid_get(obj_game_data.data, 1, 12));
-                
                 for (ii = 0; ii <= 54; ii += 1)
+                {
                     ds_list_add(classvalues, random_range(0, 50), random_range(0, 50), random_range(0, 50), random_range(0, 50), random_range(0, 50), random_range(0, 50), random_range(0, 50), random_range(0, 50), random_range(0, 50));
-                
+                }
                 randomize();
             }
         }
-        
         global.randombases = ds_grid_get(obj_game_data.data, 1, 2);
         global.randomgoldmodifier = ds_grid_get(obj_game_data.data, 1, 3);
         global.randomXPmodifier = ds_grid_get(obj_game_data.data, 1, 4);
@@ -177,7 +179,6 @@ function scr_load_game_8()
         global.randomspells = ds_grid_get(obj_game_data.data, 1, 8);
         global.randomweapons = ds_grid_get(obj_game_data.data, 1, 9);
         global.randomitems = ds_grid_get(obj_game_data.data, 1, 10);
-        
         with (obj_stat_holder)
         {
             ds_grid_set(irving_stats, 7, 0, "Garrick");

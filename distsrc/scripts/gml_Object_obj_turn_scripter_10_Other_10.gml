@@ -1,5 +1,4 @@
 characters = ds_priority_create();
-
 for (ii = 0; ii <= 7; ii += 1)
 {
     if (ii == 0)
@@ -42,7 +41,6 @@ for (ii = 0; ii <= 7; ii += 1)
         xx = 640;
         yy = 832;
     }
-    
     if (global.map[xx / 32][yy / 32].occupant == -4)
     {
         with (instance_create(xx, yy, choose(obj_enemy_delian_conjurer, obj_enemy_delian_stalker, obj_enemy_delian_drifter)))
@@ -51,16 +49,18 @@ for (ii = 0; ii <= 7; ii += 1)
             GridY = y / 32;
             global.map[GridX][GridY].occupant = id;
             rusher = true;
-            
             if (class == "Conjurer")
+            {
                 equippedcoord = 202;
-            
+            }
             if (class == "Stalker")
+            {
                 equippedcoord = 154;
-            
+            }
             if (class == "Drifter")
+            {
                 equippedcoord = 42;
-            
+            }
             ds_priority_add(other.characters, id, other.ii);
             name = "Undead";
             scr_undead();
@@ -70,26 +70,42 @@ for (ii = 0; ii <= 7; ii += 1)
         }
     }
 }
-
 if (turn == 1)
+{
     alpha = 0.9;
+}
 else if (turn == 2)
+{
     alpha = 0.8;
+}
 else if (turn == 3)
+{
     alpha = 0.7;
+}
 else if (turn == 4)
+{
     alpha = 0.6;
+}
 else if (turn == 5)
+{
     alpha = 0.5;
+}
 else if (turn == 6)
+{
     alpha = 0.4;
+}
 else if (turn == 7)
+{
     alpha = 0.3;
+}
 else if (turn == 8)
+{
     alpha = 0.2;
+}
 else if (turn == 9)
+{
     alpha = 0.1;
-
+}
 if (turn >= 9 && !instance_exists(obj_stat_view))
 {
     obj_game.state = "idle";

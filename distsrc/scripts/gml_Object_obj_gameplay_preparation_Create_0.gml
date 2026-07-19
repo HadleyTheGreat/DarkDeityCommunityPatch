@@ -24,13 +24,11 @@ myy = 0;
 selected = 1;
 notreplacing = true;
 flash = 0;
-
 if (instance_exists(obj_room_info))
 {
     chaptername = scr_chaptername(obj_room_info.chap);
     chap = obj_room_info.chap;
 }
-
 if (!instance_exists(obj_marker_parent) && global.battlesaver == false && (room != room_lp && room != room_l1 && room != room_l2 && room != room_ch_4 && room != room_story_1_level && room != room_story_2_level && room != room_story_3_level && room != room_story_4_level && room != room_story_5_level && room != room_story_6_level && room != room_story_7_level))
 {
     levelsplit = ds_grid_create(2, 30);
@@ -95,18 +93,16 @@ if (!instance_exists(obj_marker_parent) && global.battlesaver == false && (room 
     ds_grid_set(levelsplit, 0, 29, ds_grid_get(obj_stat_holder.liberty_stats, 2, 1));
     ds_grid_set(levelsplit, 1, 29, ds_grid_value_x(obj_game_data.characters, 0, 0, 29, 5, "Liberty"));
     ds_grid_sort(levelsplit, 0, true);
-    
     for (ii = 0; ii <= 29; ii += 1)
+    {
         instance_create(0, 0, ds_grid_get(obj_game_data.characters, ds_grid_get(levelsplit, 1, ii), 1));
-    
+    }
     ds_grid_destroy(levelsplit);
-    
     with (obj_marker_parent)
     {
         scr_update_equipment_all();
         scr_player_creation_updates();
     }
-    
     with (obj_marker_parent)
     {
         if (unitid < 6)
@@ -138,20 +134,20 @@ if (!instance_exists(obj_marker_parent) && global.battlesaver == false && (room 
             iddisplay = unitid - 25;
             height = 5;
         }
-        
         if (unitid > obj_room_info.maxunitid || alive == false)
+        {
             instance_destroy();
+        }
         else
+        {
             selected = false;
+        }
     }
-    
     battlesavenum = 0;
-    
     if (ds_grid_get(obj_game_data.data, 0, 12) != false)
     {
         battlesave = ds_grid_create(30, 3);
         ds_grid_read(battlesave, ds_grid_get(obj_game_data.data, 0, 12));
-        
         with (obj_marker_parent)
         {
             if (ds_grid_get(other.battlesave, other.battlesavenum, 0) == 1)
@@ -160,37 +156,33 @@ if (!instance_exists(obj_marker_parent) && global.battlesaver == false && (room 
                 x = ds_grid_get(other.battlesave, other.battlesavenum, 1);
                 y = ds_grid_get(other.battlesave, other.battlesavenum, 2);
                 obj_room_info.selectedtotal += 1;
-                
                 with (obj_swapspot)
                 {
                     if (x == other.x && y == other.y)
+                    {
                         occupant = other;
+                    }
                 }
             }
             else
             {
                 selected = false;
             }
-            
             other.battlesavenum += 1;
         }
-        
         ds_grid_destroy(battlesave);
     }
     else
     {
         ganba = ds_grid_create(2, 30);
         ganba2 = 0;
-        
         with (obj_marker_parent)
         {
             ds_grid_add(other.ganba, 0, other.ganba2, id);
             ds_grid_add(other.ganba, 1, other.ganba2, level);
             other.ganba2 += 1;
         }
-        
         ds_grid_sort(ganba, 1, false);
-        
         for (ii = 0; ii <= 29; ii += 1)
         {
             if (ds_grid_get(ganba, 0, ii) != 0)
@@ -198,15 +190,14 @@ if (!instance_exists(obj_marker_parent) && global.battlesaver == false && (room 
                 if (obj_room_info.selectedtotal < obj_room_info.selectabletotal)
                 {
                     with (ds_grid_get(ganba, 0, ii))
+                    {
                         selected = true;
-                    
+                    }
                     obj_room_info.selectedtotal += 1;
                 }
             }
         }
-        
         ds_grid_destroy(ganba);
-        
         with (obj_marker_parent)
         {
             if (selected)
@@ -216,8 +207,9 @@ if (!instance_exists(obj_marker_parent) && global.battlesaver == false && (room 
                     if ((other.x == 0 || other.y == 0) && (occupant == -4 || occupant == other))
                     {
                         if (occupant == -4)
+                        {
                             occupant = other;
-                        
+                        }
                         other.x = x;
                         other.y = y;
                     }
@@ -241,18 +233,18 @@ else if (global.battlesaver)
     ds_list_read(midsave_objectives, ini_read_string("Saves", "4", ""));
     ds_list_read(midsave_hazards, ini_read_string("Saves", "5", ""));
     ds_list_read(midsave_specific, ini_read_string("Saves", "7", ""));
-    
     if (instance_exists(obj_room_info))
     {
         var gridstring = ini_read_string("Saves", "8", "");
-        
         if (gridstring != "")
+        {
             ds_grid_read(obj_room_info.gamestats, gridstring);
-    }
-    
+        }
+    {
     with (obj_swapspot)
+    {
         instance_destroy();
-    
+    }
     with (obj_actor)
     {
         if (army == 20)
@@ -261,134 +253,102 @@ else if (global.battlesaver)
             instance_destroy();
         }
     }
-    
     for (ii = 0; ii <= (ds_list_size(midsave_players) - 4); ii += 4)
     {
         var unit1 = -4;
-        
         switch (ds_list_find_value(midsave_players, ii))
         {
             case "Irving":
                 unit1 = instance_create(ds_list_find_value(midsave_players, ii + 1), ds_list_find_value(midsave_players, ii + 2), obj_irving);
                 break;
-            
             case "Garrick":
                 unit1 = instance_create(ds_list_find_value(midsave_players, ii + 1), ds_list_find_value(midsave_players, ii + 2), obj_garrick);
                 break;
-            
             case "Maren":
                 unit1 = instance_create(ds_list_find_value(midsave_players, ii + 1), ds_list_find_value(midsave_players, ii + 2), obj_maren);
                 break;
-            
             case "Alden":
                 unit1 = instance_create(ds_list_find_value(midsave_players, ii + 1), ds_list_find_value(midsave_players, ii + 2), obj_alden);
                 break;
-            
             case "Cia":
                 unit1 = instance_create(ds_list_find_value(midsave_players, ii + 1), ds_list_find_value(midsave_players, ii + 2), obj_cia);
                 break;
-            
             case "Elias":
                 unit1 = instance_create(ds_list_find_value(midsave_players, ii + 1), ds_list_find_value(midsave_players, ii + 2), obj_elias);
                 break;
-            
             case "Lincoln":
                 unit1 = instance_create(ds_list_find_value(midsave_players, ii + 1), ds_list_find_value(midsave_players, ii + 2), obj_lincoln);
                 break;
-            
             case "Bianca":
                 unit1 = instance_create(ds_list_find_value(midsave_players, ii + 1), ds_list_find_value(midsave_players, ii + 2), obj_bianca);
                 break;
-            
             case "Sophia":
                 unit1 = instance_create(ds_list_find_value(midsave_players, ii + 1), ds_list_find_value(midsave_players, ii + 2), obj_sophia);
                 break;
-            
             case "Sloane":
                 unit1 = instance_create(ds_list_find_value(midsave_players, ii + 1), ds_list_find_value(midsave_players, ii + 2), obj_sloane);
                 break;
-            
             case "Brooke":
                 unit1 = instance_create(ds_list_find_value(midsave_players, ii + 1), ds_list_find_value(midsave_players, ii + 2), obj_brooke);
                 break;
-            
             case "Benji":
                 unit1 = instance_create(ds_list_find_value(midsave_players, ii + 1), ds_list_find_value(midsave_players, ii + 2), obj_benji);
                 break;
-            
             case "Caius":
                 unit1 = instance_create(ds_list_find_value(midsave_players, ii + 1), ds_list_find_value(midsave_players, ii + 2), obj_caius);
                 break;
-            
             case "Sara":
                 unit1 = instance_create(ds_list_find_value(midsave_players, ii + 1), ds_list_find_value(midsave_players, ii + 2), obj_sara);
                 break;
-            
             case "Samara":
                 unit1 = instance_create(ds_list_find_value(midsave_players, ii + 1), ds_list_find_value(midsave_players, ii + 2), obj_samara);
                 break;
-            
             case "Corvan":
                 unit1 = instance_create(ds_list_find_value(midsave_players, ii + 1), ds_list_find_value(midsave_players, ii + 2), obj_corvan);
                 break;
-            
             case "Helena":
                 unit1 = instance_create(ds_list_find_value(midsave_players, ii + 1), ds_list_find_value(midsave_players, ii + 2), obj_helena);
                 break;
-            
             case "Aurima":
                 unit1 = instance_create(ds_list_find_value(midsave_players, ii + 1), ds_list_find_value(midsave_players, ii + 2), obj_aurima);
                 break;
-            
             case "Vesta":
                 unit1 = instance_create(ds_list_find_value(midsave_players, ii + 1), ds_list_find_value(midsave_players, ii + 2), obj_vesta);
                 break;
-            
             case "Ford":
                 unit1 = instance_create(ds_list_find_value(midsave_players, ii + 1), ds_list_find_value(midsave_players, ii + 2), obj_ford);
                 break;
-            
             case "Monroe":
                 unit1 = instance_create(ds_list_find_value(midsave_players, ii + 1), ds_list_find_value(midsave_players, ii + 2), obj_monroe);
                 break;
-            
             case "Iris":
                 unit1 = instance_create(ds_list_find_value(midsave_players, ii + 1), ds_list_find_value(midsave_players, ii + 2), obj_iris);
                 break;
-            
             case "Maeve":
                 unit1 = instance_create(ds_list_find_value(midsave_players, ii + 1), ds_list_find_value(midsave_players, ii + 2), obj_kitara);
                 break;
-            
             case "Thae'Lanel":
                 unit1 = instance_create(ds_list_find_value(midsave_players, ii + 1), ds_list_find_value(midsave_players, ii + 2), obj_thaelanel);
                 break;
-            
             case "Wren":
                 unit1 = instance_create(ds_list_find_value(midsave_players, ii + 1), ds_list_find_value(midsave_players, ii + 2), obj_wren);
                 break;
-            
             case "Faust":
                 unit1 = instance_create(ds_list_find_value(midsave_players, ii + 1), ds_list_find_value(midsave_players, ii + 2), obj_faust);
                 break;
-            
             case "Fenton":
                 unit1 = instance_create(ds_list_find_value(midsave_players, ii + 1), ds_list_find_value(midsave_players, ii + 2), obj_fenton);
                 break;
-            
             case "Alexa":
                 unit1 = instance_create(ds_list_find_value(midsave_players, ii + 1), ds_list_find_value(midsave_players, ii + 2), obj_alexa);
                 break;
-            
             case "Rose":
                 unit1 = instance_create(ds_list_find_value(midsave_players, ii + 1), ds_list_find_value(midsave_players, ii + 2), obj_rose);
                 break;
-            
             case "Liberty":
                 unit1 = instance_create(ds_list_find_value(midsave_players, ii + 1), ds_list_find_value(midsave_players, ii + 2), obj_liberty);
                 break;
         }
-        
         if (unit1 != -4)
         {
             with (unit1)
@@ -402,7 +362,6 @@ else if (global.battlesaver)
             }
         }
     }
-    
     with (obj_ai_controller)
     {
         if (ds_list_find_index(other.midsave_enemies, id) != -1)
@@ -412,31 +371,31 @@ else if (global.battlesaver)
             tempHP = ds_list_find_value(other.midsave_enemies, ds_list_find_index(other.midsave_enemies, id) + 3);
             GridX = x / 32;
             GridY = y / 32;
-            
             with (obj_node)
             {
                 if (occupant == other.id)
+                {
                     occupant = -4;
+                }
             }
-            
             global.map[GridX][GridY].occupant = id;
         }
         else
         {
             if (global.map[x / 32][y / 32].occupant == id)
+            {
                 global.map[x / 32][y / 32].occupant = -4;
-            
+            }
             instance_destroy();
         }
     }
-    
     with (obj_turn_scripter)
     {
         turn = ds_list_find_value(other.midsave_turnscript, 0);
-        
         with (obj_game)
+        {
             turn_counter = other.turn;
-        
+        }
         P = ds_list_find_value(other.midsave_turnscript, 1);
         dongus = ds_list_find_value(other.midsave_turnscript, 2);
         dingus = ds_list_find_value(other.midsave_turnscript, 3);
@@ -447,45 +406,50 @@ else if (global.battlesaver)
         porter = ds_list_find_value(other.midsave_turnscript, 8);
         param1 = ds_list_find_value(other.midsave_turnscript, 9);
     }
-    
     with (obj_hazard)
+    {
         instance_destroy();
-    
+    }
     with (obj_cursor_preparing)
+    {
         instance_destroy();
-    
+    }
     with (obj_objective_parent)
     {
         allowed = false;
-        
         for (ii = 0; ii <= (ds_list_size(other.midsave_objectives) - 3); ii += 3)
         {
             if (x == ds_list_find_value(other.midsave_objectives, ii + 1) && y == ds_list_find_value(other.midsave_objectives, ii + 2) && ds_list_find_value(other.midsave_objectives, ii) == asset_get_index(object_get_name(object_index)))
+            {
                 allowed = true;
+            }
         }
-        
         if (allowed == false)
+        {
             instance_destroy();
+        }
     }
-    
     if (!ds_list_empty(midsave_objectives))
     {
         for (ii = 0; ii <= (ds_list_size(midsave_objectives) - 3); ii += 3)
         {
             if (collision_point(ds_list_find_value(midsave_objectives, ii + 1) + 16, ds_list_find_value(midsave_objectives, ii + 2) + 16, ds_list_find_value(midsave_objectives, ii), false, true) == -4)
+            {
                 instance_create_depth(ds_list_find_value(midsave_objectives, ii + 1), ds_list_find_value(midsave_objectives, ii + 2), 0, ds_list_find_value(midsave_objectives, ii));
+            }
         }
     }
-    
     if (!ds_list_empty(midsave_hazards))
     {
         for (ii = 0; ii <= (ds_list_size(midsave_hazards) - 3); ii += 3)
+        {
             instance_create_depth(ds_list_find_value(midsave_hazards, ii + 1), ds_list_find_value(midsave_hazards, ii + 2), 0, ds_list_find_value(midsave_hazards, ii));
+        }
     }
-    
     with (obj_actor)
+    {
         scr_update_equipment_all();
-    
+    }
     if (room == room_l22)
     {
         if (!ds_list_empty(midsave_specific))
@@ -510,7 +474,6 @@ else if (global.battlesaver)
             }
         }
     }
-    
     if (room == room_l14)
     {
         if (!ds_list_empty(midsave_specific))
@@ -536,7 +499,6 @@ else if (global.battlesaver)
             }
         }
     }
-    
     if (room == room_l17)
     {
         if (!ds_list_empty(midsave_specific))
@@ -593,7 +555,6 @@ else if (global.battlesaver)
             }
         }
     }
-    
     if (room == Room_l27)
     {
         if (!ds_list_empty(midsave_specific))
@@ -675,7 +636,6 @@ else if (global.battlesaver)
                 }
             }
         }
-        
         if (room == room_ch_newageoldworld)
         {
             if (!ds_list_empty(midsave_specific))
@@ -743,136 +703,104 @@ else if (global.battlesaver)
             }
         }
     }
-    
     if (room == room_l15_1)
     {
         for (ii = 0; ii <= (ds_list_size(midsave_specific) - 5); ii += 5)
         {
             var unit1 = -4;
-            
             switch (ds_list_find_value(midsave_specific, ii))
             {
                 case "Irving":
                     unit1 = instance_create(ds_list_find_value(midsave_specific, ii + 1), ds_list_find_value(midsave_specific, ii + 2), obj_irving_enemy);
                     break;
-                
                 case "Garrick":
                     unit1 = instance_create(ds_list_find_value(midsave_specific, ii + 1), ds_list_find_value(midsave_specific, ii + 2), obj_garrick_enemy);
                     break;
-                
                 case "Maren":
                     unit1 = instance_create(ds_list_find_value(midsave_specific, ii + 1), ds_list_find_value(midsave_specific, ii + 2), obj_maren_enemy);
                     break;
-                
                 case "Alden":
                     unit1 = instance_create(ds_list_find_value(midsave_specific, ii + 1), ds_list_find_value(midsave_specific, ii + 2), obj_alden_enemy);
                     break;
-                
                 case "Cia":
                     unit1 = instance_create(ds_list_find_value(midsave_specific, ii + 1), ds_list_find_value(midsave_specific, ii + 2), obj_cia_enemy);
                     break;
-                
                 case "Elias":
                     unit1 = instance_create(ds_list_find_value(midsave_specific, ii + 1), ds_list_find_value(midsave_specific, ii + 2), obj_elias_enemy);
                     break;
-                
                 case "Lincoln":
                     unit1 = instance_create(ds_list_find_value(midsave_specific, ii + 1), ds_list_find_value(midsave_specific, ii + 2), obj_lincoln_enemy);
                     break;
-                
                 case "Bianca":
                     unit1 = instance_create(ds_list_find_value(midsave_specific, ii + 1), ds_list_find_value(midsave_specific, ii + 2), obj_bianca_enemy);
                     break;
-                
                 case "Sophia":
                     unit1 = instance_create(ds_list_find_value(midsave_specific, ii + 1), ds_list_find_value(midsave_specific, ii + 2), obj_sophia_enemy);
                     break;
-                
                 case "Sloane":
                     unit1 = instance_create(ds_list_find_value(midsave_specific, ii + 1), ds_list_find_value(midsave_specific, ii + 2), obj_sloane_enemy);
                     break;
-                
                 case "Brooke":
                     unit1 = instance_create(ds_list_find_value(midsave_specific, ii + 1), ds_list_find_value(midsave_specific, ii + 2), obj_brooke_enemy);
                     break;
-                
                 case "Benji":
                     unit1 = instance_create(ds_list_find_value(midsave_specific, ii + 1), ds_list_find_value(midsave_specific, ii + 2), obj_benji_enemy);
                     break;
-                
                 case "Caius":
                     unit1 = instance_create(ds_list_find_value(midsave_specific, ii + 1), ds_list_find_value(midsave_specific, ii + 2), obj_caius_enemy);
                     break;
-                
                 case "Sara":
                     unit1 = instance_create(ds_list_find_value(midsave_specific, ii + 1), ds_list_find_value(midsave_specific, ii + 2), obj_sara_enemy);
                     break;
-                
                 case "Samara":
                     unit1 = instance_create(ds_list_find_value(midsave_specific, ii + 1), ds_list_find_value(midsave_specific, ii + 2), obj_samara_enemy);
                     break;
-                
                 case "Corvan":
                     unit1 = instance_create(ds_list_find_value(midsave_specific, ii + 1), ds_list_find_value(midsave_specific, ii + 2), obj_corvan_enemy);
                     break;
-                
                 case "Helena":
                     unit1 = instance_create(ds_list_find_value(midsave_specific, ii + 1), ds_list_find_value(midsave_specific, ii + 2), obj_helena_enemy);
                     break;
-                
                 case "Aurima":
                     unit1 = instance_create(ds_list_find_value(midsave_specific, ii + 1), ds_list_find_value(midsave_specific, ii + 2), obj_aurima_enemy);
                     break;
-                
                 case "Vesta":
                     unit1 = instance_create(ds_list_find_value(midsave_specific, ii + 1), ds_list_find_value(midsave_specific, ii + 2), obj_vesta_enemy);
                     break;
-                
                 case "Ford":
                     unit1 = instance_create(ds_list_find_value(midsave_specific, ii + 1), ds_list_find_value(midsave_specific, ii + 2), obj_ford_enemy);
                     break;
-                
                 case "Monroe":
                     unit1 = instance_create(ds_list_find_value(midsave_specific, ii + 1), ds_list_find_value(midsave_specific, ii + 2), obj_monroe_enemy);
                     break;
-                
                 case "Iris":
                     unit1 = instance_create(ds_list_find_value(midsave_specific, ii + 1), ds_list_find_value(midsave_specific, ii + 2), obj_iris_enemy);
                     break;
-                
                 case "Maeve":
                     unit1 = instance_create(ds_list_find_value(midsave_specific, ii + 1), ds_list_find_value(midsave_specific, ii + 2), obj_kitara_enemy);
                     break;
-                
                 case "Thae'Lanel":
                     unit1 = instance_create(ds_list_find_value(midsave_specific, ii + 1), ds_list_find_value(midsave_specific, ii + 2), obj_thaelanel_enemy);
                     break;
-                
                 case "Wren":
                     unit1 = instance_create(ds_list_find_value(midsave_specific, ii + 1), ds_list_find_value(midsave_specific, ii + 2), obj_wren_enemy);
                     break;
-                
                 case "Faust":
                     unit1 = instance_create(ds_list_find_value(midsave_specific, ii + 1), ds_list_find_value(midsave_specific, ii + 2), obj_faust_enemy);
                     break;
-                
                 case "Fenton":
                     unit1 = instance_create(ds_list_find_value(midsave_specific, ii + 1), ds_list_find_value(midsave_specific, ii + 2), obj_fenton_enemy);
                     break;
-                
                 case "Alexa":
                     unit1 = instance_create(ds_list_find_value(midsave_specific, ii + 1), ds_list_find_value(midsave_specific, ii + 2), obj_alexa_enemy);
                     break;
-                
                 case "Rose":
                     unit1 = instance_create(ds_list_find_value(midsave_specific, ii + 1), ds_list_find_value(midsave_specific, ii + 2), obj_rose_enemy);
                     break;
-                
                 case "Liberty":
                     unit1 = instance_create(ds_list_find_value(midsave_specific, ii + 1), ds_list_find_value(midsave_specific, ii + 2), obj_liberty_enemy);
                     break;
             }
-            
             if (unit1 != -4)
             {
                 with (unit1)
@@ -889,7 +817,6 @@ else if (global.battlesaver)
             }
         }
     }
-    
     ds_list_destroy(midsave_players);
     ds_list_destroy(midsave_enemies);
     ds_list_destroy(midsave_turnscript);
@@ -903,16 +830,18 @@ else if (global.battlesaver)
 else if (room == room_lp || room == room_l1 || room == room_l2 || room == room_ch_4 || room == room_story_1_level || room == room_story_2_level || room == room_story_3_level || room == room_story_4_level || room == room_story_5_level || room == room_story_6_level || room == room_story_7_level)
 {
     with (obj_cursor_preparing)
+    {
         instance_destroy();
-    
+    }
     with (obj_turn_scripter)
+    {
         turn += 1;
-    
+    }
     with (obj_game)
+    {
         turn_counter += 1;
-    
+    }
     obj_game.state = "player turn draw";
-    
     with (obj_actor)
     {
         if (army == 20)
@@ -922,7 +851,6 @@ else if (room == room_lp || room == room_l1 || room == room_l2 || room == room_c
             global.map[GridX][GridY].occupant = id;
         }
     }
-    
     global.map[0][0].occupant = -4;
     instance_destroy();
 }

@@ -3,70 +3,60 @@ var name1 = bonding.selected.name;
 var name2 = bonding.selected2.name;
 var level = ds_grid_get(bonding.selected.personalarray, 6, ds_grid_value_y(bonding.selected.personalarray, 7, 0, 7, 9, name2));
 filebranch = "Bonds_English";
-
 switch (global.language)
 {
     case "French":
         filebranch = "Bonds_French//";
         break;
-    
     case "German":
         filebranch = "Bonds_German//";
         break;
-    
     case "Italian":
         filebranch = "Bonds_Italian//";
         break;
-    
     case "Spanish":
         filebranch = "Bonds_Spanish//";
         break;
-    
     case "Japanese":
         filebranch = "Bonds_Japanese//";
         break;
-    
     case "Korean":
         filebranch = "Bonds_Korean//";
         break;
-    
     case "Chinese":
         filebranch = "Bonds_Chinese//";
         break;
 }
-
 if (name1 == "Garrick" || name2 == "Garrick")
 {
     if (level == 1)
     {
         instance_deactivate_all(true);
-        
         with (instance_create(0, 0, obj_text_holder))
         {
         }
-        
         with (instance_create(0, 0, obj_dialogue_character_display))
         {
             instance_activate_object(obj_game_data);
             instance_activate_object(obj_controller);
             var file = file_text_open_read("Bonds//" + filebranch + "Bonds_Irving.txt");
-            
             for (ii = 0; ii <= 27; ii += 1)
             {
                 if (file_text_eof(file))
+                {
                     break;
-                
+                }
                 if (ii > 1)
+                {
                     ds_priority_add(speakerpool, file_text_read_string(file), ii);
-                
+                }
                 file_text_readln(file);
-                
                 if (ii > 1)
+                {
                     ds_priority_add(obj_text_holder.text_holder, file_text_read_string(file), ii);
-                
+                }
                 file_text_readln(file);
             }
-            
             file_text_close(file);
             unit1 = "Irving";
             unit2 = "Garrick";
@@ -148,17 +138,18 @@ if (name1 == "Garrick" || name2 == "Garrick")
             ds_priority_add(soundpool, -4, 26);
             ds_priority_add(expressionpool1, 2, 26);
             ds_priority_add(expressionpool2, 2, 26);
-            
             if (ds_grid_value_exists(obj_game_data.characters, 0, 0, 29, 5, 1122))
+            {
                 actor1 = 1122;
+            }
             else
+            {
                 actor1 = 1119;
-            
+            }
             actor2 = 1084;
             speaker = ds_priority_delete_min(speakerpool);
             speakerpositionx = display_get_gui_width() * 0.25;
         }
-        
         with (instance_create(0, 0, obj_text_scroll))
         {
             text = ds_priority_delete_min(obj_text_holder.text_holder);
@@ -169,33 +160,31 @@ if (name1 == "Garrick" || name2 == "Garrick")
     else if (level == 2)
     {
         instance_deactivate_all(true);
-        
         with (instance_create(0, 0, obj_text_holder))
         {
         }
-        
         with (instance_create(0, 0, obj_dialogue_character_display))
         {
             instance_activate_object(obj_game_data);
             instance_activate_object(obj_controller);
             var file = file_text_open_read("Bonds//" + filebranch + "Bonds_Irving.txt");
-            
             for (ii = 0; ii <= 49; ii += 1)
             {
                 if (file_text_eof(file))
+                {
                     break;
-                
+                }
                 if (ii > 29)
+                {
                     ds_priority_add(speakerpool, file_text_read_string(file), ii);
-                
+                }
                 file_text_readln(file);
-                
                 if (ii > 29)
+                {
                     ds_priority_add(obj_text_holder.text_holder, file_text_read_string(file), ii);
-                
+                }
                 file_text_readln(file);
             }
-            
             file_text_close(file);
             unit1 = "Irving";
             unit2 = "Garrick";
@@ -259,17 +248,18 @@ if (name1 == "Garrick" || name2 == "Garrick")
             ds_priority_add(soundpool, -4, 20);
             ds_priority_add(expressionpool1, 3, 20);
             ds_priority_add(expressionpool2, 2, 20);
-            
             if (ds_grid_value_exists(obj_game_data.characters, 0, 0, 29, 5, 1122))
+            {
                 actor1 = 1122;
+            }
             else
+            {
                 actor1 = 1119;
-            
+            }
             actor2 = 1084;
             speaker = ds_priority_delete_min(speakerpool);
             speakerpositionx = display_get_gui_width() * 0.25;
         }
-        
         with (instance_create(0, 0, obj_text_scroll))
         {
             text = ds_priority_delete_min(obj_text_holder.text_holder);
@@ -280,33 +270,31 @@ if (name1 == "Garrick" || name2 == "Garrick")
     else if (level == 3)
     {
         instance_deactivate_all(true);
-        
         with (instance_create(0, 0, obj_text_holder))
         {
         }
-        
         with (instance_create(0, 0, obj_dialogue_character_display))
         {
             instance_activate_object(obj_game_data);
             instance_activate_object(obj_controller);
             var file = file_text_open_read("Bonds//" + filebranch + "Bonds_Irving.txt");
-            
             for (ii = 0; ii <= 92; ii += 1)
             {
                 if (file_text_eof(file))
+                {
                     break;
-                
+                }
                 if (ii > 51)
+                {
                     ds_priority_add(speakerpool, file_text_read_string(file), ii);
-                
+                }
                 file_text_readln(file);
-                
                 if (ii > 51)
+                {
                     ds_priority_add(obj_text_holder.text_holder, file_text_read_string(file), ii);
-                
+                }
                 file_text_readln(file);
             }
-            
             file_text_close(file);
             unit1 = "Irving";
             unit2 = "Garrick";
@@ -433,17 +421,18 @@ if (name1 == "Garrick" || name2 == "Garrick")
             ds_priority_add(soundpool, -4, 41);
             ds_priority_add(expressionpool1, 0, 41);
             ds_priority_add(expressionpool2, 0, 41);
-            
             if (ds_grid_value_exists(obj_game_data.characters, 0, 0, 29, 5, 1122))
+            {
                 actor1 = 1122;
+            }
             else
+            {
                 actor1 = 1119;
-            
+            }
             actor2 = 1084;
             speaker = ds_priority_delete_min(speakerpool);
             speakerpositionx = display_get_gui_width() * 0.25;
         }
-        
         with (instance_create(0, 0, obj_text_scroll))
         {
             text = ds_priority_delete_min(obj_text_holder.text_holder);
@@ -452,39 +441,36 @@ if (name1 == "Garrick" || name2 == "Garrick")
         }
     }
 }
-
 if (name1 == "Maren" || name2 == "Maren")
 {
     if (level == 1)
     {
         instance_deactivate_all(true);
-        
         with (instance_create(0, 0, obj_text_holder))
         {
         }
-        
         with (instance_create(0, 0, obj_dialogue_character_display))
         {
             instance_activate_object(obj_game_data);
             instance_activate_object(obj_controller);
             var file = file_text_open_read("Bonds//" + filebranch + "Bonds_Irving.txt");
-            
             for (ii = 0; ii <= 113; ii += 1)
             {
                 if (file_text_eof(file))
+                {
                     break;
-                
+                }
                 if (ii > 94)
+                {
                     ds_priority_add(speakerpool, file_text_read_string(file), ii);
-                
+                }
                 file_text_readln(file);
-                
                 if (ii > 94)
+                {
                     ds_priority_add(obj_text_holder.text_holder, file_text_read_string(file), ii);
-                
+                }
                 file_text_readln(file);
             }
-            
             file_text_close(file);
             unit1 = "Irving";
             unit2 = "Maren";
@@ -545,17 +531,18 @@ if (name1 == "Maren" || name2 == "Maren")
             ds_priority_add(soundpool, -4, 19);
             ds_priority_add(expressionpool1, 2, 19);
             ds_priority_add(expressionpool2, 2, 19);
-            
             if (ds_grid_value_exists(obj_game_data.characters, 0, 0, 29, 5, 1122))
+            {
                 actor1 = 1122;
+            }
             else
+            {
                 actor1 = 1119;
-            
+            }
             actor2 = 1088;
             speaker = ds_priority_delete_min(speakerpool);
             speakerpositionx = display_get_gui_width() * 0.25;
         }
-        
         with (instance_create(0, 0, obj_text_scroll))
         {
             text = ds_priority_delete_min(obj_text_holder.text_holder);
@@ -566,33 +553,31 @@ if (name1 == "Maren" || name2 == "Maren")
     else if (level == 2)
     {
         instance_deactivate_all(true);
-        
         with (instance_create(0, 0, obj_text_holder))
         {
         }
-        
         with (instance_create(0, 0, obj_dialogue_character_display))
         {
             instance_activate_object(obj_game_data);
             instance_activate_object(obj_controller);
             var file = file_text_open_read("Bonds//" + filebranch + "Bonds_Irving.txt");
-            
             for (ii = 0; ii <= 137; ii += 1)
             {
                 if (file_text_eof(file))
+                {
                     break;
-                
+                }
                 if (ii > 115)
+                {
                     ds_priority_add(speakerpool, file_text_read_string(file), ii);
-                
+                }
                 file_text_readln(file);
-                
                 if (ii > 115)
+                {
                     ds_priority_add(obj_text_holder.text_holder, file_text_read_string(file), ii);
-                
+                }
                 file_text_readln(file);
             }
-            
             file_text_close(file);
             unit1 = "Irving";
             unit2 = "Maren";
@@ -662,17 +647,18 @@ if (name1 == "Maren" || name2 == "Maren")
             ds_priority_add(soundpool, 471, 22);
             ds_priority_add(expressionpool1, 0, 22);
             ds_priority_add(expressionpool2, 0, 22);
-            
             if (ds_grid_value_exists(obj_game_data.characters, 0, 0, 29, 5, 1122))
+            {
                 actor1 = 1122;
+            }
             else
+            {
                 actor1 = 1119;
-            
+            }
             actor2 = 1088;
             speaker = ds_priority_delete_min(speakerpool);
             speakerpositionx = display_get_gui_width() * 0.25;
         }
-        
         with (instance_create(0, 0, obj_text_scroll))
         {
             text = ds_priority_delete_min(obj_text_holder.text_holder);
@@ -683,33 +669,31 @@ if (name1 == "Maren" || name2 == "Maren")
     else if (level == 3)
     {
         instance_deactivate_all(true);
-        
         with (instance_create(0, 0, obj_text_holder))
         {
         }
-        
         with (instance_create(0, 0, obj_dialogue_character_display))
         {
             instance_activate_object(obj_game_data);
             instance_activate_object(obj_controller);
             var file = file_text_open_read("Bonds//" + filebranch + "Bonds_Irving.txt");
-            
             for (ii = 0; ii <= 163; ii += 1)
             {
                 if (file_text_eof(file))
+                {
                     break;
-                
+                }
                 if (ii > 139)
+                {
                     ds_priority_add(speakerpool, file_text_read_string(file), ii);
-                
+                }
                 file_text_readln(file);
-                
                 if (ii > 139)
+                {
                     ds_priority_add(obj_text_holder.text_holder, file_text_read_string(file), ii);
-                
+                }
                 file_text_readln(file);
             }
-            
             file_text_close(file);
             unit1 = "Irving";
             unit2 = "Maren";
@@ -785,17 +769,18 @@ if (name1 == "Maren" || name2 == "Maren")
             ds_priority_add(soundpool, 801, 24);
             ds_priority_add(expressionpool1, 2, 24);
             ds_priority_add(expressionpool2, 2, 24);
-            
             if (ds_grid_value_exists(obj_game_data.characters, 0, 0, 29, 5, 1122))
+            {
                 actor1 = 1122;
+            }
             else
+            {
                 actor1 = 1119;
-            
+            }
             actor2 = 1088;
             speaker = ds_priority_delete_min(speakerpool);
             speakerpositionx = display_get_gui_width() * 0.25;
         }
-        
         with (instance_create(0, 0, obj_text_scroll))
         {
             text = ds_priority_delete_min(obj_text_holder.text_holder);
@@ -804,39 +789,36 @@ if (name1 == "Maren" || name2 == "Maren")
         }
     }
 }
-
 if (name1 == "Alden" || name2 == "Alden")
 {
     if (level == 1)
     {
         instance_deactivate_all(true);
-        
         with (instance_create(0, 0, obj_text_holder))
         {
         }
-        
         with (instance_create(0, 0, obj_dialogue_character_display))
         {
             instance_activate_object(obj_game_data);
             instance_activate_object(obj_controller);
             var file = file_text_open_read("Bonds//" + filebranch + "Bonds_Irving.txt");
-            
             for (ii = 0; ii <= 188; ii += 1)
             {
                 if (file_text_eof(file))
+                {
                     break;
-                
+                }
                 if (ii > 165)
+                {
                     ds_priority_add(speakerpool, file_text_read_string(file), ii);
-                
+                }
                 file_text_readln(file);
-                
                 if (ii > 165)
+                {
                     ds_priority_add(obj_text_holder.text_holder, file_text_read_string(file), ii);
-                
+                }
                 file_text_readln(file);
             }
-            
             file_text_close(file);
             unit1 = "Irving";
             unit2 = "Alden";
@@ -909,17 +891,18 @@ if (name1 == "Alden" || name2 == "Alden")
             ds_priority_add(soundpool, -4, 23);
             ds_priority_add(expressionpool1, 2, 23);
             ds_priority_add(expressionpool2, 2, 23);
-            
             if (ds_grid_value_exists(obj_game_data.characters, 0, 0, 29, 5, 1122))
+            {
                 actor1 = 1122;
+            }
             else
+            {
                 actor1 = 1119;
-            
+            }
             actor2 = 1127;
             speaker = ds_priority_delete_min(speakerpool);
             speakerpositionx = display_get_gui_width() * 0.25;
         }
-        
         with (instance_create(0, 0, obj_text_scroll))
         {
             text = ds_priority_delete_min(obj_text_holder.text_holder);
@@ -930,33 +913,31 @@ if (name1 == "Alden" || name2 == "Alden")
     else if (level == 2)
     {
         instance_deactivate_all(true);
-        
         with (instance_create(0, 0, obj_text_holder))
         {
         }
-        
         with (instance_create(0, 0, obj_dialogue_character_display))
         {
             instance_activate_object(obj_game_data);
             instance_activate_object(obj_controller);
             var file = file_text_open_read("Bonds//" + filebranch + "Bonds_Irving.txt");
-            
             for (ii = 0; ii <= 208; ii += 1)
             {
                 if (file_text_eof(file))
+                {
                     break;
-                
+                }
                 if (ii > 190)
+                {
                     ds_priority_add(speakerpool, file_text_read_string(file), ii);
-                
+                }
                 file_text_readln(file);
-                
                 if (ii > 190)
+                {
                     ds_priority_add(obj_text_holder.text_holder, file_text_read_string(file), ii);
-                
+                }
                 file_text_readln(file);
             }
-            
             file_text_close(file);
             unit1 = "Irving";
             unit2 = "Alden";
@@ -1014,17 +995,18 @@ if (name1 == "Alden" || name2 == "Alden")
             ds_priority_add(soundpool, -4, 18);
             ds_priority_add(expressionpool1, 0, 18);
             ds_priority_add(expressionpool2, 1, 18);
-            
             if (ds_grid_value_exists(obj_game_data.characters, 0, 0, 29, 5, 1122))
+            {
                 actor1 = 1122;
+            }
             else
+            {
                 actor1 = 1119;
-            
+            }
             actor2 = 1127;
             speaker = ds_priority_delete_min(speakerpool);
             speakerpositionx = display_get_gui_width() * 0.25;
         }
-        
         with (instance_create(0, 0, obj_text_scroll))
         {
             text = ds_priority_delete_min(obj_text_holder.text_holder);
@@ -1035,33 +1017,31 @@ if (name1 == "Alden" || name2 == "Alden")
     else if (level == 3)
     {
         instance_deactivate_all(true);
-        
         with (instance_create(0, 0, obj_text_holder))
         {
         }
-        
         with (instance_create(0, 0, obj_dialogue_character_display))
         {
             instance_activate_object(obj_game_data);
             instance_activate_object(obj_controller);
             var file = file_text_open_read("Bonds//" + filebranch + "Bonds_Irving.txt");
-            
             for (ii = 0; ii <= 228; ii += 1)
             {
                 if (file_text_eof(file))
+                {
                     break;
-                
+                }
                 if (ii > 210)
+                {
                     ds_priority_add(speakerpool, file_text_read_string(file), ii);
-                
+                }
                 file_text_readln(file);
-                
                 if (ii > 210)
+                {
                     ds_priority_add(obj_text_holder.text_holder, file_text_read_string(file), ii);
-                
+                }
                 file_text_readln(file);
             }
-            
             file_text_close(file);
             unit1 = "Irving";
             unit2 = "Alden";
@@ -1119,17 +1099,18 @@ if (name1 == "Alden" || name2 == "Alden")
             ds_priority_add(soundpool, 770, 18);
             ds_priority_add(expressionpool1, 2, 18);
             ds_priority_add(expressionpool2, 2, 18);
-            
             if (ds_grid_value_exists(obj_game_data.characters, 0, 0, 29, 5, 1122))
+            {
                 actor1 = 1122;
+            }
             else
+            {
                 actor1 = 1119;
-            
+            }
             actor2 = 1127;
             speaker = ds_priority_delete_min(speakerpool);
             speakerpositionx = display_get_gui_width() * 0.25;
         }
-        
         with (instance_create(0, 0, obj_text_scroll))
         {
             text = ds_priority_delete_min(obj_text_holder.text_holder);
@@ -1138,39 +1119,36 @@ if (name1 == "Alden" || name2 == "Alden")
         }
     }
 }
-
 if (name1 == "Cia" || name2 == "Cia")
 {
     if (level == 1)
     {
         instance_deactivate_all(true);
-        
         with (instance_create(0, 0, obj_text_holder))
         {
         }
-        
         with (instance_create(0, 0, obj_dialogue_character_display))
         {
             instance_activate_object(obj_game_data);
             instance_activate_object(obj_controller);
             var file = file_text_open_read("Bonds//" + filebranch + "Bonds_Irving.txt");
-            
             for (ii = 0; ii <= 248; ii += 1)
             {
                 if (file_text_eof(file))
+                {
                     break;
-                
+                }
                 if (ii > 230)
+                {
                     ds_priority_add(speakerpool, file_text_read_string(file), ii);
-                
+                }
                 file_text_readln(file);
-                
                 if (ii > 230)
+                {
                     ds_priority_add(obj_text_holder.text_holder, file_text_read_string(file), ii);
-                
+                }
                 file_text_readln(file);
             }
-            
             file_text_close(file);
             unit1 = "Irving";
             unit2 = "Cia";
@@ -1228,17 +1206,18 @@ if (name1 == "Cia" || name2 == "Cia")
             ds_priority_add(soundpool, 328, 18);
             ds_priority_add(expressionpool1, 0, 18);
             ds_priority_add(expressionpool2, 0, 18);
-            
             if (ds_grid_value_exists(obj_game_data.characters, 0, 0, 29, 5, 1122))
+            {
                 actor1 = 1122;
+            }
             else
+            {
                 actor1 = 1119;
-            
+            }
             actor2 = 1097;
             speaker = ds_priority_delete_min(speakerpool);
             speakerpositionx = display_get_gui_width() * 0.25;
         }
-        
         with (instance_create(0, 0, obj_text_scroll))
         {
             text = ds_priority_delete_min(obj_text_holder.text_holder);
@@ -1249,33 +1228,31 @@ if (name1 == "Cia" || name2 == "Cia")
     else if (level == 2)
     {
         instance_deactivate_all(true);
-        
         with (instance_create(0, 0, obj_text_holder))
         {
         }
-        
         with (instance_create(0, 0, obj_dialogue_character_display))
         {
             instance_activate_object(obj_game_data);
             instance_activate_object(obj_controller);
             var file = file_text_open_read("Bonds//" + filebranch + "Bonds_Irving.txt");
-            
             for (ii = 0; ii <= 265; ii += 1)
             {
                 if (file_text_eof(file))
+                {
                     break;
-                
+                }
                 if (ii > 250)
+                {
                     ds_priority_add(speakerpool, file_text_read_string(file), ii);
-                
+                }
                 file_text_readln(file);
-                
                 if (ii > 250)
+                {
                     ds_priority_add(obj_text_holder.text_holder, file_text_read_string(file), ii);
-                
+                }
                 file_text_readln(file);
             }
-            
             file_text_close(file);
             unit1 = "Irving";
             unit2 = "Cia";
@@ -1324,17 +1301,18 @@ if (name1 == "Cia" || name2 == "Cia")
             ds_priority_add(soundpool, 769, 15);
             ds_priority_add(expressionpool1, 2, 15);
             ds_priority_add(expressionpool2, 0, 15);
-            
             if (ds_grid_value_exists(obj_game_data.characters, 0, 0, 29, 5, 1122))
+            {
                 actor1 = 1122;
+            }
             else
+            {
                 actor1 = 1119;
-            
+            }
             actor2 = 1097;
             speaker = ds_priority_delete_min(speakerpool);
             speakerpositionx = display_get_gui_width() * 0.25;
         }
-        
         with (instance_create(0, 0, obj_text_scroll))
         {
             text = ds_priority_delete_min(obj_text_holder.text_holder);
@@ -1345,33 +1323,31 @@ if (name1 == "Cia" || name2 == "Cia")
     else if (level == 3)
     {
         instance_deactivate_all(true);
-        
         with (instance_create(0, 0, obj_text_holder))
         {
         }
-        
         with (instance_create(0, 0, obj_dialogue_character_display))
         {
             instance_activate_object(obj_game_data);
             instance_activate_object(obj_controller);
             var file = file_text_open_read("Bonds//" + filebranch + "Bonds_Irving.txt");
-            
             for (ii = 0; ii <= 296; ii += 1)
             {
                 if (file_text_eof(file))
+                {
                     break;
-                
+                }
                 if (ii > 267)
+                {
                     ds_priority_add(speakerpool, file_text_read_string(file), ii);
-                
+                }
                 file_text_readln(file);
-                
                 if (ii > 267)
+                {
                     ds_priority_add(obj_text_holder.text_holder, file_text_read_string(file), ii);
-                
+                }
                 file_text_readln(file);
             }
-            
             file_text_close(file);
             unit1 = "Irving";
             unit2 = "Cia";
@@ -1462,17 +1438,18 @@ if (name1 == "Cia" || name2 == "Cia")
             ds_priority_add(soundpool, -4, 29);
             ds_priority_add(expressionpool1, 2, 29);
             ds_priority_add(expressionpool2, 2, 29);
-            
             if (ds_grid_value_exists(obj_game_data.characters, 0, 0, 29, 5, 1122))
+            {
                 actor1 = 1122;
+            }
             else
+            {
                 actor1 = 1119;
-            
+            }
             actor2 = 1097;
             speaker = ds_priority_delete_min(speakerpool);
             speakerpositionx = display_get_gui_width() * 0.25;
         }
-        
         with (instance_create(0, 0, obj_text_scroll))
         {
             text = ds_priority_delete_min(obj_text_holder.text_holder);
@@ -1481,39 +1458,36 @@ if (name1 == "Cia" || name2 == "Cia")
         }
     }
 }
-
 if (name1 == "Elias" || name2 == "Elias")
 {
     if (level == 1)
     {
         instance_deactivate_all(true);
-        
         with (instance_create(0, 0, obj_text_holder))
         {
         }
-        
         with (instance_create(0, 0, obj_dialogue_character_display))
         {
             instance_activate_object(obj_game_data);
             instance_activate_object(obj_controller);
             var file = file_text_open_read("Bonds//" + filebranch + "Bonds_Irving.txt");
-            
             for (ii = 0; ii <= 312; ii += 1)
             {
                 if (file_text_eof(file))
+                {
                     break;
-                
+                }
                 if (ii > 298)
+                {
                     ds_priority_add(speakerpool, file_text_read_string(file), ii);
-                
+                }
                 file_text_readln(file);
-                
                 if (ii > 298)
+                {
                     ds_priority_add(obj_text_holder.text_holder, file_text_read_string(file), ii);
-                
+                }
                 file_text_readln(file);
             }
-            
             file_text_close(file);
             unit1 = "Irving";
             unit2 = "Elias";
@@ -1559,17 +1533,18 @@ if (name1 == "Elias" || name2 == "Elias")
             ds_priority_add(soundpool, -4, 14);
             ds_priority_add(expressionpool1, 0, 14);
             ds_priority_add(expressionpool2, 0, 14);
-            
             if (ds_grid_value_exists(obj_game_data.characters, 0, 0, 29, 5, 1122))
+            {
                 actor1 = 1122;
+            }
             else
+            {
                 actor1 = 1119;
-            
+            }
             actor2 = 1103;
             speaker = ds_priority_delete_min(speakerpool);
             speakerpositionx = display_get_gui_width() * 0.25;
         }
-        
         with (instance_create(0, 0, obj_text_scroll))
         {
             text = ds_priority_delete_min(obj_text_holder.text_holder);
@@ -1580,33 +1555,31 @@ if (name1 == "Elias" || name2 == "Elias")
     else if (level == 2)
     {
         instance_deactivate_all(true);
-        
         with (instance_create(0, 0, obj_text_holder))
         {
         }
-        
         with (instance_create(0, 0, obj_dialogue_character_display))
         {
             instance_activate_object(obj_game_data);
             instance_activate_object(obj_controller);
             var file = file_text_open_read("Bonds//" + filebranch + "Bonds_Irving.txt");
-            
             for (ii = 0; ii <= 336; ii += 1)
             {
                 if (file_text_eof(file))
+                {
                     break;
-                
+                }
                 if (ii > 314)
+                {
                     ds_priority_add(speakerpool, file_text_read_string(file), ii);
-                
+                }
                 file_text_readln(file);
-                
                 if (ii > 314)
+                {
                     ds_priority_add(obj_text_holder.text_holder, file_text_read_string(file), ii);
-                
+                }
                 file_text_readln(file);
             }
-            
             file_text_close(file);
             unit1 = "Irving";
             unit2 = "Elias";
@@ -1676,17 +1649,18 @@ if (name1 == "Elias" || name2 == "Elias")
             ds_priority_add(soundpool, -4, 22);
             ds_priority_add(expressionpool1, 0, 22);
             ds_priority_add(expressionpool2, 0, 22);
-            
             if (ds_grid_value_exists(obj_game_data.characters, 0, 0, 29, 5, 1122))
+            {
                 actor1 = 1122;
+            }
             else
+            {
                 actor1 = 1119;
-            
+            }
             actor2 = 1103;
             speaker = ds_priority_delete_min(speakerpool);
             speakerpositionx = display_get_gui_width() * 0.25;
         }
-        
         with (instance_create(0, 0, obj_text_scroll))
         {
             text = ds_priority_delete_min(obj_text_holder.text_holder);
@@ -1697,33 +1671,31 @@ if (name1 == "Elias" || name2 == "Elias")
     else if (level == 3)
     {
         instance_deactivate_all(true);
-        
         with (instance_create(0, 0, obj_text_holder))
         {
         }
-        
         with (instance_create(0, 0, obj_dialogue_character_display))
         {
             instance_activate_object(obj_game_data);
             instance_activate_object(obj_controller);
             var file = file_text_open_read("Bonds//" + filebranch + "Bonds_Irving.txt");
-            
             for (ii = 0; ii <= 362; ii += 1)
             {
                 if (file_text_eof(file))
+                {
                     break;
-                
+                }
                 if (ii > 338)
+                {
                     ds_priority_add(speakerpool, file_text_read_string(file), ii);
-                
+                }
                 file_text_readln(file);
-                
                 if (ii > 338)
+                {
                     ds_priority_add(obj_text_holder.text_holder, file_text_read_string(file), ii);
-                
+                }
                 file_text_readln(file);
             }
-            
             file_text_close(file);
             unit1 = "Irving";
             unit2 = "Elias";
@@ -1799,17 +1771,18 @@ if (name1 == "Elias" || name2 == "Elias")
             ds_priority_add(soundpool, -4, 24);
             ds_priority_add(expressionpool1, 2, 24);
             ds_priority_add(expressionpool2, 2, 24);
-            
             if (ds_grid_value_exists(obj_game_data.characters, 0, 0, 29, 5, 1122))
+            {
                 actor1 = 1122;
+            }
             else
+            {
                 actor1 = 1119;
-            
+            }
             actor2 = 1103;
             speaker = ds_priority_delete_min(speakerpool);
             speakerpositionx = display_get_gui_width() * 0.25;
         }
-        
         with (instance_create(0, 0, obj_text_scroll))
         {
             text = ds_priority_delete_min(obj_text_holder.text_holder);
@@ -1818,39 +1791,36 @@ if (name1 == "Elias" || name2 == "Elias")
         }
     }
 }
-
 if (name1 == "Lincoln" || name2 == "Lincoln")
 {
     if (level == 1)
     {
         instance_deactivate_all(true);
-        
         with (instance_create(0, 0, obj_text_holder))
         {
         }
-        
         with (instance_create(0, 0, obj_dialogue_character_display))
         {
             instance_activate_object(obj_game_data);
             instance_activate_object(obj_controller);
             var file = file_text_open_read("Bonds//" + filebranch + "Bonds_Irving.txt");
-            
             for (ii = 0; ii <= 380; ii += 1)
             {
                 if (file_text_eof(file))
+                {
                     break;
-                
+                }
                 if (ii > 364)
+                {
                     ds_priority_add(speakerpool, file_text_read_string(file), ii);
-                
+                }
                 file_text_readln(file);
-                
                 if (ii > 364)
+                {
                     ds_priority_add(obj_text_holder.text_holder, file_text_read_string(file), ii);
-                
+                }
                 file_text_readln(file);
             }
-            
             file_text_close(file);
             unit1 = "Irving";
             unit2 = "Lincoln";
@@ -1902,17 +1872,18 @@ if (name1 == "Lincoln" || name2 == "Lincoln")
             ds_priority_add(soundpool, -4, 16);
             ds_priority_add(expressionpool1, 0, 16);
             ds_priority_add(expressionpool2, 0, 16);
-            
             if (ds_grid_value_exists(obj_game_data.characters, 0, 0, 29, 5, 1122))
+            {
                 actor1 = 1122;
+            }
             else
+            {
                 actor1 = 1119;
-            
+            }
             actor2 = 1093;
             speaker = ds_priority_delete_min(speakerpool);
             speakerpositionx = display_get_gui_width() * 0.25;
         }
-        
         with (instance_create(0, 0, obj_text_scroll))
         {
             text = ds_priority_delete_min(obj_text_holder.text_holder);
@@ -1923,33 +1894,31 @@ if (name1 == "Lincoln" || name2 == "Lincoln")
     else if (level == 2)
     {
         instance_deactivate_all(true);
-        
         with (instance_create(0, 0, obj_text_holder))
         {
         }
-        
         with (instance_create(0, 0, obj_dialogue_character_display))
         {
             instance_activate_object(obj_game_data);
             instance_activate_object(obj_controller);
             var file = file_text_open_read("Bonds//" + filebranch + "Bonds_Irving.txt");
-            
             for (ii = 0; ii <= 399; ii += 1)
             {
                 if (file_text_eof(file))
+                {
                     break;
-                
+                }
                 if (ii > 382)
+                {
                     ds_priority_add(speakerpool, file_text_read_string(file), ii);
-                
+                }
                 file_text_readln(file);
-                
                 if (ii > 382)
+                {
                     ds_priority_add(obj_text_holder.text_holder, file_text_read_string(file), ii);
-                
+                }
                 file_text_readln(file);
             }
-            
             file_text_close(file);
             unit1 = "Irving";
             unit2 = "Lincoln";
@@ -2004,17 +1973,18 @@ if (name1 == "Lincoln" || name2 == "Lincoln")
             ds_priority_add(soundpool, 741, 17);
             ds_priority_add(expressionpool1, 0, 17);
             ds_priority_add(expressionpool2, 0, 17);
-            
             if (ds_grid_value_exists(obj_game_data.characters, 0, 0, 29, 5, 1122))
+            {
                 actor1 = 1122;
+            }
             else
+            {
                 actor1 = 1119;
-            
+            }
             actor2 = 1093;
             speaker = ds_priority_delete_min(speakerpool);
             speakerpositionx = display_get_gui_width() * 0.25;
         }
-        
         with (instance_create(0, 0, obj_text_scroll))
         {
             text = ds_priority_delete_min(obj_text_holder.text_holder);
@@ -2025,33 +1995,31 @@ if (name1 == "Lincoln" || name2 == "Lincoln")
     else if (level == 3)
     {
         instance_deactivate_all(true);
-        
         with (instance_create(0, 0, obj_text_holder))
         {
         }
-        
         with (instance_create(0, 0, obj_dialogue_character_display))
         {
             instance_activate_object(obj_game_data);
             instance_activate_object(obj_controller);
             var file = file_text_open_read("Bonds//" + filebranch + "Bonds_Irving.txt");
-            
             for (ii = 0; ii <= 416; ii += 1)
             {
                 if (file_text_eof(file))
+                {
                     break;
-                
+                }
                 if (ii > 401)
+                {
                     ds_priority_add(speakerpool, file_text_read_string(file), ii);
-                
+                }
                 file_text_readln(file);
-                
                 if (ii > 401)
+                {
                     ds_priority_add(obj_text_holder.text_holder, file_text_read_string(file), ii);
-                
+                }
                 file_text_readln(file);
             }
-            
             file_text_close(file);
             unit1 = "Irving";
             unit2 = "Lincoln";
@@ -2100,17 +2068,18 @@ if (name1 == "Lincoln" || name2 == "Lincoln")
             ds_priority_add(soundpool, -4, 15);
             ds_priority_add(expressionpool1, 1, 15);
             ds_priority_add(expressionpool2, 1, 15);
-            
             if (ds_grid_value_exists(obj_game_data.characters, 0, 0, 29, 5, 1122))
+            {
                 actor1 = 1122;
+            }
             else
+            {
                 actor1 = 1119;
-            
+            }
             actor2 = 1093;
             speaker = ds_priority_delete_min(speakerpool);
             speakerpositionx = display_get_gui_width() * 0.25;
         }
-        
         with (instance_create(0, 0, obj_text_scroll))
         {
             text = ds_priority_delete_min(obj_text_holder.text_holder);
@@ -2119,39 +2088,36 @@ if (name1 == "Lincoln" || name2 == "Lincoln")
         }
     }
 }
-
 if (name1 == "Sloane" || name2 == "Sloane")
 {
     if (level == 1)
     {
         instance_deactivate_all(true);
-        
         with (instance_create(0, 0, obj_text_holder))
         {
         }
-        
         with (instance_create(0, 0, obj_dialogue_character_display))
         {
             instance_activate_object(obj_game_data);
             instance_activate_object(obj_controller);
             var file = file_text_open_read("Bonds//" + filebranch + "Bonds_Irving.txt");
-            
             for (ii = 0; ii <= 436; ii += 1)
             {
                 if (file_text_eof(file))
+                {
                     break;
-                
+                }
                 if (ii > 418)
+                {
                     ds_priority_add(speakerpool, file_text_read_string(file), ii);
-                
+                }
                 file_text_readln(file);
-                
                 if (ii > 418)
+                {
                     ds_priority_add(obj_text_holder.text_holder, file_text_read_string(file), ii);
-                
+                }
                 file_text_readln(file);
             }
-            
             file_text_close(file);
             unit1 = "Irving";
             unit2 = "Sloane";
@@ -2209,17 +2175,18 @@ if (name1 == "Sloane" || name2 == "Sloane")
             ds_priority_add(soundpool, -4, 18);
             ds_priority_add(expressionpool1, 3, 18);
             ds_priority_add(expressionpool2, 0, 18);
-            
             if (ds_grid_value_exists(obj_game_data.characters, 0, 0, 29, 5, 1122))
+            {
                 actor1 = 1122;
+            }
             else
+            {
                 actor1 = 1119;
-            
+            }
             actor2 = 1134;
             speaker = ds_priority_delete_min(speakerpool);
             speakerpositionx = display_get_gui_width() * 0.25;
         }
-        
         with (instance_create(0, 0, obj_text_scroll))
         {
             text = ds_priority_delete_min(obj_text_holder.text_holder);
@@ -2230,33 +2197,31 @@ if (name1 == "Sloane" || name2 == "Sloane")
     else if (level == 2)
     {
         instance_deactivate_all(true);
-        
         with (instance_create(0, 0, obj_text_holder))
         {
         }
-        
         with (instance_create(0, 0, obj_dialogue_character_display))
         {
             instance_activate_object(obj_game_data);
             instance_activate_object(obj_controller);
             var file = file_text_open_read("Bonds//" + filebranch + "Bonds_Irving.txt");
-            
             for (ii = 0; ii <= 455; ii += 1)
             {
                 if (file_text_eof(file))
+                {
                     break;
-                
+                }
                 if (ii > 438)
+                {
                     ds_priority_add(speakerpool, file_text_read_string(file), ii);
-                
+                }
                 file_text_readln(file);
-                
                 if (ii > 438)
+                {
                     ds_priority_add(obj_text_holder.text_holder, file_text_read_string(file), ii);
-                
+                }
                 file_text_readln(file);
             }
-            
             file_text_close(file);
             unit1 = "Irving";
             unit2 = "Sloane";
@@ -2311,17 +2276,18 @@ if (name1 == "Sloane" || name2 == "Sloane")
             ds_priority_add(soundpool, 377, 17);
             ds_priority_add(expressionpool1, 6, 17);
             ds_priority_add(expressionpool2, 4, 17);
-            
             if (ds_grid_value_exists(obj_game_data.characters, 0, 0, 29, 5, 1122))
+            {
                 actor1 = 1122;
+            }
             else
+            {
                 actor1 = 1119;
-            
+            }
             actor2 = 1134;
             speaker = ds_priority_delete_min(speakerpool);
             speakerpositionx = display_get_gui_width() * 0.25;
         }
-        
         with (instance_create(0, 0, obj_text_scroll))
         {
             text = ds_priority_delete_min(obj_text_holder.text_holder);
@@ -2332,33 +2298,31 @@ if (name1 == "Sloane" || name2 == "Sloane")
     else if (level == 3)
     {
         instance_deactivate_all(true);
-        
         with (instance_create(0, 0, obj_text_holder))
         {
         }
-        
         with (instance_create(0, 0, obj_dialogue_character_display))
         {
             instance_activate_object(obj_game_data);
             instance_activate_object(obj_controller);
             var file = file_text_open_read("Bonds//" + filebranch + "Bonds_Irving.txt");
-            
             for (ii = 0; ii <= 477; ii += 1)
             {
                 if (file_text_eof(file))
+                {
                     break;
-                
+                }
                 if (ii > 457)
+                {
                     ds_priority_add(speakerpool, file_text_read_string(file), ii);
-                
+                }
                 file_text_readln(file);
-                
                 if (ii > 457)
+                {
                     ds_priority_add(obj_text_holder.text_holder, file_text_read_string(file), ii);
-                
+                }
                 file_text_readln(file);
             }
-            
             file_text_close(file);
             unit1 = "Irving";
             unit2 = "Sloane";
@@ -2422,17 +2386,18 @@ if (name1 == "Sloane" || name2 == "Sloane")
             ds_priority_add(soundpool, -4, 20);
             ds_priority_add(expressionpool1, 3, 20);
             ds_priority_add(expressionpool2, 0, 20);
-            
             if (ds_grid_value_exists(obj_game_data.characters, 0, 0, 29, 5, 1122))
+            {
                 actor1 = 1122;
+            }
             else
+            {
                 actor1 = 1119;
-            
+            }
             actor2 = 1134;
             speaker = ds_priority_delete_min(speakerpool);
             speakerpositionx = display_get_gui_width() * 0.25;
         }
-        
         with (instance_create(0, 0, obj_text_scroll))
         {
             text = ds_priority_delete_min(obj_text_holder.text_holder);
@@ -2441,39 +2406,36 @@ if (name1 == "Sloane" || name2 == "Sloane")
         }
     }
 }
-
 if (name1 == "Sara" || name2 == "Sara")
 {
     if (level == 1)
     {
         instance_deactivate_all(true);
-        
         with (instance_create(0, 0, obj_text_holder))
         {
         }
-        
         with (instance_create(0, 0, obj_dialogue_character_display))
         {
             instance_activate_object(obj_game_data);
             instance_activate_object(obj_controller);
             var file = file_text_open_read("Bonds//" + filebranch + "Bonds_Irving.txt");
-            
             for (ii = 0; ii <= 497; ii += 1)
             {
                 if (file_text_eof(file))
+                {
                     break;
-                
+                }
                 if (ii > 479)
+                {
                     ds_priority_add(speakerpool, file_text_read_string(file), ii);
-                
+                }
                 file_text_readln(file);
-                
                 if (ii > 479)
+                {
                     ds_priority_add(obj_text_holder.text_holder, file_text_read_string(file), ii);
-                
+                }
                 file_text_readln(file);
             }
-            
             file_text_close(file);
             unit1 = "Irving";
             unit2 = "Sara";
@@ -2531,17 +2493,18 @@ if (name1 == "Sara" || name2 == "Sara")
             ds_priority_add(soundpool, -4, 18);
             ds_priority_add(expressionpool1, 0, 18);
             ds_priority_add(expressionpool2, 0, 18);
-            
             if (ds_grid_value_exists(obj_game_data.characters, 0, 0, 29, 5, 1122))
+            {
                 actor1 = 1122;
+            }
             else
+            {
                 actor1 = 1119;
-            
+            }
             actor2 = 1170;
             speaker = ds_priority_delete_min(speakerpool);
             speakerpositionx = display_get_gui_width() * 0.25;
         }
-        
         with (instance_create(0, 0, obj_text_scroll))
         {
             text = ds_priority_delete_min(obj_text_holder.text_holder);
@@ -2552,33 +2515,31 @@ if (name1 == "Sara" || name2 == "Sara")
     else if (level == 2)
     {
         instance_deactivate_all(true);
-        
         with (instance_create(0, 0, obj_text_holder))
         {
         }
-        
         with (instance_create(0, 0, obj_dialogue_character_display))
         {
             instance_activate_object(obj_game_data);
             instance_activate_object(obj_controller);
             var file = file_text_open_read("Bonds//" + filebranch + "Bonds_Irving.txt");
-            
             for (ii = 0; ii <= 529; ii += 1)
             {
                 if (file_text_eof(file))
+                {
                     break;
-                
+                }
                 if (ii > 499)
+                {
                     ds_priority_add(speakerpool, file_text_read_string(file), ii);
-                
+                }
                 file_text_readln(file);
-                
                 if (ii > 499)
+                {
                     ds_priority_add(obj_text_holder.text_holder, file_text_read_string(file), ii);
-                
+                }
                 file_text_readln(file);
             }
-            
             file_text_close(file);
             unit1 = "Irving";
             unit2 = "Sara";
@@ -2672,17 +2633,18 @@ if (name1 == "Sara" || name2 == "Sara")
             ds_priority_add(soundpool, 205, 30);
             ds_priority_add(expressionpool1, 2, 30);
             ds_priority_add(expressionpool2, 2, 30);
-            
             if (ds_grid_value_exists(obj_game_data.characters, 0, 0, 29, 5, 1122))
+            {
                 actor1 = 1122;
+            }
             else
+            {
                 actor1 = 1119;
-            
+            }
             actor2 = 1170;
             speaker = ds_priority_delete_min(speakerpool);
             speakerpositionx = display_get_gui_width() * 0.25;
         }
-        
         with (instance_create(0, 0, obj_text_scroll))
         {
             text = ds_priority_delete_min(obj_text_holder.text_holder);
@@ -2693,33 +2655,31 @@ if (name1 == "Sara" || name2 == "Sara")
     else if (level == 3)
     {
         instance_deactivate_all(true);
-        
         with (instance_create(0, 0, obj_text_holder))
         {
         }
-        
         with (instance_create(0, 0, obj_dialogue_character_display))
         {
             instance_activate_object(obj_game_data);
             instance_activate_object(obj_controller);
             var file = file_text_open_read("Bonds//" + filebranch + "Bonds_Irving.txt");
-            
             for (ii = 0; ii <= 552; ii += 1)
             {
                 if (file_text_eof(file))
+                {
                     break;
-                
+                }
                 if (ii > 531)
+                {
                     ds_priority_add(speakerpool, file_text_read_string(file), ii);
-                
+                }
                 file_text_readln(file);
-                
                 if (ii > 531)
+                {
                     ds_priority_add(obj_text_holder.text_holder, file_text_read_string(file), ii);
-                
+                }
                 file_text_readln(file);
             }
-            
             file_text_close(file);
             unit1 = "Irving";
             unit2 = "Sara";
@@ -2786,17 +2746,18 @@ if (name1 == "Sara" || name2 == "Sara")
             ds_priority_add(soundpool, -4, 21);
             ds_priority_add(expressionpool1, 2, 21);
             ds_priority_add(expressionpool2, 2, 21);
-            
             if (ds_grid_value_exists(obj_game_data.characters, 0, 0, 29, 5, 1122))
+            {
                 actor1 = 1122;
+            }
             else
+            {
                 actor1 = 1119;
-            
+            }
             actor2 = 1170;
             speaker = ds_priority_delete_min(speakerpool);
             speakerpositionx = display_get_gui_width() * 0.25;
         }
-        
         with (instance_create(0, 0, obj_text_scroll))
         {
             text = ds_priority_delete_min(obj_text_holder.text_holder);
@@ -2805,39 +2766,36 @@ if (name1 == "Sara" || name2 == "Sara")
         }
     }
 }
-
 if (name1 == "Vesta" || name2 == "Vesta")
 {
     if (level == 1)
     {
         instance_deactivate_all(true);
-        
         with (instance_create(0, 0, obj_text_holder))
         {
         }
-        
         with (instance_create(0, 0, obj_dialogue_character_display))
         {
             instance_activate_object(obj_game_data);
             instance_activate_object(obj_controller);
             var file = file_text_open_read("Bonds//" + filebranch + "Bonds_Irving.txt");
-            
             for (ii = 0; ii <= 567; ii += 1)
             {
                 if (file_text_eof(file))
+                {
                     break;
-                
+                }
                 if (ii > 554)
+                {
                     ds_priority_add(speakerpool, file_text_read_string(file), ii);
-                
+                }
                 file_text_readln(file);
-                
                 if (ii > 554)
+                {
                     ds_priority_add(obj_text_holder.text_holder, file_text_read_string(file), ii);
-                
+                }
                 file_text_readln(file);
             }
-            
             file_text_close(file);
             unit1 = "Irving";
             unit2 = "Vesta";
@@ -2880,17 +2838,18 @@ if (name1 == "Vesta" || name2 == "Vesta")
             ds_priority_add(soundpool, -4, 13);
             ds_priority_add(expressionpool1, 0, 13);
             ds_priority_add(expressionpool2, 0, 13);
-            
             if (ds_grid_value_exists(obj_game_data.characters, 0, 0, 29, 5, 1122))
+            {
                 actor1 = 1122;
+            }
             else
+            {
                 actor1 = 1119;
-            
+            }
             actor2 = 1192;
             speaker = ds_priority_delete_min(speakerpool);
             speakerpositionx = display_get_gui_width() * 0.25;
         }
-        
         with (instance_create(0, 0, obj_text_scroll))
         {
             text = ds_priority_delete_min(obj_text_holder.text_holder);
@@ -2901,33 +2860,31 @@ if (name1 == "Vesta" || name2 == "Vesta")
     else if (level == 2)
     {
         instance_deactivate_all(true);
-        
         with (instance_create(0, 0, obj_text_holder))
         {
         }
-        
         with (instance_create(0, 0, obj_dialogue_character_display))
         {
             instance_activate_object(obj_game_data);
             instance_activate_object(obj_controller);
             var file = file_text_open_read("Bonds//" + filebranch + "Bonds_Irving.txt");
-            
             for (ii = 0; ii <= 589; ii += 1)
             {
                 if (file_text_eof(file))
+                {
                     break;
-                
+                }
                 if (ii > 569)
+                {
                     ds_priority_add(speakerpool, file_text_read_string(file), ii);
-                
+                }
                 file_text_readln(file);
-                
                 if (ii > 569)
+                {
                     ds_priority_add(obj_text_holder.text_holder, file_text_read_string(file), ii);
-                
+                }
                 file_text_readln(file);
             }
-            
             file_text_close(file);
             unit1 = "Irving";
             unit2 = "Vesta";
@@ -2991,17 +2948,18 @@ if (name1 == "Vesta" || name2 == "Vesta")
             ds_priority_add(soundpool, -4, 20);
             ds_priority_add(expressionpool1, 0, 20);
             ds_priority_add(expressionpool2, 0, 20);
-            
             if (ds_grid_value_exists(obj_game_data.characters, 0, 0, 29, 5, 1122))
+            {
                 actor1 = 1122;
+            }
             else
+            {
                 actor1 = 1119;
-            
+            }
             actor2 = 1192;
             speaker = ds_priority_delete_min(speakerpool);
             speakerpositionx = display_get_gui_width() * 0.25;
         }
-        
         with (instance_create(0, 0, obj_text_scroll))
         {
             text = ds_priority_delete_min(obj_text_holder.text_holder);
@@ -3012,33 +2970,31 @@ if (name1 == "Vesta" || name2 == "Vesta")
     else if (level == 3)
     {
         instance_deactivate_all(true);
-        
         with (instance_create(0, 0, obj_text_holder))
         {
         }
-        
         with (instance_create(0, 0, obj_dialogue_character_display))
         {
             instance_activate_object(obj_game_data);
             instance_activate_object(obj_controller);
             var file = file_text_open_read("Bonds//" + filebranch + "Bonds_Irving.txt");
-            
             for (ii = 0; ii <= 619; ii += 1)
             {
                 if (file_text_eof(file))
+                {
                     break;
-                
+                }
                 if (ii > 591)
+                {
                     ds_priority_add(speakerpool, file_text_read_string(file), ii);
-                
+                }
                 file_text_readln(file);
-                
                 if (ii > 591)
+                {
                     ds_priority_add(obj_text_holder.text_holder, file_text_read_string(file), ii);
-                
+                }
                 file_text_readln(file);
             }
-            
             file_text_close(file);
             unit1 = "Irving";
             unit2 = "Vesta";
@@ -3126,17 +3082,18 @@ if (name1 == "Vesta" || name2 == "Vesta")
             ds_priority_add(soundpool, -4, 28);
             ds_priority_add(expressionpool1, 2, 28);
             ds_priority_add(expressionpool2, 0, 28);
-            
             if (ds_grid_value_exists(obj_game_data.characters, 0, 0, 29, 5, 1122))
+            {
                 actor1 = 1122;
+            }
             else
+            {
                 actor1 = 1119;
-            
+            }
             actor2 = 1192;
             speaker = ds_priority_delete_min(speakerpool);
             speakerpositionx = display_get_gui_width() * 0.25;
         }
-        
         with (instance_create(0, 0, obj_text_scroll))
         {
             text = ds_priority_delete_min(obj_text_holder.text_holder);
@@ -3145,39 +3102,36 @@ if (name1 == "Vesta" || name2 == "Vesta")
         }
     }
 }
-
 if (name1 == "Liberty" || name2 == "Liberty")
 {
     if (level == 1)
     {
         instance_deactivate_all(true);
-        
         with (instance_create(0, 0, obj_text_holder))
         {
         }
-        
         with (instance_create(0, 0, obj_dialogue_character_display))
         {
             instance_activate_object(obj_game_data);
             instance_activate_object(obj_controller);
             var file = file_text_open_read("Bonds//" + filebranch + "Bonds_Irving.txt");
-            
             for (ii = 0; ii <= 639; ii += 1)
             {
                 if (file_text_eof(file))
+                {
                     break;
-                
+                }
                 if (ii > 621)
+                {
                     ds_priority_add(speakerpool, file_text_read_string(file), ii);
-                
+                }
                 file_text_readln(file);
-                
                 if (ii > 621)
+                {
                     ds_priority_add(obj_text_holder.text_holder, file_text_read_string(file), ii);
-                
+                }
                 file_text_readln(file);
             }
-            
             file_text_close(file);
             unit1 = "Irving";
             unit2 = "Liberty";
@@ -3235,17 +3189,18 @@ if (name1 == "Liberty" || name2 == "Liberty")
             ds_priority_add(soundpool, -4, 18);
             ds_priority_add(expressionpool1, 0, 18);
             ds_priority_add(expressionpool2, 0, 18);
-            
             if (ds_grid_value_exists(obj_game_data.characters, 0, 0, 29, 5, 1122))
+            {
                 actor1 = 1122;
+            }
             else
+            {
                 actor1 = 1119;
-            
+            }
             actor2 = 1181;
             speaker = ds_priority_delete_min(speakerpool);
             speakerpositionx = display_get_gui_width() * 0.25;
         }
-        
         with (instance_create(0, 0, obj_text_scroll))
         {
             text = ds_priority_delete_min(obj_text_holder.text_holder);
@@ -3256,33 +3211,31 @@ if (name1 == "Liberty" || name2 == "Liberty")
     else if (level == 2)
     {
         instance_deactivate_all(true);
-        
         with (instance_create(0, 0, obj_text_holder))
         {
         }
-        
         with (instance_create(0, 0, obj_dialogue_character_display))
         {
             instance_activate_object(obj_game_data);
             instance_activate_object(obj_controller);
             var file = file_text_open_read("Bonds//" + filebranch + "Bonds_Irving.txt");
-            
             for (ii = 0; ii <= 661; ii += 1)
             {
                 if (file_text_eof(file))
+                {
                     break;
-                
+                }
                 if (ii > 641)
+                {
                     ds_priority_add(speakerpool, file_text_read_string(file), ii);
-                
+                }
                 file_text_readln(file);
-                
                 if (ii > 641)
+                {
                     ds_priority_add(obj_text_holder.text_holder, file_text_read_string(file), ii);
-                
+                }
                 file_text_readln(file);
             }
-            
             file_text_close(file);
             unit1 = "Irving";
             unit2 = "Liberty";
@@ -3346,17 +3299,18 @@ if (name1 == "Liberty" || name2 == "Liberty")
             ds_priority_add(soundpool, -4, 20);
             ds_priority_add(expressionpool1, 4, 20);
             ds_priority_add(expressionpool2, 2, 20);
-            
             if (ds_grid_value_exists(obj_game_data.characters, 0, 0, 29, 5, 1122))
+            {
                 actor1 = 1122;
+            }
             else
+            {
                 actor1 = 1119;
-            
+            }
             actor2 = 1181;
             speaker = ds_priority_delete_min(speakerpool);
             speakerpositionx = display_get_gui_width() * 0.25;
         }
-        
         with (instance_create(0, 0, obj_text_scroll))
         {
             text = ds_priority_delete_min(obj_text_holder.text_holder);
@@ -3367,33 +3321,31 @@ if (name1 == "Liberty" || name2 == "Liberty")
     else if (level == 3)
     {
         instance_deactivate_all(true);
-        
         with (instance_create(0, 0, obj_text_holder))
         {
         }
-        
         with (instance_create(0, 0, obj_dialogue_character_display))
         {
             instance_activate_object(obj_game_data);
             instance_activate_object(obj_controller);
             var file = file_text_open_read("Bonds//" + filebranch + "Bonds_Irving.txt");
-            
             for (ii = 0; ii <= 681; ii += 1)
             {
                 if (file_text_eof(file))
+                {
                     break;
-                
+                }
                 if (ii > 663)
+                {
                     ds_priority_add(speakerpool, file_text_read_string(file), ii);
-                
+                }
                 file_text_readln(file);
-                
                 if (ii > 663)
+                {
                     ds_priority_add(obj_text_holder.text_holder, file_text_read_string(file), ii);
-                
+                }
                 file_text_readln(file);
             }
-            
             file_text_close(file);
             unit1 = "Irving";
             unit2 = "Liberty";
@@ -3449,17 +3401,18 @@ if (name1 == "Liberty" || name2 == "Liberty")
             ds_priority_add(soundpool, -4, 18);
             ds_priority_add(expressionpool1, 1, 18);
             ds_priority_add(expressionpool2, 1, 18);
-            
             if (ds_grid_value_exists(obj_game_data.characters, 0, 0, 29, 5, 1122))
+            {
                 actor1 = 1122;
+            }
             else
+            {
                 actor1 = 1119;
-            
+            }
             actor2 = 1181;
             speaker = ds_priority_delete_min(speakerpool);
             speakerpositionx = display_get_gui_width() * 0.25;
         }
-        
         with (instance_create(0, 0, obj_text_scroll))
         {
             text = ds_priority_delete_min(obj_text_holder.text_holder);
@@ -3468,8 +3421,8 @@ if (name1 == "Liberty" || name2 == "Liberty")
         }
     }
 }
-
 with (obj_dialogue_character_display)
+{
     bonddist = true;
-
+}
 instance_destroy();
