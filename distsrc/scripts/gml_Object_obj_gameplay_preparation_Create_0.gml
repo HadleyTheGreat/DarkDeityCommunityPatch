@@ -240,7 +240,7 @@ else if (global.battlesaver)
         {
             ds_grid_read(obj_room_info.gamestats, gridstring);
         }
-    {
+    }
     with (obj_swapspot)
     {
         instance_destroy();
