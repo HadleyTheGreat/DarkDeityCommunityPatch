@@ -217,25 +217,41 @@ function Uninstall-FilesFromBackup {
     }
 }
 
+function Test-LegacyInstall {
+    $data_win_old = Join-Path $GAME_DIR "data.win.old"
+    $data_win = Join-Path $GAME_DIR "data.win"
+    $remove_script = Join-Path $GAME_DIR "removepatch.bat"  # windows remove script
+    $remove_script_2 = Join-Path $GAME_DIR "removepatch.sh"  # linux remove script
 
+    if ((Test-Path $data_win_old) -or (Test-Path $remove_script) -or (Test-Path $remove_script_2)) {
+        Write-Output "$true"
+    } else {
+        Write-Output "$false"
+    }
+}
 
 function Do-LegacyUninstall {
-    $oldFile = Join-Path $GAME_DIR "data.win.old"
-    $dataWin = Join-Path $GAME_DIR "data.win"
-    $removeScript = Join-Path $GAME_DIR "removepatch.bat" # Changed extension for Windows
+    $data_win_old = Join-Path $GAME_DIR "data.win.old"
+    $data_win = Join-Path $GAME_DIR "data.win"
+    $remove_script = Join-Path $GAME_DIR "removepatch.bat"  # windows remove script
+    $remove_script_2 = Join-Path $GAME_DIR "removepatch.sh"  # linux remove script
 
-    if ((Test-Path $oldFile) -or (Test-Path $removeScript))
+    if ((Test-Path $data_win_old) -or (Test-Path $remove_script) -or (Test-Path $remove_script_2))
     {        
         # Remove or restore legacy files that might be present from earlier versions of the patch
         Write-Output "--- Removing legacy install files ---"
-        if (Test-Path -Path $oldFile) { 
-            if ($VERBOSE_OUTPUT) { Write-Output "$oldFile" }
-            Remove-Item -Path $dataWin -Force
-            Move-Item -Path $oldFile -Destination $dataWin -Force        
+        if (Test-Path -Path $data_win_old) { 
+            if ($VERBOSE_OUTPUT) { Write-Output "$data_win_old" }
+            Remove-Item -Path $data_win -Force
+            Move-Item -Path $data_win_old -Destination $data_win -Force        
         }
-        if (Test-Path -Path $removeScript) { 
-            if ($VERBOSE_OUTPUT) { Write-Output "$removeScript" }                
-            Remove-Item -Path $removeScript -Force
+        if (Test-Path -Path $remove_script) { 
+            if ($VERBOSE_OUTPUT) { Write-Output "$remove_script" }                
+            Remove-Item -Path $remove_script -Force
+        }
+        if (Test-Path -Path $remove_script_2) { 
+            if ($VERBOSE_OUTPUT) { Write-Output "$remove_script_2" }                
+            Remove-Item -Path $remove_script_2 -Force
         }
     }
 }
@@ -278,7 +294,7 @@ function Do-Version {
 
 function Do-Hash {
     $currentFile = Join-Path $GAME_DIR "data.win"
-    $oldFile = Join-Path $GAME_DIR "data.win.old"
+    $data_win_old = Join-Path $GAME_DIR "data.win.old"
 
     if (-not (Test-Path -Path $currentFile -PathType Leaf)) {
         Write-Error "Error: Couldn't find file `"$currentFile`""
@@ -288,8 +304,8 @@ function Do-Hash {
     $currentHash = Get-Sha256Hash $currentFile
     Write-Output "data.win: $currentHash"
     
-    if (Test-Path -Path $oldFile -PathType Leaf) {        
-        $backupHash = Get-Sha256Hash $oldFile
+    if (Test-Path -Path $data_win_old -PathType Leaf) {        
+        $backupHash = Get-Sha256Hash $data_win_old
         Write-Output "data.win.old: $backupHash"
     }
 }
@@ -365,6 +381,11 @@ function Validate-PostHash {
 }
 
 function Get-InstallState {
+    # Return values:
+    # 3: Other patch installed - Do-Uninstall needed
+    # 2: Ready to install - Do-Install can be peformed
+    # 1: Already installed - Do-Uninstall can be performed
+    # 0: Cannot install - Dark Deity is the wrong version
     if (-not (Test-Path -Path "$SCRIPTS_DIR" -PathType Container)) {
         Write-Error "Error: Scripts directory missing at`"$SCRIPTS_DIR`""
         exit 1
@@ -376,17 +397,9 @@ function Get-InstallState {
         exit 1
     }
 
-    $dataWinOld = Join-Path $GAME_DIR "data.win.old"
-    if (Test-Path -Path $dataWinOld) {
+    if (Test-LegacyInstall -eq $true) {
         # A patch is already installed, but it isn't this one
-        # Return 3: Old patch detected - Uninstall needed
-        return 3
-    }
-
-    $removePatch = Join-Path $GAME_DIR "removepatch.bat"
-    if (Test-Path -Path $removePatch) {
-        # A patch is already installed, but it isn't this one
-        # Return 3: Old patch detected - Uninstall needed
+        # Return 3: Other patch installed - Uninstall needed
         return 3
     }
 
@@ -395,13 +408,13 @@ function Get-InstallState {
     $match = Import-Csv -Path $hash_file | Where-Object { $_.AfterHash -eq $currentHash } | 
                 Select-Object -First 1
     if ($null -ne $match) {
-        # Return 1: Already Installed
+        # Return 1: Installed
         return 1
     }
 
     if (Test-Path -Path $PATCH_DIR) {
-        # A patch is already installed, but it isn't this one
-        # Return 3: Old patch detected - Uninstall needed
+        # A patch is already installed, but it isn't this one or else the hash would have matched
+        # Return 3: Other patch installed - Uninstall needed
         return 3
     }
 
@@ -410,7 +423,7 @@ function Get-InstallState {
     if ($null -ne $match) {
         $script:postPatchHash = $match.AfterHash
         # The patch is not installed, but data.win is the right version to install on
-        # Return 2: Do-Install OK
+        # Return 2: Ready to Install
         return 2
     }
 
@@ -724,7 +737,7 @@ function Parse-Params {
 }
 
 # Script entry point execution
-Parse-Params -argsList $args
+Parse-Params -argsList @($args)
 if ([string]::IsNullOrEmpty($ACTION)) {
     Show-Usage
     exit 0
