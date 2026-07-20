@@ -91,8 +91,8 @@ Examples:
   ./$SCRIPT_NAME -i
   ./$SCRIPT_NAME -i -p
   ./$SCRIPT_NAME -i "$HOME/.local/share/Steam/steamapps/common/Dark Deity"
-  ./$SCRIPT_NAME -u "$HOME/Games/Dark Deity Complete Edition"
-  ./$SCRIPT_NAME --hash "$HOME/.local/share/Steam/steamapps/common/Dark Deity"
+  ./$SCRIPT_NAME -u ~/.steam/Steam/steamapps/common/"Dark Deity"
+  ./$SCRIPT_NAME --hash "/usr/local/games/Dark Deity"
 EOF
 }
 
@@ -258,26 +258,47 @@ uninstall_files_from_backup() {
 }
 
 ################################################################################
+# Function: legacy_install_is_present
+# Check to see if there are files left over from a legacy install
+################################################################################
+legacy_install_is_present() {
+    local data_win_old="$GAME_DIR/data.win.old"
+    local remove_script="$GAME_DIR/removepatch.sh"
+    local remove_script_2="$GAME_DIR/removepatch.bat"
+    if [[ -f "$data_win_old" ]] || [[ -f "$remove_script" ]] || [[ -f "$remove_script_2" ]]; then
+        return 0  # return value of 0 indicates TRUE
+    else
+        return 1  # return value of 1 indicates FALSE
+    fi
+}
+
+################################################################################
 # Function: do_legacy_uninstall
 # Remove legacy patch files from previous versions
 ################################################################################
 do_legacy_uninstall() {
-    local old_file="$GAME_DIR/data.win.old"
+    local data_win_old="$GAME_DIR/data.win.old"
     local data_win="$GAME_DIR/data.win"
     local remove_script="$GAME_DIR/removepatch.sh"
+    local remove_script_2="$GAME_DIR/removepatch.bat"
     
-    if [[ -f "$old_file" ]] || [[ -f "$remove_script" ]]; then
+    if [[ -f "$data_win_old" ]] || [[ -f "$remove_script" ]] || [[ -f "$remove_script_2" ]]; then
         echo "--- Removing legacy install files ---"
         
-        if [[ -f "$old_file" ]]; then
-            if [[ "$VERBOSE_OUTPUT" == "true" ]]; then echo "Removing: $old_file"; fi
+        if [[ -f "$data_win_old" ]]; then
+            if [[ "$VERBOSE_OUTPUT" == "true" ]]; then echo "Removing: $data_win_old"; fi
             rm -f "$data_win"
-            mv "$old_file" "$data_win"
+            mv "$data_win_old" "$data_win"
         fi
         
         if [[ -f "$remove_script" ]]; then
             if [[ "$VERBOSE_OUTPUT" == "true" ]]; then echo "Removing: $remove_script"; fi
             rm -f "$remove_script"
+        fi
+
+        if [[ -f "$remove_script_2" ]]; then
+            if [[ "$VERBOSE_OUTPUT" == "true" ]]; then echo "Removing: $remove_script_2"; fi
+            rm -f "$remove_script_2"
         fi
     fi
 }
@@ -363,17 +384,18 @@ do_hash() {
 ################################################################################
 prompt_for_game_dir() {
     local mydir
+    local selected
     
     # Try zenity first (GNOME), then kdialog (KDE)
     if command -v zenity &> /dev/null; then
-    	selected=$(zenity \
-    		--file-selection \
-    		--title="Please locate the Dark Deity executable" \
-    		--filename="$HOME/Desktop/" 2>/dev/null) || return 1
+        selected=$(zenity \
+            --file-selection \
+            --title="Please locate the Dark Deity executable" \
+            --filename="$HOME/Desktop/" 2>/dev/null) || return 1
     elif command -v kdialog &> /dev/null; then
-		selected=$(kdialog \
-    		--getopenfilename "$HOME/Desktop/" \
-    		--title="Please locate the Dark Deity executable" 2>/dev/null) || return 1
+        selected=$(kdialog \
+            --getopenfilename "$HOME/Desktop/" \
+            --title="Please locate the Dark Deity executable" 2>/dev/null) || return 1
     else
         echo "Error: No GUI dialog tool found (zenity or kdialog required)" >&2
         return 1
@@ -457,48 +479,36 @@ get_install_state() {
     fi
     
     # Check for legacy install files
-    if [[ -f "$GAME_DIR/data.win.old" ]] || [[ -f "$GAME_DIR/removepatch.sh" ]]; then
-        echo "3"  # Old patch detected
+    if legacy_install_is_present; then
+        echo "3"  # another patch detected
         return 0
     fi
     
     local input_file="$GAME_DIR/data.win"
     local current_hash
     current_hash=$(sha256sum "$input_file" | awk '{print $1}')
-    	
-	found=false
-	version_name=""
-	
-	while IFS=, read -r name before_hash after_hash; do
-    	# Remove surrounding quotes
-    	name=${name//\"/}
-    	before_hash=${before_hash//\"/}
-    	after_hash=${after_hash//\"/}
-	
-    	if [[ "$after_hash" == "$current_hash" ]]; then
-    		echo "1"   #Already installed
-    		return 0;
-    	fi
-	done < <(tail -n +2 "$hash_file")    
-
-	while IFS=, read -r name before_hash after_hash; do
-    	# Remove surrounding quotes
-    	name=${name//\"/}
-    	before_hash=${before_hash//\"/}
-    	after_hash=${after_hash//\"/}
-	
-    	if [[ "$before_hash" == "$current_hash" ]]; then
-    		echo "2"   #Ready to install
-    		# Set the hashes because the user may follow up with Do-Install
-    		postPatchHash=$after_hash
-    		prePatchHash=$before_hash
-    		return 0;
-    	fi
-	done < <(tail -n +2 "$hash_file")
+    
+    while IFS=, read -r name before_hash after_hash; do
+        # Remove surrounding quotes
+        name=${name//\"/}
+        before_hash=${before_hash//\"/}
+        after_hash=${after_hash//\"/}
+    
+        if [[ "$after_hash" == "$current_hash" ]]; then
+            echo "1"   # Already installed
+            return 0
+        elif [[ "$before_hash" == "$current_hash" ]]; then
+            echo "2"   # Ready to install
+            # Set the hashes because the user may follow up with Do-Install
+            postPatchHash=$after_hash
+            prePatchHash=$before_hash
+            return 0
+        fi
+    done < <(tail -n +2 "$hash_file")
         
-    # Check if old patch is installed
+    # Check if a patch folder already exists
     if [[ -d "$PATCH_DIR" ]]; then
-        echo "3"  # Old patch detected
+        echo "3"  # another patch detected
         return 0
     fi
     
