@@ -36,33 +36,52 @@ $STEAM_ROOTS += "C:\Program Files\Steam"
 $prePatchHash = ""
 $postPatchHash = ""
 
-function Show-Usage {
-    @"
+$RED=""
+$GREEN=""
+$YELLOW=""
+$BLUE=""
+$MAGENTA=""
+$CYAN=""
+$WHITE=""
+$NC="" # No Color (Reset)
+
+
+function Show-BriefUsage {
+@"
 Dark Deity Community Patch installation and removal tool for Windows
-
-This patch is for Dark Deity version 1.58 on x86-based Windows or Linux platforms.
-
-Usage: 
-  .\$SCRIPT_NAME COMMAND [flags] [directory]
-COMMAND can be one of
-  -h, -?, --help  Show this help    
+Usage:
+  .\$SCRIPT_NAME COMMAND [OPTIONS]                # auto-locate in Steam
+  .\$SCRIPT_NAME COMMAND [OPTIONS] -p             # gui prompt for directory
+  .\$SCRIPT_NAME COMMAND [OPTIONS] -d DIRECTORY  # specify Dark Deity directory
+COMMAND can be one of:
+  -h, -?, --help  Show the help    
   -i, --install   Install the patch
   -u, --uninstall Uninstall the patch
-  -a, --auto      Install the patch or prompt the user to remove it
-  -c, --hash      Calculate the hash of data.win and data.win.old if it exists
-Optional flags can be
+  -a, --auto      Interactively prompt to either uninstall or install 
+                  based on the current patched state
+  -q, --query     Query the current patch state of Dark Deity  
+  -c, --hash      Calculate the SHA256 hash of Dark Deity's data.win file
+OPTIONS can be zero or more of:
   -o, --override  Ignore version mismatch and attempt to patch anyway
-  -p, --prompt    Show a GUI prompt to select the Dark Deity directory.    
-If directory is omitted, the Steam version of the game will be located automatically
-For non-Steam versions, use the -p flag or specify the directory on the command-line. 
-
-Examples:
-  .\$SCRIPT_NAME -i
-  .\$SCRIPT_NAME -i -p
-  .\$SCRIPT_NAME -i "C:\Program Files\Epic Games\Dark Deity"
-  .\$SCRIPT_NAME -u "C:\Program Files (x86)\GOG Galaxy\Games\Dark Deity Complete Edition"
-  .\$SCRIPT_NAME --hash "D:\SteamLibrary\steamapps\common\Dark Deity"
+  -v, --verbose   Show verbose output
+DIRECTORY should be enclosed in quotation marks if it contains spaces.
 "@
+}
+
+function Show-Examples {
+    @"
+Examples:
+  .\$SCRIPT_NAME -a
+  .\$SCRIPT_NAME -i -p
+  .\$SCRIPT_NAME -i -d "C:\Program Files (x86)\GOG Galaxy\Games\Dark Deity"
+  .\$SCRIPT_NAME -u -d "C:\Program Files\Epic Games\Dark Deity"
+  .\$SCRIPT_NAME --hash "C:\Program Files (x86)\Steam\steamapps\common\Dark Deity"
+"@
+}
+
+function Show-Usage {
+    Show-BriefUsage
+    Show-Examples
 }
 
 function Find-LibraryFoldersVdf {
@@ -113,6 +132,14 @@ function Install-FilesWithBackup {
     $SourceDir = Join-Path $BASE_DIR files
     $addedFiles = Join-Path $PATCH_DIR "addedfiles.txt"
 
+    # Get all files from the source directory
+    $files = Get-ChildItem -Path $SourceDir -Name -Recurse -File
+
+    if (-not $files) {
+        Write-Host "No files found in source directory." -ForegroundColor Yellow
+        return
+    }
+    
     # Create patch directory if it doesn't exist
     if (-not (Test-Path -Path $PATCH_DIR)) {
         New-Item -ItemType Directory -Path $PATCH_DIR -Force | Out-Null
@@ -121,14 +148,6 @@ function Install-FilesWithBackup {
     # Create backup directory if it doesn't exist
     if (-not (Test-Path -Path $BACKUP_DIR)) {
         New-Item -ItemType Directory -Path $BACKUP_DIR -Force | Out-Null
-    }
-
-    # Get all files from the source directory
-    $files = Get-ChildItem -Path $SourceDir -Name -Recurse -File
-
-    if (-not $files) {
-        Write-Host "No files found in source directory." -ForegroundColor Yellow
-        return
     }
 
     foreach ($file in $files) {
@@ -161,8 +180,6 @@ function Install-FilesWithBackup {
 }
 
 function Uninstall-FilesFromBackup {
-    $VerbosePreference = 'Continue'
-
     # This function restores previously backed up files from $BACKUP_DIR to $GAME_DIR, recursively.  After that it, deletes files that were added to $GAME_DIR that were not present before the patch, then finally it removes $BACKUP_DIR.
     if (-not $GAME_DIR) {
         Write-Error "Game directory was unset"
@@ -223,11 +240,7 @@ function Test-LegacyInstall {
     $remove_script = Join-Path $GAME_DIR "removepatch.bat"  # windows remove script
     $remove_script_2 = Join-Path $GAME_DIR "removepatch.sh"  # linux remove script
 
-    if ((Test-Path $data_win_old) -or (Test-Path $remove_script) -or (Test-Path $remove_script_2)) {
-        Write-Output "$true"
-    } else {
-        Write-Output "$false"
-    }
+    return ((Test-Path $data_win_old) -or (Test-Path $remove_script) -or (Test-Path $remove_script_2))
 }
 
 function Do-LegacyUninstall {
@@ -258,6 +271,7 @@ function Do-LegacyUninstall {
 
 function Do-Uninstall {
     if (Test-Path $BACKUP_DIR) {
+        Write-Output "Uninstalling from backup"
         Uninstall-FilesFromBackup
     }
 
@@ -279,7 +293,7 @@ function Do-Install {
     
     $cliExe = Join-Path $BASE_DIR "utmt_cli" | Join-Path -ChildPath "UndertaleModCli.exe"
     $script1 = Join-Path $BASE_DIR "scripts" | Join-Path -ChildPath "nongmlmods.csx"
-    $script2 = Join-Path $BASE_DIR "tools" | Join-Path -ChildPath "scriptupdater.csx"
+    $script2 = Join-Path $BASE_DIR "scripts" | Join-Path -ChildPath "scriptupdater.csx"
     
     # Execute UndertaleModCli
     & $cliExe load "$unpatchedData" -s "$script1" -s "$script2" -o "$patchedData"
@@ -338,27 +352,55 @@ function Resolve-GameDir {
     if ($script:PROMPT) {
         $script:GAME_DIR = PromptFor-GameDir
         if ([string]::IsNullOrEmpty($script:GAME_DIR)) {
-            Write-Host "Prompt for game directory was cancelled.  Operation aborted." -ForegroundColor Yellow
+            Write-Output "${YELLOW}Prompt for game directory was cancelled.  Operation aborted.${NC}"
             exit 1
         }
     } elseif ([string]::IsNullOrEmpty($script:GAME_DIR)) {
         $script:GAME_DIR = Find-GameDir $APPID
         if (-not $script:GAME_DIR) {
-            Write-Host "Error: Failed to automatically locate the Dark Deity install folder." -ForegroundColor Red
-            Write-Host "Please specify the install folder on the command-line.`nExamples:`n    .\$SCRIPT_NAME -i `"C:\Program Files (x86)\GOG Galaxy\Games\Dark Deity Complete Edition`"`n    .\$SCRIPT_NAME -i `"C:\Program Files\Epic Games\Dark Deity`""
-            exit 1
+            Write-Output "Failed to locate the Dark Deity in Steam."
+            $script:GAME_DIR = ""
         }    
+        if (-not $script:GAME_DIR) {
+            $script:GAME_DIR = PromptFor-GameDir
+            if ([string]::IsNullOrEmpty($script:GAME_DIR)) {
+                Write-Output "${YELLOW}Prompt for game directory was cancelled.  Operation aborted.${NC}"
+                exit 1
+            }
+        }
     }
-    
-    $currentFile = Join-Path $script:GAME_DIR "data.win"
-    if (-not (Test-Path -Path $currentFile -PathType Leaf)) {
-        Write-Error "Error: file not found `"$currentFile`""
+    if (-not $script:GAME_DIR) {
+        @"
+${RED}Error: Failed to locate the Dark Deity game directory.${NC}
+Use [-d directory] to specify it on the command-line or [-p]
+to prompt for it interactively.
+Examples:
+  .\$SCRIPT_NAME -i -d "C:\Program Files (x86)\GOG Galaxy\Games\Dark Deity"
+  .\$SCRIPT_NAME -a -p
+  .\$SCRIPT_NAME -u -d "C:\Program Files\Epic Games\Dark Deity"
+"@
         exit 1
     }
     
-    Write-Output "GAME_DIR = $script:GAME_DIR"
-    $script:PATCH_DIR = Join-Path $GAME_DIR "patch"
-    $script:BACKUP_DIR = Join-Path $PATCH_DIR "backup"
+    @"
+GAME_DIR = `"$script:GAME_DIR`"
+"@
+    if (-not (Test-Path -Path $GAME_DIR -PathType Container))
+    {
+        @"
+${RED}Error: Specified game directory does not exist.${NC}
+"@
+        exit 1
+    }
+
+    $currentFile = Join-Path $script:GAME_DIR "data.win"
+    if (-not (Test-Path -Path $currentFile -PathType Leaf)) {
+        Write-Error "${RED}Error: file not found `"$currentFile`"${NC}"
+        exit 1
+    }
+    
+    $script:PATCH_DIR = Join-Path $script:GAME_DIR "patch"
+    $script:BACKUP_DIR = Join-Path $script:PATCH_DIR "backup"
 }
 
 function Validate-PostHash {
@@ -397,7 +439,7 @@ function Get-InstallState {
         exit 1
     }
 
-    if (Test-LegacyInstall -eq $true) {
+    if (Test-LegacyInstall) {
         # A patch is already installed, but it isn't this one
         # Return 3: Other patch installed - Uninstall needed
         return 3
@@ -473,7 +515,7 @@ function PromptFor-Uninstall {
 }
 
 function PromptFor-Reinstall {
-    Write-Host "Another version of the community patch is currently installed." -ForegroundColor Yellow
+    Write-Host "A different version of the patch is currently installed." -ForegroundColor Yellow
     $title = ""
     $message = "Do you want to replace it with this version?"
 
@@ -510,7 +552,8 @@ function PromptFor-Reinstall {
 }
 
 function PromptFor-Install {
-    Write-Host "The patch is not installed, but can be installed to this version of Dark Deity." -ForegroundColor Yellow
+    Write-Output "The patch is not currently installed."
+    Write-Output "This version of Dark Deity is supported."
 
     $title = ""
     $message = "Do you want to install the patch?"
@@ -534,8 +577,9 @@ function PromptFor-Install {
     exit 0
 }
 
-function PromptFor-OverrideInstall {    
-    Write-Host "The patch is not installed, but it was not intended for this version of Dark Deity." -ForegroundColor Yellow
+function PromptFor-OverrideInstall {
+    Write-Output "The patch is not currently installed."
+    Write-Output "The patch is not intended for this version of Dark Deity."
     $title = ""
     $message = "Do you want to override and install the patch anyway?"
 
@@ -566,7 +610,7 @@ function Main-Process {
             switch ($state)
             {
                 # State 0: The game patch is not the right version  The user can override install.
-                0 { PromptFor-OverrideInstall }                        
+                0 { PromptFor-OverrideInstall }      
                 # State 1: The game patch is installed already.  The user can uninstall.
                 1 { PromptFor-Uninstall }
                 # State 2: The game patch can be installed now.  The user can install.
@@ -622,24 +666,26 @@ function Main-Process {
                 }
             }
         }
-        "test" {
+        "query" {
             Resolve-GameDir
             $state = Get-InstallState
             switch ($state) {
                 0 {
-                    Write-Host "The patch is not installed and this is not the correct version to intall on."
+                    Write-Output "${YELLOW}The patch is not installed.${NC}"
+                    Write-Output "The patch does not support this version of Dark Deity."
                     exit 0
                 }
                 3 {
-                    Write-Host "The patch is not installed, but can be installed after the old version is uninstalled."
+                    Write-Output "${YELLOW}A different version of the patch is currently installed.${NC}"
                     exit 0
                 }
                 2 {
-                    Write-Host "The patch is not installed, but this is the correct version to install on."
+                    Write-Output "${YELLOW}The patch is not currently installed.${NC}"
+                    Write-Output "The patch supports this version of Dark Deity."
                     exit 0
                 }
                 1 {
-                    Write-Host "The patch is already installed."
+                    Write-Output "${YELLOW}The patch is already installed.${NC}"
                     exit 0
                 }
             }
@@ -647,16 +693,19 @@ function Main-Process {
         }
         "help" {
             Show-Usage
+            exit 0
         }
         "hash" {
             Resolve-GameDir
             Do-Hash
+            exit 0
         }
         "version" {
             Do-Version
+            exit 0
         }
         Default {
-            Write-Error "Internal error: No handler for command `"$ACTION`""
+            Write-Output "${RED}Internal error: No handler for command `"$ACTION`".${NC}"
             exit 1
         }
     }
@@ -671,65 +720,78 @@ function Parse-Params {
         switch -Regex ($arg) {
             '^(-h|-\?|--help)$' {
                 Set-Action "help"
-                break
+                continue
             }
             '^(-a|--auto)$' {
                 Set-Action "auto"
-                break
+                continue
             }
 
             '^(-i|--install)$' {
                 Set-Action "install"
-                break
+                continue
             }
             '^(-u|--uninstall)$' {
                 Set-Action "uninstall"
-                break
+                continue
             }
             '^(-c|--hash)$' {
                 Set-Action "hash"
-                break
+                continue
             }
             '^--version$' {
                 Set-Action "version"
-                break
+                continue
             }
-            '^(-t|--test)$' {
-                Set-Action "test"
-                break
+            '^(-q|--query)$' {
+                Set-Action "query"
+                continue
             }
             '^(-v|--verbose)$' {
                 $script:VERBOSE_OUTPUT = $true
-                break
+                continue
             }
             '^(-o|--override)$' {
                 $script:OVERRIDE = $true
-                break
+                continue
             }
             '^(-p|--prompt)$' {
                 $script:PROMPT = $true
-                break
+                continue
+            }
+            '^(-d|--directory)$' {
+                $i++;
+                if (-not ($i -lt $argsList.Count)) {
+                    @"
+${RED}Error: missing directory after `"$arg`".${NC}
+"@
+                    exit 1
+                } 
+                if ([string]::IsNullOrEmpty($argsList[$i])) {
+                    @"
+${RED}Error: directory argument is empty.${NC}
+"@
+                }
+
+                $script:GAME_DIR = $argsList[$i]
+                continue
             }
             '^-' {
-                Write-Error "Error: Unrecognized argument `"$arg`"."
+                @"
+${RED}Error: Unrecognized command or option `"$arg`".${NC}
+"@
                 exit 1
+                continue;
             }
-            Default {    
-                if ([string]::IsNullOrEmpty($ACTION)) {
-                    Write-Error "Error: Command switch missing."
-                    exit 1
-                }
-                
-                if ($ACTION -match '^(install|uninstall|hash|test)$') {        
-                    if (($argsList.Count - $i) -gt 1) {
-                        Write-Error "Error: Optional path argument must be the last argument."
-                        exit 1
-                    }
-                    $script:GAME_DIR = $arg
-                } else {
-                    Write-Error "Error: Unexpected argument `"$arg`"."
-                    exit 1
-                }
+            Default {
+                @"
+${RED}Error: Unexpected argument \"$arg\".${NC}
+Be sure to enclose directory paths with quotation marks if they contain spaces.
+Examples:
+  ./$SCRIPT_NAME -i -d `"C:\Program Files (x86)\GOG Galaxy\Games\Dark Deity`"
+  ./$SCRIPT_NAME -u -d `"C:\Program Files\Epic Games\Dark Deity`"
+"@
+                exit 1
             }
         }
         $i++

@@ -161,11 +161,11 @@ install_files_with_backup() {
         if [[ -f "$destination_path" ]]; then
             if [[ ! -f "$backup_path" ]]; then
                 mkdir -p "$(dirname "$backup_path")"
-                if [[ "$VERBOSE_OUTPUT" == "true" ]]; then echo "Backing up: $rel_path"; fi
+                if [[ "$VERBOSE_OUTPUT" == "true" ]]; then echo "$rel_path"; fi
                 mv "$destination_path" "$backup_path"
             fi
         else
-            if [[ "$VERBOSE_OUTPUT" == "true" ]]; then echo "Adding: $rel_path"; fi
+            if [[ "$VERBOSE_OUTPUT" == "true" ]]; then echo "$rel_path"; fi
             echo "$rel_path" >> "$added_files"
         fi
         
@@ -189,7 +189,7 @@ uninstall_files_from_backup() {
             local rel_path="${backup_file#$BACKUP_DIR/}"
             local target_path="$GAME_DIR/$rel_path"
             
-            if [[ "$VERBOSE_OUTPUT" == "true" ]]; then echo "Restoring: $rel_path"; fi
+            if [[ "$VERBOSE_OUTPUT" == "true" ]]; then echo "$rel_path"; fi
             mkdir -p "$(dirname "$target_path")"
             mv "$backup_file" "$target_path"
         done < <(find "$BACKUP_DIR" -type f)    
@@ -285,7 +285,7 @@ do_install() {
     
     local utmt_cli="$BASE_DIR/utmt_cli/UndertaleModCli"
     local script1="$BASE_DIR/scripts/nongmlmods.csx"
-    local script2="$BASE_DIR/tools/scriptupdater.csx"
+    local script2="$BASE_DIR/scripts/scriptupdater.csx"
     
     if ! "$utmt_cli" load "$unpatched_data" -s "$script1" -s "$script2" -o "$patched_data"; then
         echo "${RED}Error: UndertaleModCli failed execution.${NC}" 
@@ -350,7 +350,7 @@ resolve_game_dir() {
     else
         if [[ -z "$GAME_DIR" ]]; then
             if ! GAME_DIR=$(find_game_dir "$APPID"); then
-                echo "Unable to locate the Dark Deity game directory automatically in Steam"
+                echo "Failed to locate Dark Deity in Steam."
                 GAME_DIR=""
             fi
         fi
