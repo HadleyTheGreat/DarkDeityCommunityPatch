@@ -1,3 +1,3 @@
 @echo off
-powershell -ExecutionPolicy bypass -Command "tools\Apply-Patch.ps1"
+powershell -ExecutionPolicy bypass -Command ".\patchtool.ps1 -a"
 pause
