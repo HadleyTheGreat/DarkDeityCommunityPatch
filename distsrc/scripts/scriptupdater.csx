@@ -35,7 +35,7 @@ GlobalDecompileContext globalDecompileContext = new(Data);
 var decompilerSettings = Data.ToolInfo.DecompilerSettings;
 
 // Collect patch files
-string[] dirFiles = Directory.GetFiles(scriptsDir, "*.gml");
+string[] dirFiles = Directory.GetFiles(scriptsDir, "*.gml").OrderBy(i => i).ToArray();
 if (dirFiles.Length == 0)
 {
     ScriptError("No .gml files found in scripts folder.");
