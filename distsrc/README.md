@@ -1,48 +1,6 @@
 ## Dark Deity Community Patch - version 3.0.0
 
-
-
-This patch contains community developed bug fixes for Dark Deity written by JohnHadley of Steam.  JohnHadley is not affiliated with the developers of Dark Deity and this is not an official game update.  The patch is designed to be applied to version 1.5.8 of Dark Deity, which released on Steam on Nov 22, 2022 and was the latest version of the game as of 7/10/2026.  It has been tested on the Steam (Windows) release, but I believe it also should work with the Epic Games Store (Windows) or GOG (Windows) releases of the game.
-
-
-
-**New**: In addition to support for Windows PCs, there is also now an installation package that supports most x86-based Linux PCs and devices that run games through the Linux version of Steam, including the Steam Deck and Steam Machine.
-
-
-
-The installer will automatically locate the game folder for you in Steam, but you can also specify the install path manually on the command-line if for some reason auto-detection doesn't work or if you want to install the patch on the GOG or Epic Games Store versions of the game, provided you can figure out yourself where the game is installed.
-
-&#x20;
-
-##### Bugs fixed by this patch
-
-
-
-* Memory corruption: Destroying an actor object (usually because the player killed the enemy) results in corruption of other game data.
-* Game crash bug: Variable <unknown\_object>.passable(100144, -2147483648) not set before reading it. (chapter 22 especially)
-* Game crash bug: Data structure with index does not exist. (chapter 22 especially)
-* Movement bug: Unit continues to slowly drift after completing a movement path.
-* Movement bug: More than one unit ends up on the same tile as a result of movement drift.
-* Movement bug: Enemy unit cannot move anymore after being chained, even after the chain expires.
-* Movement bug: Attempting to push a unit causes it to visibly glitch out with a blurry image.
-* Movement bug: Unit's sprite being shown on a different tile than the one you can select the unit to interact with it with the cursor.
-* Spawning bug: Units spawn on top of other units in chapter 22.
-* Sprite mismatch: Irving's hair reverts back to red if you load any save file from chapter 12-16
-* Unending mission: A user reported to me that chapter 10 never ended for him, I made the game check on every turn after 8 instead of just on exactly turn 9 to try to end the map as a workaround.
-* Stat recording bug: Helena's historical statistics were not being tracked properly.
-* Battlesave state bug: Doors that were unlocked would be closed again when reloading after a battlesave
-* Battlesave state bug: Units that were already rescued would appear to be trapped again after loading from a battlesave
-* Battlesave state bug: Cumulative damage totals for the map would not be restored when loading from a battlesave, weakening items and skills that scale based on them and making end of battle and end of playthrough stats incorrect.
-* Visual bug: In chapter 17, Alexa and Rose prisoner sprites would not be removed when they were rescued.
-* Rounding bug: Critical hit damage was not rounded properly if you skipped battle animations, which could result in enemies not dying when it appeared they already reached 0 health.
-
-
-
-
-
-## HOW TO INSTALL
-
-
+The Dark Deity Community Patch is a package of bug fixes for the game Dark Deity, written by John Hadley of Steam.  This version of the patch supports all three PC/Windows distributions of the game (GOG, Steam, and Epic Games) running on Windows machines or running on Linux machines through the Proton compatibility layer.  It does not support Switch versions of the game.  The patch is meant to be applied to version 1.58 of the game, which is the current version on all three platforms as of 7/21/2026.
 
 [Command-Line Installation (Windows)](https://HadleyTheGreat.github.io/install-windows.html)
 
