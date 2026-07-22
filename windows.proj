@@ -263,7 +263,7 @@
 		<Exec
 			Condition="$([MSBuild]::IsOSPlatform('Linux'))"
 			WorkingDirectory="$(DistDir)"
-			Command='bash "$(BuildToolsDir)/Merge-Csv.sh" --sourceFolder "$(MSBuildProjectDirectory)\images" --outputFile "$(DistDir)/scripts/versions.csv"'/>	
+			Command='bash "$(BuildToolsDir)/Merge-Csv.sh" --sourceFolder "$(MSBuildProjectDirectory)/images" --outputFile "$(DistDir)/scripts/versions.csv"'/>	
 	</Target>
 	
 	<Target
