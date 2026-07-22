@@ -11,8 +11,8 @@
 		<ImportsDir>$(MSBuildProjectDirectory)\imports</ImportsDir>
 		<DistVersion>3.0.0</DistVersion>
 		<ReleaseZipFile>$(ArtifactsDir)\DarkDeityCommunityPatch-$(DistVersion)-Windows.zip</ReleaseZipFile>
-		<UtmtCliUrlWindows>https://github.com/UnderminersTeam/UndertaleModTool/releases/download/0.9.0.0/UTMT_CLI_v0.9.0.0-Windows.zip</UtmtCliUrlWindows>
-		<UtmtCliUrlLinux>https://github.com/UnderminersTeam/UndertaleModTool/releases/download/0.9.0.0/UTMT_CLI_v0.9.0.0-Ubuntu.zip</UtmtCliUrlLinux>
+		<UtmtCliUrlWindows>https://github.com/UnderminersTeam/UndertaleModTool/releases/download/0.9.1.2/UTMT_CLI_v0.9.1.2-Windows.zip</UtmtCliUrlWindows>
+		<UtmtCliUrlLinux>https://github.com/UnderminersTeam/UndertaleModTool/releases/download/0.9.1.2/UTMT_CLI_v0.9.1.2-Ubuntu.zip</UtmtCliUrlLinux>
 		<UtmtCliZipFileWindows>$(ImportsDir)\utmt_cli.zip</UtmtCliZipFileWindows>
 		<UtmtCliZipFileLinux>$(ImportsDir)\utmt_cli_linux.zip</UtmtCliZipFileLinux>
 	</PropertyGroup>
