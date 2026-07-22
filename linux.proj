@@ -10,7 +10,7 @@
 		<UtmtCliDir>$(DistDir)\utmt_cli</UtmtCliDir>
 		<ImportsDir>$(MSBuildProjectDirectory)\imports</ImportsDir>
 		<DistVersion>3.0.0</DistVersion>
-		<ReleaseZipFile>$(ArtifactsDir)\DarkDeityCommunityPatch-Linux-$(DistVersion).zip</ReleaseZipFile>
+		<ReleaseZipFile>$(ArtifactsDir)\DarkDeityCommunityPatch-$(DistVersion)-linux.zip</ReleaseZipFile>
 		<UtmtCliUrlWindows>https://github.com/UnderminersTeam/UndertaleModTool/releases/download/0.9.0.0/UTMT_CLI_v0.9.0.0-Windows.zip</UtmtCliUrlWindows>
 		<UtmtCliUrlLinux>https://github.com/UnderminersTeam/UndertaleModTool/releases/download/0.9.0.0/UTMT_CLI_v0.9.0.0-Ubuntu.zip</UtmtCliUrlLinux>
 		<UtmtCliZipFileWindows>$(ImportsDir)\utmt_cli.zip</UtmtCliZipFileWindows>
@@ -47,6 +47,7 @@
 		<DistSources Include="@(DistCommonSources);@(DistLinuxSources)" />
 		<Distro Include="Steam"/>
 		<Distro Include="GOG"/>
+		<Distro Include="Epic Games"/>
 		<!-- <Distro Include="Epic Games"/> -->		
 	</ItemGroup>
 
