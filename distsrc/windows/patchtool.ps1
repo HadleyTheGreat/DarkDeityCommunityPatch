@@ -74,7 +74,7 @@ Examples:
   .\$SCRIPT_NAME -a
   .\$SCRIPT_NAME -i -p
   .\$SCRIPT_NAME -i -d "C:\Program Files (x86)\GOG Galaxy\Games\Dark Deity"
-  .\$SCRIPT_NAME -u -d "C:\Program Files\Epic Games\Dark Deity"
+  .\$SCRIPT_NAME -u -d "C:\Program Files\Epic Games\DarkDeityPdnOn"
   .\$SCRIPT_NAME --hash "C:\Program Files (x86)\Steam\steamapps\common\Dark Deity"
 "@
 }
@@ -377,7 +377,7 @@ to prompt for it interactively.
 Examples:
   .\$SCRIPT_NAME -i -d "C:\Program Files (x86)\GOG Galaxy\Games\Dark Deity"
   .\$SCRIPT_NAME -a -p
-  .\$SCRIPT_NAME -u -d "C:\Program Files\Epic Games\Dark Deity"
+  .\$SCRIPT_NAME -u -d "C:\Program Files\Epic Games\DarkDeityPdnOn"
 "@
         exit 1
     }
@@ -789,7 +789,7 @@ ${RED}Error: Unexpected argument \"$arg\".${NC}
 Be sure to enclose directory paths with quotation marks if they contain spaces.
 Examples:
   ./$SCRIPT_NAME -i -d `"C:\Program Files (x86)\GOG Galaxy\Games\Dark Deity`"
-  ./$SCRIPT_NAME -u -d `"C:\Program Files\Epic Games\Dark Deity`"
+  ./$SCRIPT_NAME -u -d `"C:\Program Files\Epic Games\DarkDeityPdnOn"
 "@
                 exit 1
             }
