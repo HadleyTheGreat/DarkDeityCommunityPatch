@@ -1,6 +1,6 @@
 ## Dark Deity Community Patch 3.0.0
 
-This patch package contains a collection of community developed bug fixes for Dark Deity written by John Hadley of Steam.  John Hadley is not affiliated with the developers or publishers of Dark Deity and this is not an official bug patch.  The patch is compatible with Windows/PC version 1.58 of Dark Deity distributed on the Steam, Epic Games, or GOG gaming platforms.  There is also support for any of these versions running on Linux machines through the Proton compatibility layer.  There is no support for Switch versions.
+This patch package contains a collection of community developed bug fixes for Dark Deity written by John Hadley of Steam.  John Hadley is not affiliated with the developers or publishers of Dark Deity and this is not an official game release.  The patch is compatible with Windows/PC version 1.58 of Dark Deity distributed on the Steam, Epic Games, or GOG gaming platforms.  There is also support for any of these versions running on Linux machines through the Proton compatibility layer.  There is no support for Switch versions.
 
 ### HOW TO INSTALL
 
@@ -26,14 +26,18 @@ This patch package contains a collection of community developed bug fixes for Da
 
 Steam will analyze the files, detect that DATA.WIN has been changed, then re-download it automatically returning your DATA.WIN to its pre-patched state effectively removing the patch.
 
+### How Identify if the Community Patch is installed in Dark Deity
+
+Look in the lower-left corner of the Main Menu screen.  You should see the words Community Patch 3.0.0 if the patch is intalled.  In the lower right corner it should say v1.58c (c for community).
+
 ### NOTES
 
-This patch rewrites the DATA.WIN file of the game to modify the game scripts in it.  If you attempt to manually verify the Steam installation of the game then Steam will recognize that the DATA.WIN file has changed and re-download it.  You would then need to re-apply the patch if you still want to use it.  If a new official update is released for the game it may also re-download DATA.WIN and require re-application of the patch.
+This patch rewrites the DATA.WIN file of the game to modify the game scripts in it and replaces several other files in the Dark Deity game folder.  If you attempt to manually verify the Steam installation of the game then Steam will recognize that the files have changed and re-download them.  You would then need to re-apply the patch if you still want to use it.
 
 
 ### LICENSES AND ATTRIBUTIONS
 
-This patch package incorporates pre-compiled binaries and other files from the official UndertaleModCLI release version 0.9.0.0 in its entirety and with no modifications in the UTMT\_CLI folder.  JohnHadley does not lay claim to and is not affiliated with UndertaleModTool or UndertaleModCLI.
+This patch package incorporates pre-compiled binaries and other files from the official UndertaleModCLI release version 0.9.1.2 in its entirety and with no modifications in the UTMT\_CLI folder.  JohnHadley does not lay claim to and is not affiliated with UndertaleModTool or UndertaleModCLI.
 
 UndertaleModTool and its command-line tool UndertaleModCLI are third-party, open source tools for modifying GameMaker data files redistributed under the GNU General Public License version 3.0, see UTMT\_CLI\\LICENSE.TXT for full details.  The source code and binaries for UndertaleModTool and UndertaleModCLI are freely available on GitHub at https://github.com/UnderminersTeam/UndertaleModToolUndertaleModTool.
 
