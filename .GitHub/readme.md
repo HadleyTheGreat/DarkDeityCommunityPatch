@@ -1,39 +1,22 @@
-## Dark Deity Community Patch - version 2.1.1
+Dark Deity Community Patch
 
-This package contains community developed bugfix patches for Dark Deity written by JohnHadley of Steam.  It was designed to work with the most current Steam Windows PC version of the game as of 6/10/2026.  It is not intended for, has not been tested with, and is not likely to work with any other versions of the game.  JohnHadley is not affiliated with the developers of Dark Deity and this is not an official bug patch.
-
-### All bugs fixed by this patch
-
-* Memory corruption: Destroying an actor object (usually because the player killed the enemy) results in corruption of other game data.
-* Game crash bug: Variable <unknown\_object>.passable(100144, -2147483648) not set before reading it. (chapter 22 especially)
-* Game crash bug: Data structure with index does not exist. (chapter 22 especially)
-* Movement bug: Unit continues to slowly drift after completing a movement path.
-* Movement bug: More than one unit ends up on the same tile as a result of movement drift.
-* Movement bug: Enemy unit cannot move anymore after being chained, even after the chain expires.
-* Movement bug: Attempting to push a unit causes it to visibly glitch out with a blurry image.
-* Movement bug: Unit's sprite being shown on a different tile than the one you can select the unit to interact with it with the cursor.
-* Spawning bug: Units spawning on top of other units in chapter 22.
-* Sprite mismatch: Irving's hair reverts back to red if you load any save file from chapter 12-16
-* Unending mission: A user reported to me that chapter 10 never ended for him, I made the game check on every turn after 8 instead of just on exactly turn 9 to try to end the map as a workaround.
-* Stat recording bug; Helena's historical statistics were not being tracked properly.
-
-Version 2.1.1 applies exactly the same bug fixes as 2.1.0, but it has improved install scripts to make installation and uninstallation on systems that already have previous versions of the patch installed work better.  Version 2.1.0 fixed the movement bugs for enemy units as well as the player units, since I didn't realize that there were separate path completion events for player and enemy units when I made version 2.0.0.
+This patch package contains a collection of community developed bug fixes for Dark Deity written by John Hadley of Steam.  John Hadley is not affiliated with the developers of Dark Deity and this is not an official bug patch.  The patch is compatible with Windows/PC version 1.58 of Dark Deity distributed on the Steam, Epic Games, or GOG gaming platforms.  There is also support for any of these versions running on Linux machines through the Proton compatibility layer.
 
 ### HOW TO INSTALL
 
-1\) Download the zip file of the Dark Deity Community Patch from the bottom of the latest release page at https://github.com/HadleyTheGreat/DarkDeityCommunityPatch/releases/latest
+1\) Download the zip file of the Dark Deity Community Patch from the bottom of the latest release page at https://github.com/HadleyTheGreat/DarkDeityCommunityPatch/releases/latest with your web browser.
 
-2\) Use the Windows file explorer to extract the contents of the zip file into a place that the user has write access such as a folder on your desktop, or a sub-folder in your Documents or Downloads folder by right-clicking it and selecting Extract All.
+2\) Use your file manager or file explorer to extract the contents of the zip file into a folder by right-clicking it and selecting Extract All.
 
-3\) After extracting, run APPLYPATCH.BAT by double-clicking it in the file explorer or right-clicking it and selecting Open.  If you have default security settings Windows will warn you that you are about to run a batch file and ask you for permission.  You must allow it to run the batch file to do the install.
+3\) After extracting, run the **autopatch** or **autopatch.bat** script file to launch the installer, then respond its prompts to install (or uninstall if you already installed it).
 
-Once the install is complete, you don't need the zip file or the folder you extracted and installed from anymore and you can safely delete them.
+4\) Once the install is complete, you don't need the zip file or the folder you extracted and installed from anymore and you can safely delete them.
 
 ### HOW TO UNINSTALL
 
 #### Method 1:
 
-1\) Follow the same steps used to install the patch and the APPLYPATCH.BAT script will detect that it is already installed and prompt you to ask if you want to uninstall it.
+1\) Follow the same steps used to install the patch and the **autopatch** script will detect that it is already installed and prompt you to ask if you want to uninstall it.
 
 #### Method 2:
 
