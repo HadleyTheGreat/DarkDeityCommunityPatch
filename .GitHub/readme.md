@@ -1,6 +1,6 @@
 ## Dark Deity Community Patch 3.0.0
 
-This patch package contains a collection of community developed bug fixes for Dark Deity written by John Hadley of Steam.  John Hadley is not affiliated with the developers of Dark Deity and this is not an official bug patch.  The patch is compatible with Windows/PC version 1.58 of Dark Deity distributed on the Steam, Epic Games, or GOG gaming platforms.  There is also support for any of these versions running on Linux machines through the Proton compatibility layer.  There is no support for Switch versions.
+This patch package contains a collection of community developed bug fixes for Dark Deity written by John Hadley of Steam.  John Hadley is not affiliated with the developers or publishers of Dark Deity and this is not an official bug patch.  The patch is compatible with Windows/PC version 1.58 of Dark Deity distributed on the Steam, Epic Games, or GOG gaming platforms.  There is also support for any of these versions running on Linux machines through the Proton compatibility layer.  There is no support for Switch versions.
 
 ### HOW TO INSTALL
 
@@ -30,7 +30,6 @@ Steam will analyze the files, detect that DATA.WIN has been changed, then re-dow
 
 This patch rewrites the DATA.WIN file of the game to modify the game scripts in it.  If you attempt to manually verify the Steam installation of the game then Steam will recognize that the DATA.WIN file has changed and re-download it.  You would then need to re-apply the patch if you still want to use it.  If a new official update is released for the game it may also re-download DATA.WIN and require re-application of the patch.
 
-The patch calculates the SHA256 hash for the DATA.WIN file before applying changes to make sure you only apply them to the exact version of the game it was written for.  This is intentional to prevent applying the patch in situations where may no longer be compatible.  If you \*REALLY\* want to install the patches to another version, then you can delete scripts\\hashes.csv file before running APPLYPATCH.BAT to suppress the validation.  I would hope that if there is a new official game update at some point then this patch will no longer be needed because the developers will have some officially implemented bugfixes for these bugs, so you won't need to apply it anymore to any newer version of the game.
 
 ### LICENSES AND ATTRIBUTIONS
 
