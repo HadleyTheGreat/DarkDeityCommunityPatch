@@ -75,7 +75,7 @@
 
 	<Target 
 		Name="ExtractCLITools"
-		BeforeTargets="GeneratePostImageWindows;GeneratePostImageLinux"
+		BeforeTargets="BuildAllImages"
 		Condition="!Exists('$(Utmt)')">
 		
 		<MakeDir Directories="$(LocalUtmtDir)"/>
