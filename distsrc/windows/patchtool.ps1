@@ -355,12 +355,15 @@ function Resolve-GameDir {
             Write-Output "${YELLOW}Prompt for game directory was cancelled.  Operation aborted.${NC}"
             exit 1
         }
-    } elseif ([string]::IsNullOrEmpty($script:GAME_DIR)) {
+    } elseif (-not $script:GAME_DIR) {
         $script:GAME_DIR = Find-GameDir $APPID
-        if (-not $script:GAME_DIR) {
-            Write-Output "Failed to locate the Dark Deity in Steam."
-            $script:GAME_DIR = ""
-        }    
+        if ((-not $script:GAME_DIR) -and (Test-Path "C:\Program Files (x86)\GOG Galaxy\Games\Dark Deity Complete Edition\data.win" -PathType Leaf )) {
+            $script:GAME_DIR = "C:\Program Files (x86)\GOG Galaxy\Games\Dark Deity Complete Edition"
+        }        
+        if ((-not $script:GAME_DIR) -and (Test-Path "C:\Program Files\Epic Games\DarkDeityPdnOn\data.win" -PathType Leaf)) {
+            $script:GAME_DIR = "C:\Program Files\Epic Games\DarkDeityPdnOn"
+        }
+
         if (-not $script:GAME_DIR) {
             $script:GAME_DIR = PromptFor-GameDir
             if ([string]::IsNullOrEmpty($script:GAME_DIR)) {
