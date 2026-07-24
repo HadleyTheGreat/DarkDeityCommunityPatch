@@ -2,6 +2,8 @@
 
 This patch package contains a collection of community developed bug fixes for Dark Deity written by John Hadley of Steam.  John Hadley is not affiliated with the developers or publishers of Dark Deity and this is not an official game release.  The patch is compatible with Windows/PC version 1.58 of Dark Deity distributed on the Steam, Epic Games, or GOG gaming platforms.  There is also support for any of these versions running on Linux machines through the Proton compatibility layer.  There is no support for Switch versions.
 
+[Complete List of Bug Fixes and Mods](https://github.com/HadleyTheGreat/DarkDeityCommunityPatch/blob/main/distsrc/BUG_CATALOG.md)
+
 ### HOW TO INSTALL
 
 1\) Download the zip file of the Dark Deity Community Patch from the bottom of the latest release page at https://github.com/HadleyTheGreat/DarkDeityCommunityPatch/releases/latest with your web browser.
