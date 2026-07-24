@@ -18,7 +18,7 @@ This patch package contains a collection of community developed bug fixes for Da
 
 1\) Follow the same steps used to install the patch and the **autopatch** script will detect that it is already installed and prompt you to ask if you want to uninstall it.
 
-#### Method 2:
+#### Method 2 (Steam only):
 
 1\) In Steam, click Library and locate Dark Deity within it
 
