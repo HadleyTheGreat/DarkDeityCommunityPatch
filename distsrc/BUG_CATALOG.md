@@ -95,9 +95,6 @@ BUG: Previously unlocked doors (obj_door1) whose tiles were passable are not res
 BUG: Previously unlocked doors (obj_switchdoor) whose tiles were passable are not restored to that state upon reload from battlesave.
 * gml_Object_obj_objective_switch_Destroy_0.gml
 
-BUG: Sprites representing previously rescued prisoners are not removed upon reloading from a battlesave.
-* gml_Object_obj_objective_rescue_Destroy_0.gml
-
 BUG: Prisoner spawn squares previously made passable after activating switches to release prisoners are not restored to that state upon reload from battlesave.
 * gml_Object_obj_objective_switch_Destroy_0.gml
 
@@ -124,3 +121,6 @@ TYPO (English): "Yl'mars Faith" should be "Yl'mar's Faith"; (French) "Foi de Yl'
 
 TYPO (English): Chapter 25 "Months of hardship and warfare have led to this confronation".  "confronation" should be "confrontation"
 * gml_Object_obj_overview_25_Step_0.gml
+
+BUG: Chests don't get removed and can be opened more than once if opened before the character reaches the destination square.
+* gml_Object_obj_dropdown_openchest_Other_10.gml

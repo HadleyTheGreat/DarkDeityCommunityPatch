@@ -123,7 +123,7 @@ switch (selected)
                     pickuptype = "Gained one ";
                 }
             }
-            with (collision_point(obj_cursor.selectedactor.x, obj_cursor.selectedactor.y, obj_objective_openchest, false, true))
+            with (chestemp)
             {
                 if (partner1 != -4)
                 {
