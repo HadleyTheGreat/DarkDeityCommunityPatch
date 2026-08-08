@@ -32,7 +32,7 @@ BUG: Units spawning on top of other units in chapter 22
 BUG: Potential memory corruption due to handling a ds_grid as a ds_list during the destroy event of obj_stat_view
 * gml_Object_obj_stat_view_Destroy_0.gml
 
-BUG: Movement drift continues to occur sometimes after a unit's movement path ends (on movement speed 8 when any unit moves exactly 7 squares).
+BUG: Movement drift continues to occur after a unit's movement path ends (confirmed on movement speed 8 when any unit moves exactly 7 squares, but possibly could happen on other combinations of movement speed and squares moved).
 Symptoms: Can't select the unit on the square its sprite is on, but you can select it on another square; two units end up on the same square at the same time; unit visibly glitches after being pushed instead of completing the push properly; enemy unit speed is set permanently to zero after a chain applied to it expires; enemy ends up on the wrong square.
 * gml_Object_obj_purpleai_controller_Other_8.gml
 * gml_Object_obj_ai_controller_Other_8.gml
@@ -98,10 +98,10 @@ BUG: Previously unlocked doors (obj_switchdoor) whose tiles were passable are no
 BUG: Prisoner spawn squares previously made passable after activating switches to release prisoners are not restored to that state upon reload from battlesave.
 * gml_Object_obj_objective_switch_Destroy_0.gml
 
-BUG: Sprites representing previously rescued prisoners are not removed from the map upon reload from battlesave.
+BUG: Sprites representing previously rescued prisoners are not removed from the map upon reload from battlesave (chapters 4 and 17).
 * gml_Object_obj_objective_rescue_Destroy_0.gml
 
-BUG: Sprites representing previously released prisoner groups are not removed upon reloading from a battlesave.
+BUG: Sprites representing previously released prisoner groups are not removed upon reloading from a battlesave. (chapter 17)
 * gml_Object_obj_objective_visit_Destroy_0.gml
 
 BUG: Memory leak in obj_storage_holder due to not releasing memory in the ds_grid variable item_storage during its destroy event.
@@ -124,3 +124,6 @@ TYPO (English): Chapter 25 "Months of hardship and warfare have led to this conf
 
 BUG: Chests don't get removed and can be opened more than once if opened before the character reaches the destination square.
 * gml_Object_obj_dropdown_openchest_Other_10.gml
+
+BUG: In deployment if you select a unit, then before selecting the second unit to swap with it you remove the unit and put another unit in its place, then you select a second unit to swap with a glitch occurs where you end up with two units on the same square, one which cannot be selected.
+* gml_Object_obj_gameplay_preparation_Other_10.gml
